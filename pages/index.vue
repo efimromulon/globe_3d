@@ -148,14 +148,14 @@ mounted(){
 		});
 
 		var earth_texture = new THREE.Mesh(earth_texture_geometry, earth_texture_material);
-			earth_texture.recieveShadow = true;
+			earth_texture.recieveShadow = false;
 			earth_texture.castShadow = false;
 			earth_texture_material.fog = false;
-			earth_texture_material.depthWrite = false;
+			earth_texture_material.depthWrite = true;
 
-			earth_texture_material.map.generateMipalphaMaps = false;
-			earth_texture_material.map.magFilter = THREE.LinearFilter;
-			earth_texture_material.map.minFilter = THREE.LinearFilter;
+			//earth_texture_material.map.generateMipalphaMaps = false;
+			//earth_texture_material.map.magFilter = THREE.LinearFilter;
+			//earth_texture_material.map.minFilter = THREE.LinearFilter;
 			earth_texture_material.needsUpdate = true;
 
 			earth_texture.position.set(0, 0, 0);
@@ -172,9 +172,11 @@ mounted(){
 			side: THREE.FrontSide,
 			shininess: 0.0,
 			transparent: true,
-			opacity: 0.7,
+			opacity: 0.6,
 			color: 0x000000,
+			diffuse: 0x000000,
 			emissive: 0x000000,
+			specular: 0x000000,
 			//specular: 0x00ff00,
 			//emissive: 0x000000,
 			//shininess: 1,
@@ -201,9 +203,11 @@ mounted(){
 			side: THREE.FrontSide,
 			shininess: 0.0,
 			transparent: true,
-			opacity: 1.0,
-			color: 0x050505,
-			emissive: 0x050505,
+			opacity: 0.4,
+			color: 0x000000,
+			diffuse: 0x000000,
+			emissive: 0x070707,
+			specular: 0x070707,
 			//emissive: 0x000000,
 			//shininess: 1,
 			//shading: THREE.FlatShading
@@ -244,7 +248,8 @@ mounted(){
 
 			var earth_shadow_points_shape = earth_shadow_points_loader.load('030303.png');
 
-			var earth_shadow_points = new THREE.Points(earth_shadow_points_geometry, new THREE.ShaderMaterial({
+
+			var earth_shadow_points_material =  new THREE.ShaderMaterial({
 					vertexColors: THREE.VertexColors,
 					uniforms: {
 						visibility: {
@@ -303,13 +308,12 @@ mounted(){
 					}
 				`,
 					transparent: true,
-					lights: false,
-					depthWrite: true,
-					needsUpdate: true,
-					fog: false
-				}));
+					lights: false
+				});
+			var earth_shadow_points = new THREE.Points(earth_shadow_points_geometry,earth_shadow_points_material);
+			earth_shadow_points_material.depthWrite = true;
 				//gl_FragColor = vec4( vColor, 1.0 );
-				group.add(earth_shadow_points);
+				//group.add(earth_shadow_points);
 		//EARTH_POINTS_SHADOW_END
 		//EARTH_POINTS
 			var geom = new THREE.SphereBufferGeometry(615, 300, 150);
@@ -329,7 +333,8 @@ mounted(){
 			var disk = loader.load('circle_1.png');
 
 
-			var points = new THREE.Points(geom, new THREE.ShaderMaterial({
+
+			var points_material = new THREE.ShaderMaterial({
 				vertexColors: THREE.VertexColors,
 				uniforms: {
 					visibility: {
@@ -387,12 +392,10 @@ mounted(){
 					}
 				`,
 				transparent: true,
-				lights: false,
-				depthWrite: true,
-				needsUpdate: true,
-				fog: false,
-				castShadow: true
-				}));
+				lights: false
+				});
+			var points = new THREE.Points(geom, points_material);
+				points_material.depthWrite = false;
 				group.add(points);
 		//EARTH_POINTS_END
 
