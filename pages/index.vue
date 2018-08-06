@@ -64,124 +64,373 @@ mounted(){
 	var MTLLoader = require('three-mtl-loader');
 	OBJLoader(THREE);
 	MTLLoader(THREE);
+
 //VARIABLES
+
 	let canvas = document.getElementById('basicScene');
 	let width = window.innerWidth;
 	let height = window.innerHeight;
 	var fov = 75;
 	var near = 0.1;
-	var far = 10000;
+	var far = 20000;
 	var pos_x = 0;
 	var pos_y = 0;
 	var pos_z = 1800;
 	var color = 0x000000;
 	var mouse = new THREE.Vector2(), INTERSECTED;
-//VARIABLES_END
-//SCENE_GROUP_CAMERA
-	let scene = new THREE.Scene();
-	let group = new THREE.Group();	
-	scene.fog = new THREE.FogExp2( 0x000104, 0.0000675 );
-	var camera = new THREE.PerspectiveCamera(fov, width / height, near, far);
-		camera.position.set(pos_x, pos_y, pos_z);
-//SCENE_GROUP_CAMERA_END
-//RENDERER
-	let renderer = new THREE.WebGLRenderer({
-		canvas: canvas,
-		antialias: true,
-	});
 
-	renderer.setPixelRatio(window.devicePixelRatio > 1 ? 2 : 1);
-	renderer.setSize(width, height);
-	renderer.shadowMap.enabled = true;
-	renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-//RENDERER_END
-//CONTROLS
-	var controls = new OrbitControls(camera, renderer.domElement);
-	//var controls = new OrbitControls(camera, renderer.domElement);
-//CONTROLS_END
-//BACKGROUND_SCENE
-	let backgroundSceneMap = new THREE.TextureLoader().load('background_map.jpg');
+	var camera, scene, renderer, backgroundScene, backgroundCamera, group, controls;
+	init();
 
-	var backgroundSceneMesh = new THREE.Mesh(
-	    new THREE.PlaneGeometry(2, 2, 0),
-	    new THREE.MeshBasicMaterial({
-	        map: backgroundSceneMap
-	    }));
+//CREATE_SCENE
 
-	backgroundSceneMesh.material.depthTest = false;
-	backgroundSceneMesh.material.depthWrite = false;
+	function createScene() {
 
-	var backgroundScene = new THREE.Scene();
-	var backgroundCamera = new THREE.Camera();
+		scene = new THREE.Scene();
+		scene.fog = new THREE.FogExp2( 0x000104, 0.0000675 );
 
-	backgroundScene.add(backgroundCamera);
-	backgroundScene.add(backgroundSceneMesh);
-//BACKGROUND_SCENE_END
-//ADD_GROUP_&_CAMERA
-	scene.add(group);
-	scene.add(camera);
-//ADD_GROUP_&_CAMERA_END
-//EARTH_TEXTURE
-	//let color_99 = 0x04191b;
-	//let color_99 = 0x020f10;
-	//let color_99 = 0x031414;
-	//let color_99 = 0x000f11;
-	let color_99 = 0x010f12;
-	let earth_texture_geometry = new THREE.SphereGeometry(600, 240, 240, 0, Math.PI*2, 0, Math.PI);
-	let earth_texture_material = new THREE.MeshPhongMaterial({
-		map: new THREE.TextureLoader().load('Voda_normali.jpg'),
-		bumpMap: new THREE.TextureLoader().load('Shum_dlya_vody_bump.jpg'),
-		bumpScale: 12.65,
-		shininess: 0.0,
-		wireframe: false,
-		transparent: false,
-		opacity: 1.00,
-		color: color_99
-		//specular: 0xff0000,
-		//shininess: 1,
-		//shading: THREE.FlatShading
-	});
+		group = new THREE.Group();	
 
-	var earth_texture = new THREE.Mesh(earth_texture_geometry, earth_texture_material);
-		earth_texture.recieveShadow = false;
-		earth_texture.castShadow = false;
-		earth_texture_material.fog = false;
-		earth_texture_material.depthWrite = false;
+		camera = new THREE.PerspectiveCamera( fov, width / height, near, far );
+		camera.position.set( pos_x, pos_y, pos_z );
 
-		earth_texture_material.map.generateMipalphaMaps = false;
-		earth_texture_material.map.magFilter = THREE.LinearFilter;
-		earth_texture_material.map.minFilter = THREE.LinearFilter;
-		earth_texture_material.needsUpdate = true;
+		let backgroundSceneMap = new THREE.TextureLoader().load( 'background_map.jpg' );
+		var backgroundSceneMesh = new THREE.Mesh( new THREE.PlaneGeometry(2, 2, 0),	new THREE.MeshBasicMaterial( { map: backgroundSceneMap } ) );
 
+		backgroundSceneMesh.material.depthTest = false;
+		backgroundSceneMesh.material.depthWrite = false;
 
-	group.add( earth_texture );
+		backgroundScene = new THREE.Scene();
+		backgroundCamera = new THREE.Camera();
 
-	var mtlLoader = new MTLLoader();
-	mtlLoader.load('Batareya.mtl', function (materials) {
+		backgroundScene.add(backgroundCamera);
+		backgroundScene.add(backgroundSceneMesh);
 
-	    materials.preload();
+		scene.add(group);
+		scene.add(camera);
 
-	    var objLoader = new THREE.OBJLoader();
-	    objLoader.setMaterials(materials);
-	    objLoader.load('Batareya.obj', function (object) {
+	};
 
-	        group.add(object);
-	        object.position.y = 0;
-	        object.scale.multiplyScalar(100.2);
-	        console.log(object);
-	    });
+	function createRenderer() {
 
-	});
+		renderer = new THREE.WebGLRenderer( { canvas: canvas, alpha: true, antialias: true } );
 
-//LIGHTS
-	//LIGHTS_AMBIENT
+		renderer.setPixelRatio(window.devicePixelRatio > 1 ? 2 : 1);
+		renderer.setSize(width, height);
+		renderer.shadowMap.enabled = true;
+		renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+		controls = new OrbitControls(camera, renderer.domElement);
+
+	};
+
+	function addEarthTexture() {
+
+		//let color_99 = 0x04191b;
+		//let color_99 = 0x020f10;
+		//let color_99 = 0x031414;
+		//let color_99 = 0x000f11;
+		//old bump 1.65
+		let color_99 = 0x010f12;
+		let earth_texture_geometry = new THREE.SphereGeometry(600, 240, 240, 0, Math.PI*2, 0, Math.PI);
+		let earth_texture_material = new THREE.MeshPhongMaterial({
+			map: new THREE.TextureLoader().load('Voda_normali.jpg'),
+			bumpMap: new THREE.TextureLoader().load('Shum_dlya_vody_bump.jpg'),
+			bumpScale: 12.65,
+			shininess: 0.0,
+			wireframe: false,
+			transparent: true,
+			opacity: 0.94,
+			color: color_99
+			//specular: 0xff0000,
+			//shininess: 1,
+			//shading: THREE.FlatShading
+		});
+
+		var earth_texture = new THREE.Mesh(earth_texture_geometry, earth_texture_material);
+			earth_texture.recieveShadow = true;
+			earth_texture.castShadow = false;
+			earth_texture_material.fog = false;
+			earth_texture_material.depthWrite = false;
+
+			earth_texture_material.map.generateMipalphaMaps = false;
+			earth_texture_material.map.magFilter = THREE.LinearFilter;
+			earth_texture_material.map.minFilter = THREE.LinearFilter;
+			earth_texture_material.needsUpdate = true;
+
+			earth_texture.position.set(0, 0, 0);
+		group.add( earth_texture );
+
+	};
+
+	function addEarthContour(){
+		//EARTH_CONTOUR_SHADOW
+		//605
+		let earth_contour_shadow_geometry = new THREE.SphereGeometry(603, 50, 50, 0, Math.PI*2, 0, Math.PI);
+		let earth_contour_shadow_material = new THREE.MeshPhongMaterial({
+			map: new THREE.TextureLoader().load('EarthMap_transparent.png'),
+			side: THREE.DoubleSide,
+			shininess: 0.0,
+			transparent: true,
+			opacity: 0.7,
+			color: 0x000000,
+			emissive: 0x000000,
+			//specular: 0x00ff00,
+			//emissive: 0x000000,
+			//shininess: 1,
+			//shading: THREE.FlatShading
+		});
+
+		earth_contour_shadow_material.map.generateMipalphaMaps = false;
+		earth_contour_shadow_material.map.magFilter = THREE.LinearFilter;
+		earth_contour_shadow_material.map.minFilter = THREE.LinearFilter;
+		earth_contour_shadow_material.needsUpdate = true;
+		earth_contour_shadow_material.fog = false;
+		earth_contour_shadow_material.depthWrite = false;
+		//earth_contour_shadow_material.recieveShadow = true;
+		//earth_contour_shadow_material.castShadow = true;
+
+		//earth_contour_shadow_material.blending = THREE.SubstractiveBlending;
+		var earth_contour_shadow = new THREE.Mesh( earth_contour_shadow_geometry, earth_contour_shadow_material );
+
+		//group.add( earth_contour_shadow );
+		//EARTH_CONTOURR_SHADOW_END
+		//EARTH_CONTOUR
+		//605
+		let earth_contour_geometry = new THREE.SphereGeometry(615, 50, 50, 0, Math.PI*2, 0, Math.PI);
+		let earth_contour_material = new THREE.MeshPhongMaterial({
+			map: new THREE.TextureLoader().load('EarthMap_transparent.png'),
+			side: THREE.DoubleSide,
+			shininess: 0.0,
+			transparent: true,
+			opacity: 1.0,
+			color: 0xffffff,
+			emissive: 0xffffff,
+			//emissive: 0x000000,
+			//shininess: 1,
+			//shading: THREE.FlatShading
+		});
+
+		earth_contour_material.map.generateMipalphaMaps = false;
+		earth_contour_material.map.magFilter = THREE.LinearFilter;
+		earth_contour_material.map.minFilter = THREE.LinearFilter;
+		earth_contour_material.needsUpdate = true;
+		earth_contour_material.fog = false;
+		earth_contour_material.depthWrite = false;
+		earth_contour_material.recieveShadow = false;
+		earth_contour_material.castShadow = false;
+		//earth_contour_material.recieveShadow = true;
+		//earth_contour_material.castShadow = true;
+
+		//earth_contour_material.blending = THREE.SubstractiveBlending;
+		var earth_contour = new THREE.Mesh( earth_contour_geometry, earth_contour_material );
+
+		group.add( earth_contour );
+		//EARTH_CONTOUR_END
+
+	};
+
+	function addEarthPoints(){
+		//EARTH_POINTS_SHADOW
+			var earth_shadow_points_geometry = new THREE.SphereBufferGeometry(603, 300, 150);
+
+			var colors = [];
+			var color = new THREE.Color(0xffffff);
+			var q = ["pink", "red", "red", "red", "maroon", "maroon", "maroon"];
+
+			var earth_shadow_points_loader = new THREE.TextureLoader();
+				earth_shadow_points_loader.setCrossOrigin('');
+
+			var earth_shadow_points_texture = earth_shadow_points_loader.load('contour2_15.png');
+				earth_shadow_points_texture.wrapS = THREE.RepeatWrapping;
+				earth_shadow_points_texture.wrapT = THREE.RepeatWrapping;
+				earth_shadow_points_texture.repeat.set(1, 1);
+
+			var earth_shadow_points_shape = earth_shadow_points_loader.load('030303.png');
+
+			var earth_shadow_points = new THREE.Points(earth_shadow_points_geometry, new THREE.ShaderMaterial({
+					vertexColors: THREE.VertexColors,
+					uniforms: {
+						visibility: {
+							value: earth_shadow_points_texture
+						},
+						shift: {
+							value: 0
+						},
+						shape: {
+							value: earth_shadow_points_shape
+						},
+						size: {
+							value: 24
+						},
+						scale: {
+							value: window.innerHeight / 8
+						}
+					},
+					vertexShader: `			
+						uniform float scale;
+						uniform float size;
+
+						varying vec2 vUv;
+						varying vec3 vColor;
+			      
+						void main() {
+							vUv = uv;
+							vColor = color;
+							vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 );
+							gl_PointSize = size * ( scale / length( mvPosition.xyz ));
+							gl_Position = projectionMatrix * mvPosition;
+						}
+					`,
+					fragmentShader: `
+						uniform sampler2D visibility;
+						uniform float shift;
+						uniform sampler2D shape;
+
+						varying vec2 vUv;
+						varying vec3 vColor;
+
+						void main() {
+							
+							vec2 uv = vUv;
+							uv.x += shift;
+							vec4 v = texture2D(visibility, uv);
+							if (length(v.rgb) > 1.0) discard;
+
+							gl_FragColor = vec4( vColor, 1.0 );
+							gl_FragColor.a = 1.0;
+							vec4 shapeData = texture2D( shape, gl_PointCoord );
+							if (shapeData.a < 0.3) discard;
+							gl_FragColor = gl_FragColor * shapeData;
+							
+						}
+					`,
+					transparent: true,
+					lights: false,
+					depthWrite: false,
+					needsUpdate: true,
+					fog: false
+				}));
+
+				group.add(earth_shadow_points);
+		//EARTH_POINTS_SHADOW_END
+		//EARTH_POINTS
+			var geom = new THREE.SphereBufferGeometry(615, 300, 150);
+
+			var colors = [];
+			var color = new THREE.Color(0xffffff);
+			var q = ["pink", "red", "red", "red", "maroon", "maroon", "maroon"];
+
+			var loader = new THREE.TextureLoader();
+				loader.setCrossOrigin('');
+
+			var texture = loader.load('contour2_15.png');
+				texture.wrapS = THREE.RepeatWrapping;
+				texture.wrapT = THREE.RepeatWrapping;
+				texture.repeat.set(1, 1);	
+
+			var disk = loader.load('circle_1.png');
+			
+
+			var points = new THREE.Points(geom, new THREE.ShaderMaterial({
+				vertexColors: THREE.VertexColors,
+				uniforms: {
+					visibility: {
+						value: texture
+					},
+					shift: {
+						value: 0
+					},
+					shape: {
+						value: disk
+					},
+					size: {
+						value: 24
+					},
+					scale: {
+						value: window.innerHeight / 8
+					}
+				},
+				vertexShader: `			
+					uniform float scale;
+					uniform float size;
+
+					varying vec2 vUv;
+					varying vec3 vColor;
+		      
+					void main() {
+						vUv = uv;
+						vColor = color;
+						vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 );
+						gl_PointSize = size * ( scale / length( mvPosition.xyz ));
+						gl_Position = projectionMatrix * mvPosition;
+					}
+				`,
+				fragmentShader: `
+					uniform sampler2D visibility;
+					uniform float shift;
+					uniform sampler2D shape;
+
+					varying vec2 vUv;
+					varying vec3 vColor;
+
+					void main() {
+						
+						vec2 uv = vUv;
+						uv.x += shift;
+						vec4 v = texture2D(visibility, uv);
+						if (length(v.rgb) > 1.0) discard;
+
+						gl_FragColor = vec4( vColor, 1.0 );
+						gl_FragColor.a = 1.0;
+						vec4 shapeData = texture2D( shape, gl_PointCoord );
+						if (shapeData.a < 0.3) discard;
+						gl_FragColor = gl_FragColor * shapeData;
+						
+					}
+				`,
+				transparent: true,
+				lights: false,
+				depthWrite: false,
+				needsUpdate: true,
+				fog: false,
+				castShadow: true
+				}));
+				group.add(points);
+		//EARTH_POINTS_END
+
+	};
+
+	function addProvod() {
+
+		var mtlLoader = new MTLLoader();
+		mtlLoader.load('Batareya.mtl', function (materials) {
+
+			materials.preload();
+
+			var objLoader = new THREE.OBJLoader();
+			objLoader.setMaterials(materials);
+			objLoader.load('Batareya.obj', function (object) {
+
+				group.add(object);
+				object.position.set(-3000, 0, -2000);
+				console.log(object);
+			});
+
+		});
+
+	};
+
+	function addLights() {
+
+		//LIGHTS_AMBIENT
 		var ambiColor = "#ffffff";
 		var ambientLight = new THREE.AmbientLight(ambiColor, 2.5);
 		ambientLight.wrapAround = true;
 		scene.add(ambientLight);
 		
-	//LIGHTS_AMBIENT_END
-	//LIGHTS_DIRECTIONAL_LIGHT
+		//LIGHTS_AMBIENT_END
+		//LIGHTS_DIRECTIONAL_LIGHT
 		//var pointColor = "#4C709A";
 		var directionalLightColor = new THREE.Color("hsl(29, 100%, 95%)");
 		var directionalLight = new THREE.DirectionalLight(directionalLightColor);
@@ -204,8 +453,8 @@ mounted(){
 		directionalLight.target.position.set(-200, -300, -4000);
 		camera.add(directionalLight);
 
-	//LIGHTS_DIRECTIONAL_LIGHT_END
-	//LIGHTS_DIRECTIONAL_LIGHT
+		//LIGHTS_DIRECTIONAL_LIGHT_END
+		//LIGHTS_DIRECTIONAL_LIGHT
 		//var pointColor = "#4C709A";
 		var directionalLightColor_1 = new THREE.Color("hsl(170, 20%, 62%)");
 		var directionalLight_1 = new THREE.DirectionalLight(directionalLightColor_1);
@@ -225,8 +474,8 @@ mounted(){
 		//var target = new THREE.Object3D();
 		//directionalLight.target = earth_texture;
 		//camera.add(directionalLight_1);
-	//LIGHTS_DIRECTIONAL_LIGHT_END
-	//LIGHTS_SPOT_LIGHT
+		//LIGHTS_DIRECTIONAL_LIGHT_END
+		//LIGHTS_SPOT_LIGHT
 		var spotLight = new THREE.SpotLight( 0xffffff );
 		spotLight.position.set( -1000, 100, 1800 );
 
@@ -239,7 +488,22 @@ mounted(){
 		spotLight.shadow.camera.far = 4000;
 		spotLight.shadow.camera.fov = 30;
 
-		//camera.add( spotLight );
+	};
+
+	function init() {
+
+		createScene();
+		createRenderer();
+		addEarthTexture();
+		addEarthContour();
+		addEarthPoints();
+		addProvod();
+		addLights();
+
+		Render();
+
+	};
+
 	function Render() {
 
 		window.requestAnimationFrame(Render);
@@ -248,21 +512,19 @@ mounted(){
 		renderer.clear();
 		renderer.render(backgroundScene , backgroundCamera );
 		renderer.render(scene, camera);
-	}
 
-	Render();
-//RENDER_END
-//RESIZE
+	};
+
 	function onResize() {
 
 		renderer.setSize(window.innerWidth, window.innerHeight);
 		camera.aspect = (window.innerWidth / window.innerHeight);
 		camera.updateProjectionMatrix();
 
-	}
+	};
 
-	window.addEventListener('resize', onResize, false);
-//RESIZE_END
+window.addEventListener('resize', onResize, false);
+
 }//mounted end
 }
 </script>
