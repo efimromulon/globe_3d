@@ -137,8 +137,8 @@ mounted(){
 			bumpScale: 1.65,
 			shininess: 0.0,
 			wireframe: false,
-			transparent: false,
-			opacity: 2.0,
+			transparent: true,
+			opacity: 0.94,
 			color: 0x000000,
 			diffuse: color_of_bright_side,
 			emissive: color_of_dark_side,
@@ -455,7 +455,7 @@ mounted(){
 		camera.add(directionalLight);
 		var helper = new THREE.DirectionalLightHelper( directionalLight, 5 );
 
-		camera.add( helper );
+		scene.add( helper );
 		//LIGHTS_DIRECTIONAL_LIGHT_END
 		//LIGHTS_DIRECTIONAL_LIGHT
 		//var pointColor = "#4C709A";
@@ -493,6 +493,106 @@ mounted(){
 
 	};
 
+	function addClouds(){
+
+		//CLOUDS_SPHERE_SHADOW
+		let clouds_shadow_texture = new THREE.TextureLoader().load('clouds_new_1.png');
+		let clouds_shadow_texture_alpha = new THREE.TextureLoader().load('clouds_new_1.png');
+		let clouds_shadow_geometry = new THREE.SphereGeometry(603, 50, 50, 0, 2*Math.PI, 0, Math.PI);
+		let clouds_shadow_material = new THREE.MeshLambertMaterial({
+			map: clouds_shadow_texture,
+			alphaMap: clouds_shadow_texture_alpha,
+			blending: 1,
+			side: THREE.DoubleSide,
+			transparent:true,
+			opacity: 0.5,
+			color: 0x000000,
+			emissive: 0x000000,
+		});
+			//clouds_material.map.generateMipalphaMaps = false;
+			//clouds_material.map.magFilter = THREE.LinearFilter;
+			//clouds_material.map.minFilter = THREE.LinearFilter;
+			//clouds_material.needsUpdate = true;
+			//clouds_material.fog = false;
+		var clouds_shadow = new THREE.Mesh( clouds_shadow_geometry, clouds_shadow_material );
+
+
+		group.add( clouds_shadow );
+		//CLOUDS_SPHERE_SHADOW_END
+		//CLOUDS_SPHERE
+		let clouds_texture = new THREE.TextureLoader().load('clouds_new_1.png');
+		let clouds_texture_alpha = new THREE.TextureLoader().load('clouds_new_1.png');
+		let clouds_geometry = new THREE.SphereGeometry(618, 500, 500, 0, 2*Math.PI, 0, Math.PI);
+		let clouds_material = new THREE.MeshLambertMaterial({
+			map: clouds_texture,
+			alphaMap: clouds_texture_alpha,
+			blending: 2,
+			side: THREE.DoubleSide,
+			transparent:true,
+			opacity: 0.6,
+			color: 0x505050,
+			emissive: 0x090909
+		});
+			clouds_material.map.generateMipalphaMaps = false;
+			clouds_material.map.magFilter = THREE.LinearFilter;
+			clouds_material.map.minFilter = THREE.LinearFilter;
+			clouds_material.needsUpdate = true;
+			clouds_material.fog = false;
+		var clouds = new THREE.Mesh( clouds_geometry, clouds_material );
+
+
+		group.add( clouds );
+		//CLOUDS_SPHERE_END
+
+	};
+
+	function addAureole(){
+
+		//EARTH_AUREOLE
+		var customMaterial = new THREE.ShaderMaterial( 
+		{
+		    uniforms: 
+			{ 
+				"c":   { type: "f", value: 0.4 },
+				"p":   { type: "f", value: 1.6 },
+				glowColor: { type: "c", value: new THREE.Color(0x304a62) },
+				viewVector: { type: "v3", value: camera.position }
+			},
+			vertexShader: `
+				uniform vec3 viewVector;
+				uniform float c;
+				uniform float p;
+				varying float intensity;
+				void main() 
+				{
+					vec3 vNormal = normalize( normalMatrix * normal );
+					vec3 vNormel = normalize( normalMatrix * viewVector );
+					intensity = pow( c - dot(vNormal, vNormel), p );
+
+					gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
+				}
+			`,
+			fragmentShader: `
+				uniform vec3 glowColor;
+				varying float intensity;
+				void main() 
+				{
+					vec3 glow = glowColor * intensity;
+					gl_FragColor = vec4( glow, 1.0 );
+				}
+			`,
+			side: THREE.BackSide,
+			blending: THREE.AdditiveBlending,
+			transparent: true
+		}   );
+		let moonGlow_geometry = new THREE.SphereGeometry(635, 300, 300, 0, Math.PI*2, 0, Math.PI);
+		var moonGlow = new THREE.Mesh( moonGlow_geometry, customMaterial );
+		//moonGlow.scale.multiplyScalar(1.2);
+		scene.add( moonGlow );
+		//EARTH_AUREOLE_END
+
+	};
+
 	function init() {
 
 		createScene();
@@ -500,6 +600,8 @@ mounted(){
 		addEarthTexture();
 		addEarthContour();
 		addEarthPoints();
+		addAureole();
+		addClouds();
 		addProvod();
 		addLights();
 
