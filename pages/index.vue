@@ -126,23 +126,23 @@ mounted(){
 
 	function addEarthTexture() {
 
-		//let color_99 = 0x04191b;
-		//let color_99 = 0x020f10;
-		//let color_99 = 0x031414;
-		//let color_99 = 0x000f11;
-		//old bump 1.65
-		let color_99 = 0x010f12;
+		//let color_99 = 0x04191b;//let color_99 = 0x020f10;//let color_99 = 0x031414;//let color_99 = 0x000f11;//let color_99 = 0x010f12;
+		var color_of_direct_light= 0x000c18;
+		var color_of_bright_side= 0x000c18;
+		var color_of_dark_side= 0x020b14;
 		let earth_texture_geometry = new THREE.SphereGeometry(600, 240, 240, 0, Math.PI*2, 0, Math.PI);
 		let earth_texture_material = new THREE.MeshPhongMaterial({
 			map: new THREE.TextureLoader().load('Voda_normali.jpg'),
 			bumpMap: new THREE.TextureLoader().load('Shum_dlya_vody_bump.jpg'),
-			bumpScale: 12.65,
+			bumpScale: 1.65,
 			shininess: 0.0,
 			wireframe: false,
-			transparent: true,
-			opacity: 0.94,
-			color: color_99
-			//specular: 0xff0000,
+			transparent: false,
+			opacity: 2.0,
+			color: 0x000000,
+			diffuse: color_of_bright_side,
+			emissive: color_of_dark_side,
+			specular: color_of_direct_light,
 			//shininess: 1,
 			//shading: THREE.FlatShading
 		});
@@ -169,7 +169,7 @@ mounted(){
 		let earth_contour_shadow_geometry = new THREE.SphereGeometry(603, 50, 50, 0, Math.PI*2, 0, Math.PI);
 		let earth_contour_shadow_material = new THREE.MeshPhongMaterial({
 			map: new THREE.TextureLoader().load('EarthMap_transparent.png'),
-			side: THREE.DoubleSide,
+			side: THREE.FrontSide,
 			shininess: 0.0,
 			transparent: true,
 			opacity: 0.7,
@@ -187,25 +187,23 @@ mounted(){
 		earth_contour_shadow_material.needsUpdate = true;
 		earth_contour_shadow_material.fog = false;
 		earth_contour_shadow_material.depthWrite = false;
-		//earth_contour_shadow_material.recieveShadow = true;
-		//earth_contour_shadow_material.castShadow = true;
 
-		//earth_contour_shadow_material.blending = THREE.SubstractiveBlending;
+		earth_contour_shadow_material.blending = THREE.SubstractiveBlending;
 		var earth_contour_shadow = new THREE.Mesh( earth_contour_shadow_geometry, earth_contour_shadow_material );
 
-		//group.add( earth_contour_shadow );
+		group.add( earth_contour_shadow );
 		//EARTH_CONTOURR_SHADOW_END
 		//EARTH_CONTOUR
 		//605
 		let earth_contour_geometry = new THREE.SphereGeometry(615, 50, 50, 0, Math.PI*2, 0, Math.PI);
 		let earth_contour_material = new THREE.MeshPhongMaterial({
 			map: new THREE.TextureLoader().load('EarthMap_transparent.png'),
-			side: THREE.DoubleSide,
+			side: THREE.FrontSide,
 			shininess: 0.0,
 			transparent: true,
 			opacity: 1.0,
-			color: 0xffffff,
-			emissive: 0xffffff,
+			color: 0x050505,
+			emissive: 0x050505,
 			//emissive: 0x000000,
 			//shininess: 1,
 			//shading: THREE.FlatShading
@@ -217,12 +215,10 @@ mounted(){
 		earth_contour_material.needsUpdate = true;
 		earth_contour_material.fog = false;
 		earth_contour_material.depthWrite = false;
-		earth_contour_material.recieveShadow = false;
-		earth_contour_material.castShadow = false;
 		//earth_contour_material.recieveShadow = true;
 		//earth_contour_material.castShadow = true;
 
-		//earth_contour_material.blending = THREE.SubstractiveBlending;
+		earth_contour_material.blending = THREE.SubstractiveBlending;
 		var earth_contour = new THREE.Mesh( earth_contour_geometry, earth_contour_material );
 
 		group.add( earth_contour );
@@ -261,7 +257,7 @@ mounted(){
 							value: earth_shadow_points_shape
 						},
 						size: {
-							value: 24
+							value: 25
 						},
 						scale: {
 							value: window.innerHeight / 8
@@ -283,35 +279,36 @@ mounted(){
 						}
 					`,
 					fragmentShader: `
-						uniform sampler2D visibility;
-						uniform float shift;
-						uniform sampler2D shape;
+					uniform sampler2D visibility;
+					uniform float shift;
+					uniform sampler2D shape;
 
-						varying vec2 vUv;
-						varying vec3 vColor;
+					varying vec2 vUv;
+					varying vec3 vColor;
 
-						void main() {
-							
-							vec2 uv = vUv;
-							uv.x += shift;
-							vec4 v = texture2D(visibility, uv);
-							if (length(v.rgb) > 1.0) discard;
+					void main() {
+						
+						vec2 uv = vUv;
+						uv.x += shift;
+						vec4 v = texture2D(visibility, uv);
+						if (length(v.rgb) > 1.0) discard;
 
-							gl_FragColor = vec4( vColor, 1.0 );
-							gl_FragColor.a = 1.0;
-							vec4 shapeData = texture2D( shape, gl_PointCoord );
-							if (shapeData.a < 0.3) discard;
-							gl_FragColor = gl_FragColor * shapeData;
-							
-						}
-					`,
+						
+						gl_FragColor = vec4(0.1, 0.1, 0.1, 1.0);
+						gl_FragColor.a = 0.0625;
+						vec4 shapeData = texture2D( shape, gl_PointCoord );
+						if (shapeData.a < 0.1) discard;
+						gl_FragColor = gl_FragColor * shapeData;
+						
+					}
+				`,
 					transparent: true,
 					lights: false,
-					depthWrite: false,
+					depthWrite: true,
 					needsUpdate: true,
 					fog: false
 				}));
-
+				//gl_FragColor = vec4( vColor, 1.0 );
 				group.add(earth_shadow_points);
 		//EARTH_POINTS_SHADOW_END
 		//EARTH_POINTS
@@ -330,7 +327,7 @@ mounted(){
 				texture.repeat.set(1, 1);	
 
 			var disk = loader.load('circle_1.png');
-			
+
 
 			var points = new THREE.Points(geom, new THREE.ShaderMaterial({
 				vertexColors: THREE.VertexColors,
@@ -345,7 +342,7 @@ mounted(){
 						value: disk
 					},
 					size: {
-						value: 24
+						value: 25
 					},
 					scale: {
 						value: window.innerHeight / 8
@@ -381,17 +378,17 @@ mounted(){
 						vec4 v = texture2D(visibility, uv);
 						if (length(v.rgb) > 1.0) discard;
 
-						gl_FragColor = vec4( vColor, 1.0 );
-						gl_FragColor.a = 1.0;
+						gl_FragColor = vec4(0.9, 0.9, 0.9, 1.0);
+						gl_FragColor.a = 0.0625;
 						vec4 shapeData = texture2D( shape, gl_PointCoord );
-						if (shapeData.a < 0.3) discard;
+						if (shapeData.a < 0.1) discard;
 						gl_FragColor = gl_FragColor * shapeData;
 						
 					}
 				`,
 				transparent: true,
 				lights: false,
-				depthWrite: false,
+				depthWrite: true,
 				needsUpdate: true,
 				fog: false,
 				castShadow: true
@@ -425,16 +422,17 @@ mounted(){
 
 		//LIGHTS_AMBIENT
 		var ambiColor = "#ffffff";
-		var ambientLight = new THREE.AmbientLight(ambiColor, 2.5);
+		var ambientLight = new THREE.AmbientLight(ambiColor, 0.5);
 		ambientLight.wrapAround = true;
 		scene.add(ambientLight);
 		
 		//LIGHTS_AMBIENT_END
 		//LIGHTS_DIRECTIONAL_LIGHT
 		//var pointColor = "#4C709A";
-		var directionalLightColor = new THREE.Color("hsl(29, 100%, 95%)");
+		//var directionalLightColor = new THREE.Color("hsl(29, 100%, 95%)");
+		var directionalLightColor = new THREE.Color(0xffffff);
 		var directionalLight = new THREE.DirectionalLight(directionalLightColor);
-		directionalLight.position.set(2000, 1200, -5600);
+		directionalLight.position.set(300, 80, -2000);
 		directionalLight.castShadow = true;
 		directionalLight.shadow.camera.near = 0.5;
 		directionalLight.shadow.camera.far = 1300;
@@ -444,15 +442,17 @@ mounted(){
 		directionalLight.shadow.camera.bottom = -600;
 
 		directionalLight.distance = 10;
-		directionalLight.intensity = 10.1;
+		directionalLight.intensity = 14.0;
 		directionalLight.shadow.mapSize.height = 1024;
 		directionalLight.shadow.mapSize.width = 1024;
 		//var target = new THREE.Object3D();
 		//directionalLight.target = earth_texture;
 		camera.add( directionalLight.target );
-		directionalLight.target.position.set(-200, -300, -4000);
+		directionalLight.target.position.set(150, 40, -2000);
 		camera.add(directionalLight);
+		var helper = new THREE.DirectionalLightHelper( directionalLight, 5 );
 
+		camera.add( helper );
 		//LIGHTS_DIRECTIONAL_LIGHT_END
 		//LIGHTS_DIRECTIONAL_LIGHT
 		//var pointColor = "#4C709A";
