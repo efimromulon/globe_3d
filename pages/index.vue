@@ -401,25 +401,62 @@ mounted(){
 
 	};
 
-	function addProvod() {
+	function addConnector() {
 
 		var mtlLoader = new MTLLoader();
-		mtlLoader.load('Batareya.mtl', function (materials) {
+		mtlLoader.load('3.mtl', function (materials) {
 
 			materials.preload();
 
 			var objLoader = new THREE.OBJLoader();
 			objLoader.setMaterials(materials);
-			objLoader.load('Batareya.obj', function (object) {
+			console.log(materials);
+			objLoader.load('3.obj', function (object) {
 
 				group.add(object);
-				object.position.set(-3000, 0, -2000);
+				object.applyMatrix(	new THREE.Matrix4().makeRotationY(-Math.PI/2));
+				object.position.set(-595, 0, 0);
+				object.scale.multiplyScalar(0.25);
 				console.log(object);
 			});
 
 		});
 
 	};
+	function addProvod() {
+
+		var mtlLoader = new MTLLoader();
+		mtlLoader.load('1.mtl', function (materials) {
+
+			materials.preload();
+
+			var objLoader = new THREE.OBJLoader();
+			objLoader.setMaterials(materials);
+			console.log(materials);
+			objLoader.load('1.obj', function (object) {
+
+				group.add(object);
+				object.applyMatrix(	new THREE.Matrix4().makeRotationY(-Math.PI/2));
+				object.position.set(-595, 0, 0);
+				object.scale.multiplyScalar(0.25);
+				console.log(object);
+			});
+
+		});
+
+	};
+function addSea(){
+  var geom = new THREE.CylinderGeometry(60,60,800,40,10);
+  var mat = new THREE.MeshPhongMaterial({
+    color: 0x68c3c0,
+    transparent:true,
+    opacity:.6
+  });
+  geom.applyMatrix(	new THREE.Matrix4().makeRotationX(-Math.PI/2));
+  var mesh = new THREE.Mesh(geom, mat);
+  scene.add(mesh);
+};
+
 
 	function addLights() {
 
@@ -592,7 +629,99 @@ mounted(){
 		//EARTH_AUREOLE_END
 
 	};
+	function addAureole_1(){
 
+		//EARTH_AUREOLE
+		var luminiGeometry = new THREE.SphereBufferGeometry(615, 300, 150);
+		var lumini_loader = new THREE.TextureLoader();
+			lumini_loader.setCrossOrigin('');
+
+		var lumini_texture = lumini_loader.load('contour2_15.png');
+		lumini_texture.wrapS = THREE.RepeatWrapping;
+		lumini_texture.wrapT = THREE.RepeatWrapping;
+		lumini_texture.repeat.set(1, 1);
+
+
+		var luminiMaterial = new THREE.ShaderMaterial( 
+		{
+			vertexColors: THREE.VertexColors,
+		    uniforms: 
+			{ 
+				visibility: {
+					value: lumini_texture
+				},
+				shift: {
+					value: 0
+				},
+				size: {
+					value: 25
+				},
+				scale: {
+					value: window.innerHeight / 2
+				},
+				"c":   { type: "f", value: 1.4 },
+				"p":   { type: "f", value: 1.6 },
+				glowColor: { type: "c", value: new THREE.Color(0x304a62) },
+				viewVector: { type: "v3", value: camera.position }
+			},
+			vertexShader: `
+				uniform float scale;
+				uniform float size;
+
+				varying vec2 vUv;
+				varying vec3 vColor;
+
+				uniform vec3 viewVector;
+				uniform float c;
+				uniform float p;
+				varying float intensity;
+				void main() 
+				{
+					vUv = uv;
+					vColor = color;
+					vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 );
+
+					vec3 vNormal = normalize( normalMatrix * normal );
+					vec3 vNormel = normalize( normalMatrix * viewVector );
+					intensity = pow( c - dot(vNormal, vNormel), p );
+
+					gl_PointSize = size * ( scale / length( mvPosition.xyz ));
+					gl_Position = projectionMatrix * mvPosition;
+				}
+			`,
+			fragmentShader: `
+				uniform sampler2D visibility;
+				uniform float shift;
+
+				varying vec2 vUv;
+				varying vec3 vColor;
+
+				uniform vec3 glowColor;
+				varying float intensity;
+
+				void main() 
+				{
+					vec2 uv = vUv;
+					uv.x += shift;
+					vec4 v = texture2D(visibility, uv);
+					if (length(v.rgb) > 1.0) discard;
+
+					vec3 glow = glowColor * intensity;
+					gl_FragColor = vec4( glow, 1.0 );
+				}
+			`,
+			side: THREE.FrontSide,
+			blending: THREE.AdditiveBlending,
+			transparent: true
+		}   );
+		var lumini = new THREE.Points(luminiGeometry, luminiMaterial);
+		//let moonGlow_geometry = new THREE.SphereGeometry(635, 300, 300, 0, Math.PI*2, 0, Math.PI);
+		//var moonGlow = new THREE.Mesh( moonGlow_geometry, customMaterial );
+		//moonGlow.scale.multiplyScalar(1.2);
+		scene.add( lumini );
+		//EARTH_AUREOLE_END
+
+	};
 	function init() {
 
 		createScene();
@@ -601,7 +730,10 @@ mounted(){
 		addEarthContour();
 		addEarthPoints();
 		addAureole();
+		addAureole_1();
 		addClouds();
+		addSea();
+		addConnector();
 		addProvod();
 		addLights();
 
