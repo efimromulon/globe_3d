@@ -241,7 +241,7 @@ mounted(){
 			var earth_shadow_points_loader = new THREE.TextureLoader();
 				earth_shadow_points_loader.setCrossOrigin('');
 
-			var earth_shadow_points_texture = earth_shadow_points_loader.load('contour2_15.png');
+			var earth_shadow_points_texture = earth_shadow_points_loader.load('contour2_15_1.png');
 				earth_shadow_points_texture.wrapS = THREE.RepeatWrapping;
 				earth_shadow_points_texture.wrapT = THREE.RepeatWrapping;
 				earth_shadow_points_texture.repeat.set(1, 1);
@@ -296,7 +296,7 @@ mounted(){
 						vec2 uv = vUv;
 						uv.x += shift;
 						vec4 v = texture2D(visibility, uv);
-						if (length(v.rgb) > 1.0) discard;
+						if (length(v.rgb) > 0.6) discard;
 
 						
 						gl_FragColor = vec4(0.1, 0.1, 0.1, 1.0);
@@ -313,7 +313,7 @@ mounted(){
 			var earth_shadow_points = new THREE.Points(earth_shadow_points_geometry,earth_shadow_points_material);
 			earth_shadow_points_material.depthWrite = true;
 				//gl_FragColor = vec4( vColor, 1.0 );
-				//group.add(earth_shadow_points);
+			group.add(earth_shadow_points);
 		//EARTH_POINTS_SHADOW_END
 		//EARTH_POINTS
 			var geom = new THREE.SphereBufferGeometry(615, 300, 150);
@@ -325,7 +325,7 @@ mounted(){
 			var loader = new THREE.TextureLoader();
 				loader.setCrossOrigin('');
 
-			var texture = loader.load('contour2_15.png');
+			var texture = loader.load('contour2_15_1.png');
 				texture.wrapS = THREE.RepeatWrapping;
 				texture.wrapT = THREE.RepeatWrapping;
 				texture.repeat.set(1, 1);	
@@ -381,12 +381,12 @@ mounted(){
 						vec2 uv = vUv;
 						uv.x += shift;
 						vec4 v = texture2D(visibility, uv);
-						if (length(v.rgb) > 1.0) discard;
+						if (length(v.rgb) > 0.6) discard;
 
 						gl_FragColor = vec4(0.9, 0.9, 0.9, 1.0);
 						gl_FragColor.a = 0.0625;
 						vec4 shapeData = texture2D( shape, gl_PointCoord );
-						if (shapeData.a < 0.1) discard;
+						if (shapeData.a < 0.6) discard;
 						gl_FragColor = gl_FragColor * shapeData;
 						
 					}
@@ -402,8 +402,29 @@ mounted(){
 	};
 
 	function addConnector() {
-
+		let coords = [
+			{
+				lat: 18,	long: 24//
+			},
+			{
+				lat: 25,	long: 12
+			},
+			{
+				lat: 35,	long: 12
+			},
+			{
+				lat: 46,	long: 11//
+			},
+			{
+				lat: 55,	long: 12
+			},
+			{
+				lat: 65,	long: 12
+			}
+		];
 		var mtlLoader = new MTLLoader();
+
+
 		mtlLoader.load('3.mtl', function (materials) {
 
 			materials.preload();
@@ -414,13 +435,27 @@ mounted(){
 			objLoader.load('3.obj', function (object) {
 
 				group.add(object);
-				object.applyMatrix(	new THREE.Matrix4().makeRotationY(-Math.PI/2));
-				object.position.set(-595, 0, 0);
+				var xrot = new THREE.Matrix4().makeRotationX((-90-18)*(Math.PI/180));
+				var yrot = new THREE.Matrix4().makeRotationY((45+24)*(Math.PI/180));
+				var xyrot = xrot.multiply(yrot);
+				
+				var zrot = new THREE.Matrix4().makeRotationZ((0)*(Math.PI/180));
+				var xyzrot = xyrot.multiply(zrot);
+				object.applyMatrix(	xyzrot );
+				var phi   = (-80-18)*(Math.PI/180);
+				var theta = (24-45)*(Math.PI/180);
+				let xrad = -((605.5) * Math.sin(phi)*Math.cos(theta));
+				let zrad = ((605.5) * Math.sin(phi)*Math.sin(theta));
+				let yrad = ((605.5) * Math.cos(phi));
+				object.position.set(xrad, zrad, yrad);
+
 				object.scale.multiplyScalar(0.25);
 				console.log(object);
 			});
 
+
 		});
+
 
 	};
 	function addProvod() {
@@ -636,7 +671,7 @@ function addSea(){
 		var lumini_loader = new THREE.TextureLoader();
 			lumini_loader.setCrossOrigin('');
 
-		var lumini_texture = lumini_loader.load('contour2_15.png');
+		var lumini_texture = lumini_loader.load('contour2_15_1.png');
 		lumini_texture.wrapS = THREE.RepeatWrapping;
 		lumini_texture.wrapT = THREE.RepeatWrapping;
 		lumini_texture.repeat.set(1, 1);
@@ -657,7 +692,7 @@ function addSea(){
 					value: 25
 				},
 				scale: {
-					value: window.innerHeight / 2
+					value: window.innerHeight / 8
 				},
 				"c":   { type: "f", value: 1.4 },
 				"p":   { type: "f", value: 1.6 },
@@ -704,16 +739,21 @@ function addSea(){
 					vec2 uv = vUv;
 					uv.x += shift;
 					vec4 v = texture2D(visibility, uv);
-					if (length(v.rgb) > 1.0) discard;
+					if (length(v.rgb) > 0.6) discard;
 
 					vec3 glow = glowColor * intensity;
 					gl_FragColor = vec4( glow, 1.0 );
+
 				}
 			`,
 			side: THREE.FrontSide,
 			blending: THREE.AdditiveBlending,
 			transparent: true
 		}   );
+		//luminiMaterial.uniforms.visibility.value.generateMipalphaMaps = false;
+		//luminiMaterial.uniforms.visibility.value.magFilter = THREE.LinearFilter;
+		//luminiMaterial.uniforms.visibility.value.minFilter = THREE.LinearFilter;
+		//luminiMaterial.needsUpdate = true;
 		var lumini = new THREE.Points(luminiGeometry, luminiMaterial);
 		//let moonGlow_geometry = new THREE.SphereGeometry(635, 300, 300, 0, Math.PI*2, 0, Math.PI);
 		//var moonGlow = new THREE.Mesh( moonGlow_geometry, customMaterial );
@@ -728,13 +768,13 @@ function addSea(){
 		createRenderer();
 		addEarthTexture();
 		addEarthContour();
-		addEarthPoints();
-		addAureole();
-		addAureole_1();
-		addClouds();
-		addSea();
+		//addEarthPoints();
+		//addAureole();
+		//addAureole_1();
+		//addClouds();
+		//addSea();
 		addConnector();
-		addProvod();
+		//addProvod();
 		addLights();
 
 		Render();
@@ -744,6 +784,19 @@ function addSea(){
 	function Render() {
 
 		window.requestAnimationFrame(Render);
+
+//		lumini.forEach(e => {
+//			let conj = new THREE.Quaternion();
+//			conj.copy(group.quaternion);
+//			conj.conjugate();
+//
+//			e.quaternion.multiplyQuaternions()
+//				conj,
+//				camera.quaternion
+//			;
+//
+//			//e.quaternion.copy(camera.quaternion);
+//		});
 
 		renderer.autoClear = false;
 		renderer.clear();
