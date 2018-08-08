@@ -407,56 +407,104 @@ mounted(){
 				lat: 18,	long: 24//
 			},
 			{
-				lat: 25,	long: 12
+				lat: -8,	long: -3//
 			},
 			{
-				lat: 35,	long: 12
+				lat: -15,	long:-101//
 			},
 			{
-				lat: 46,	long: 11//
+				lat: 50,	long: 18//
 			},
 			{
-				lat: 55,	long: 12
+				lat: 35,	long: -105//
 			},
 			{
-				lat: 65,	long: 12
+				lat: 73,	long: -102
 			}
 		];
-		var mtlLoader = new MTLLoader();
+		coords.forEach(function(item, i, coords) {
 
+			var mtlLoader = new MTLLoader();
+			mtlLoader.load('3.mtl', function (materials) {
 
-		mtlLoader.load('3.mtl', function (materials) {
+				materials.preload();
+				var objLoader = new THREE.OBJLoader();
+				objLoader.setMaterials(materials);
+				objLoader.load('3.obj', function (object) {		
+						
+					group.add(object);
+					object.translate(0, 0, 0.25 + 595);
+					var startVector = new THREE.Vector3(0, 0, 0);
+					var endVector = new THREE.Vector3(xrad,  yrad,  zrad);
 
-			materials.preload();
+					var phi   = (90-item.lat)*(Math.PI/180);
+					var theta = (item.long-180)*(Math.PI/180);
+					let xrad = -((595) * Math.sin(phi)*Math.cos(theta));
+					let zrad = ((595) * Math.sin(phi)*Math.sin(theta));
+					let yrad = ((595) * Math.cos(phi));
+					if ((item.lat < 0)&(item.lat > -45)&(item.long < 0)&(item.long > -45)){
+						var xrot = new THREE.Matrix4().makeRotationX( (180)*(Math.PI/180) - (90-item.lat)*(Math.PI/180) );
+						var yrot = new THREE.Matrix4().makeRotationY( (270)*(Math.PI/180) - (item.long-180)*(Math.PI/180) );
+						var xyrot = xrot.multiply(yrot);
+						var zrot = new THREE.Matrix4().makeRotationZ( 0 );
+						var xyzrot = xyrot.multiply(zrot);
 
-			var objLoader = new THREE.OBJLoader();
-			objLoader.setMaterials(materials);
-			console.log(materials);
-			objLoader.load('3.obj', function (object) {
+						object.applyMatrix(	xyzrot );
+					};
+					if ((item.lat < 0)&(item.lat > -45)&(item.long < -90)&(item.long > -135)){
+						var xrot = new THREE.Matrix4().makeRotationX( (180)*(Math.PI/180) - (90-item.lat)*(Math.PI/180) );
+						var yrot = new THREE.Matrix4().makeRotationY( (270)*(Math.PI/180) - (item.long-180)*(Math.PI/180) );
+						var xyrot = xrot.multiply(yrot);
+						var zrot = new THREE.Matrix4().makeRotationZ( 0 );
+						var xyzrot = xyrot.multiply(zrot);
 
-				group.add(object);
-				var xrot = new THREE.Matrix4().makeRotationX((-90-18)*(Math.PI/180));
-				var yrot = new THREE.Matrix4().makeRotationY((45+24)*(Math.PI/180));
-				var xyrot = xrot.multiply(yrot);
-				
-				var zrot = new THREE.Matrix4().makeRotationZ((0)*(Math.PI/180));
-				var xyzrot = xyrot.multiply(zrot);
-				object.applyMatrix(	xyzrot );
-				var phi   = (-80-18)*(Math.PI/180);
-				var theta = (24-45)*(Math.PI/180);
-				let xrad = -((605.5) * Math.sin(phi)*Math.cos(theta));
-				let zrad = ((605.5) * Math.sin(phi)*Math.sin(theta));
-				let yrad = ((605.5) * Math.cos(phi));
-				object.position.set(xrad, zrad, yrad);
+						object.applyMatrix(	xyzrot );
+					};
+					if ((item.lat > 0)&(item.lat < 45)&(item.long < -90)&(item.long > -135)){
+						var xrot = new THREE.Matrix4().makeRotationX( (180)*(Math.PI/180) - (90-item.lat)*(Math.PI/180) );
+						var yrot = new THREE.Matrix4().makeRotationY( (270)*(Math.PI/180) - (item.long-180)*(Math.PI/180) );
+						var xyrot = xrot.multiply(yrot);
+						var zrot = new THREE.Matrix4().makeRotationZ( 0 );
+						var xyzrot = xyrot.multiply(zrot);
 
-				object.scale.multiplyScalar(0.25);
-				console.log(object);
+						object.applyMatrix(	xyzrot );
+					};
+					if ((item.lat > 45)&(item.lat < 90)&(item.long < -90)&(item.long > -135)){
+						var xrot = new THREE.Matrix4().makeRotationX( (180)*(Math.PI/180) - (90-item.lat)*(Math.PI/180) );
+						var yrot = new THREE.Matrix4().makeRotationY( (264)*(Math.PI/180) - (item.long-180)*(Math.PI/180) );
+						var xyrot = xrot.multiply(yrot);
+						var zrot = new THREE.Matrix4().makeRotationZ( 0 );
+						var xyzrot = xyrot.multiply(zrot);
+
+						object.applyMatrix(	xyzrot );
+					};
+					if ((item.lat > 0)&(item.lat < 45)&(item.long > 0)){
+						var xrot = new THREE.Matrix4().makeRotationX( (300)*(Math.PI/180) - (90-item.lat)*(Math.PI/180) );
+						var yrot = new THREE.Matrix4().makeRotationY( (-35)*(Math.PI/180) - (item.long-180)*(Math.PI/180) );
+						var xyrot = xrot.multiply(yrot);
+						var zrot = new THREE.Matrix4().makeRotationZ( 0 );
+						var xyzrot = xyrot.multiply(zrot);
+
+						object.applyMatrix(	xyzrot );
+					};
+					if ((item.lat > 45)&(item.lat < 90)&(item.long > 0)){
+						var xrot = new THREE.Matrix4().makeRotationX( (-25)*(Math.PI/180) + (90-item.lat)*(Math.PI/180) );
+						var yrot = new THREE.Matrix4().makeRotationY( (-160)*(Math.PI/180) + (item.long-180)*(Math.PI/180) );
+						var xyrot = xrot.multiply(yrot);
+						var zrot = new THREE.Matrix4().makeRotationZ( 0 );
+						var xyzrot = xyrot.multiply(zrot);
+
+						object.applyMatrix(	xyzrot );
+					};
+					object.position.set(xrad, zrad, yrad);
+
+					object.scale.multiplyScalar(0.25);
+					
+				});
+
 			});
 
-
 		});
-
-
 	};
 	function addProvod() {
 
