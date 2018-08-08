@@ -89,7 +89,7 @@ mounted(){
 		scene = new THREE.Scene();
 		scene.fog = new THREE.FogExp2( 0x000104, 0.0000675 );
 
-		group = new THREE.Group();	
+		group = new THREE.Object3D();	
 
 		camera = new THREE.PerspectiveCamera( fov, width / height, near, far );
 		camera.position.set( pos_x, pos_y, pos_z );
@@ -145,6 +145,8 @@ mounted(){
 			//specular: color_of_direct_light,
 			//shininess: 1,
 			//shading: THREE.FlatShading
+			//normalMap: new THREE.TextureLoader().load('Voda_normali.jpg'),
+			//normalMapScale: 1.65,
 		});
 
 		var earth_texture = new THREE.Mesh(earth_texture_geometry, earth_texture_material);
@@ -882,7 +884,7 @@ mounted(){
 		//let moonGlow_geometry = new THREE.SphereGeometry(635, 300, 300, 0, Math.PI*2, 0, Math.PI);
 		//var moonGlow = new THREE.Mesh( moonGlow_geometry, customMaterial );
 		//moonGlow.scale.multiplyScalar(1.2);
-		scene.add( lumini );
+		group.add( lumini );
 		//EARTH_AUREOLE_END
 	};
 	function addAureole_2(){
@@ -979,7 +981,7 @@ mounted(){
 		//let moonGlow_geometry = new THREE.SphereGeometry(635, 300, 300, 0, Math.PI*2, 0, Math.PI);
 		//var moonGlow = new THREE.Mesh( moonGlow_geometry, customMaterial );
 		//moonGlow.scale.multiplyScalar(1.2);
-		scene.add( lumini_1 );
+		group.add( lumini_1 );
 		//EARTH_AUREOLE_END
 	};
 	function addAureole_3(){
@@ -1076,7 +1078,7 @@ mounted(){
 		//let moonGlow_geometry = new THREE.SphereGeometry(635, 300, 300, 0, Math.PI*2, 0, Math.PI);
 		//var moonGlow = new THREE.Mesh( moonGlow_geometry, customMaterial );
 		//moonGlow.scale.multiplyScalar(1.2);
-		scene.add( lumini_2 );
+		group.add( lumini_2 );
 		//EARTH_AUREOLE_END
 	};
 	function addAureole_4(){
@@ -1173,7 +1175,7 @@ mounted(){
 		//let moonGlow_geometry = new THREE.SphereGeometry(635, 300, 300, 0, Math.PI*2, 0, Math.PI);
 		//var moonGlow = new THREE.Mesh( moonGlow_geometry, customMaterial );
 		//moonGlow.scale.multiplyScalar(1.2);
-		scene.add( lumini_3 );
+		group.add( lumini_3 );
 		//EARTH_AUREOLE_END
 	};
 	function addAureole_5(){
@@ -1270,7 +1272,7 @@ mounted(){
 		//let moonGlow_geometry = new THREE.SphereGeometry(635, 300, 300, 0, Math.PI*2, 0, Math.PI);
 		//var moonGlow = new THREE.Mesh( moonGlow_geometry, customMaterial );
 		//moonGlow.scale.multiplyScalar(1.2);
-		scene.add( lumini_4 );
+		group.add( lumini_4 );
 		//EARTH_AUREOLE_END
 	};
 	function addAureole_6(){
@@ -1367,7 +1369,7 @@ mounted(){
 		//let moonGlow_geometry = new THREE.SphereGeometry(635, 300, 300, 0, Math.PI*2, 0, Math.PI);
 		//var moonGlow = new THREE.Mesh( moonGlow_geometry, customMaterial );
 		//moonGlow.scale.multiplyScalar(1.2);
-		scene.add( lumini_5 );
+		group.add( lumini_5 );
 				let conj = new THREE.Quaternion();
 		conj.copy(group.quaternion);
 		conj.conjugate();
@@ -1395,8 +1397,9 @@ mounted(){
 		//addClouds();
 		//addConnector();
 		//addProvod();
-		addLights();
 
+
+		addLights();
 
 
 		Render();
@@ -1406,6 +1409,17 @@ mounted(){
 	function Render() {
 
 		window.requestAnimationFrame(Render);
+		//group.rotation.y = 90*(Math.PI/180);
+		//group.rotation.x = 30*(Math.PI/180);
+		//camera.rotation.z = 11*(Math.PI/180);
+//
+		//camera.position.x = - width*3/5;
+		//camera.position.y = 0;
+		//camera.position.z = 1800;
+		//group.rotation.y += 0.002;
+
+
+
 
 		renderer.autoClear = false;
 		renderer.clear();
