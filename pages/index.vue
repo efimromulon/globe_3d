@@ -138,11 +138,11 @@ mounted(){
 			shininess: 0.0,
 			wireframe: false,
 			transparent: true,
-			opacity: 0.94,
-			color: 0x000000,
-			diffuse: color_of_bright_side,
-			emissive: color_of_dark_side,
-			specular: color_of_direct_light,
+			opacity: 0.64,
+			color: 0x000003,
+			//diffuse: color_of_bright_side,
+			//emissive: color_of_dark_side,
+			//specular: color_of_direct_light,
 			//shininess: 1,
 			//shading: THREE.FlatShading
 		});
@@ -151,7 +151,7 @@ mounted(){
 			earth_texture.recieveShadow = false;
 			earth_texture.castShadow = false;
 			earth_texture_material.fog = false;
-			earth_texture_material.depthWrite = true;
+			earth_texture_material.depthWrite = false;
 
 			//earth_texture_material.map.generateMipalphaMaps = false;
 			//earth_texture_material.map.magFilter = THREE.LinearFilter;
@@ -169,10 +169,10 @@ mounted(){
 		let earth_contour_shadow_geometry = new THREE.SphereGeometry(603, 50, 50, 0, Math.PI*2, 0, Math.PI);
 		let earth_contour_shadow_material = new THREE.MeshPhongMaterial({
 			map: new THREE.TextureLoader().load('EarthMap_transparent.png'),
-			side: THREE.FrontSide,
+			side: THREE.DoubletSide,
 			shininess: 0.0,
 			transparent: true,
-			opacity: 0.6,
+			opacity: 1.0,
 			color: 0x000000,
 			diffuse: 0x000000,
 			emissive: 0x000000,
@@ -188,12 +188,12 @@ mounted(){
 		earth_contour_shadow_material.map.minFilter = THREE.LinearFilter;
 		earth_contour_shadow_material.needsUpdate = true;
 		earth_contour_shadow_material.fog = false;
-		earth_contour_shadow_material.depthWrite = false;
+		earth_contour_shadow_material.depthWrite = true;
 
 		earth_contour_shadow_material.blending = THREE.SubstractiveBlending;
 		var earth_contour_shadow = new THREE.Mesh( earth_contour_shadow_geometry, earth_contour_shadow_material );
 
-		group.add( earth_contour_shadow );
+		//group.add( earth_contour_shadow );
 		//EARTH_CONTOURR_SHADOW_END
 		//EARTH_CONTOUR
 		//605
@@ -203,11 +203,11 @@ mounted(){
 			side: THREE.FrontSide,
 			shininess: 0.0,
 			transparent: true,
-			opacity: 0.4,
-			color: 0x000000,
-			diffuse: 0x000000,
-			emissive: 0x070707,
-			specular: 0x070707,
+			opacity: 1.0,
+			color: 0xffffff,
+			diffuse: 0xffffff,
+			emissive: 0xffffff,
+			specular: 0xffffff,
 			//emissive: 0x000000,
 			//shininess: 1,
 			//shading: THREE.FlatShading
@@ -311,9 +311,9 @@ mounted(){
 					lights: false
 				});
 			var earth_shadow_points = new THREE.Points(earth_shadow_points_geometry,earth_shadow_points_material);
-			earth_shadow_points_material.depthWrite = true;
+			earth_shadow_points_material.depthWrite = false;
 				//gl_FragColor = vec4( vColor, 1.0 );
-			group.add(earth_shadow_points);
+			//group.add(earth_shadow_points);
 		//EARTH_POINTS_SHADOW_END
 		//EARTH_POINTS
 			var geom = new THREE.SphereBufferGeometry(615, 300, 150);
@@ -381,21 +381,22 @@ mounted(){
 						vec2 uv = vUv;
 						uv.x += shift;
 						vec4 v = texture2D(visibility, uv);
-						if (length(v.rgb) > 0.6) discard;
+						if (length(v.rgb) > 1.0) discard;
 
-						gl_FragColor = vec4(0.9, 0.9, 0.9, 1.0);
-						gl_FragColor.a = 0.0625;
+						gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
+						gl_FragColor.a = 0.8;
 						vec4 shapeData = texture2D( shape, gl_PointCoord );
-						if (shapeData.a < 0.6) discard;
+						if (shapeData.a < 0.1) discard;
 						gl_FragColor = gl_FragColor * shapeData;
 						
 					}
 				`,
 				transparent: true,
-				lights: false
+				lights: false,
+				opacity: 1.0
 				});
 			var points = new THREE.Points(geom, points_material);
-				points_material.depthWrite = false;
+				//points_material.depthWrite = false;
 				group.add(points);
 		//EARTH_POINTS_END
 
@@ -505,7 +506,9 @@ mounted(){
 			});
 
 		});
+	
 	};
+
 	function addProvod() {
 
 		let coords = [
@@ -778,14 +781,16 @@ mounted(){
 		let moonGlow_geometry = new THREE.SphereGeometry(635, 300, 300, 0, Math.PI*2, 0, Math.PI);
 		var moonGlow = new THREE.Mesh( moonGlow_geometry, customMaterial );
 		//moonGlow.scale.multiplyScalar(1.2);
+				customMaterial.fog = false;
+		customMaterial.depthWrite = false;
 		scene.add( moonGlow );
 		//EARTH_AUREOLE_END
 
 	};
-	function addAureole_1(){
 
+	function addAureole_1(){
 		//EARTH_AUREOLE
-		var luminiGeometry = new THREE.SphereBufferGeometry(615, 300, 150);
+		var luminiGeometry = new THREE.SphereBufferGeometry(618, 300, 150);
 		var lumini_loader = new THREE.TextureLoader();
 			lumini_loader.setCrossOrigin('');
 
@@ -807,14 +812,14 @@ mounted(){
 					value: 0
 				},
 				size: {
-					value: 25
+					value: 45
 				},
 				scale: {
 					value: window.innerHeight / 8
 				},
-				"c":   { type: "f", value: 1.4 },
-				"p":   { type: "f", value: 1.6 },
-				glowColor: { type: "c", value: new THREE.Color(0x304a62) },
+				"c":   { type: "f", value: 1.0 },
+				"p":   { type: "f", value: 0.95 },
+				glowColor: { type: "c", value: new THREE.Color(0xffffff) },
 				viewVector: { type: "v3", value: camera.position }
 			},
 			vertexShader: `
@@ -872,26 +877,513 @@ mounted(){
 		//luminiMaterial.uniforms.visibility.value.magFilter = THREE.LinearFilter;
 		//luminiMaterial.uniforms.visibility.value.minFilter = THREE.LinearFilter;
 		//luminiMaterial.needsUpdate = true;
-		var lumini = new THREE.Points(luminiGeometry, luminiMaterial);
+		var lumini = new THREE.Mesh(luminiGeometry, luminiMaterial);
 		//let moonGlow_geometry = new THREE.SphereGeometry(635, 300, 300, 0, Math.PI*2, 0, Math.PI);
 		//var moonGlow = new THREE.Mesh( moonGlow_geometry, customMaterial );
 		//moonGlow.scale.multiplyScalar(1.2);
 		scene.add( lumini );
 		//EARTH_AUREOLE_END
-
 	};
+	function addAureole_2(){
+		//EARTH_AUREOLE
+		var luminiGeometry_1 = new THREE.SphereBufferGeometry(619, 300, 150);
+		var lumini_loader = new THREE.TextureLoader();
+			lumini_loader.setCrossOrigin('');
+
+		var lumini_texture = lumini_loader.load('contour2_15_1.png');
+		lumini_texture.wrapS = THREE.RepeatWrapping;
+		lumini_texture.wrapT = THREE.RepeatWrapping;
+		lumini_texture.repeat.set(1, 1);
+
+
+		var luminiMaterial_1 = new THREE.ShaderMaterial( 
+		{
+			vertexColors: THREE.VertexColors,
+		    uniforms: 
+			{ 
+				visibility: {
+					value: lumini_texture
+				},
+				shift: {
+					value: 0
+				},
+				size: {
+					value: 45
+				},
+				scale: {
+					value: window.innerHeight / 8
+				},
+				"c":   { type: "f", value: 1.0 },
+				"p":   { type: "f", value: 0.95 },
+				glowColor: { type: "c", value: new THREE.Color(0xffffff) },
+				viewVector: { type: "v3", value: camera.position }
+			},
+			vertexShader: `
+				uniform float scale;
+				uniform float size;
+
+				varying vec2 vUv;
+				varying vec3 vColor;
+
+				uniform vec3 viewVector;
+				uniform float c;
+				uniform float p;
+				varying float intensity;
+				void main() 
+				{
+					vUv = uv;
+					vColor = color;
+					vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 );
+
+					vec3 vNormal = normalize( normalMatrix * normal );
+					vec3 vNormel = normalize( normalMatrix * viewVector );
+					intensity = pow( c - dot(vNormal, vNormel), p );
+
+					gl_PointSize = size * ( scale / length( mvPosition.xyz ));
+					gl_Position = projectionMatrix * mvPosition;
+				}
+			`,
+			fragmentShader: `
+				uniform sampler2D visibility;
+				uniform float shift;
+
+				varying vec2 vUv;
+				varying vec3 vColor;
+
+				uniform vec3 glowColor;
+				varying float intensity;
+
+				void main() 
+				{
+					vec2 uv = vUv;
+					uv.x += shift;
+					vec4 v = texture2D(visibility, uv);
+					if (length(v.rgb) > 0.6) discard;
+
+					vec3 glow = glowColor * intensity;
+					gl_FragColor = vec4( glow, 1.0 );
+
+				}
+			`,
+			side: THREE.FrontSide,
+			blending: THREE.AdditiveBlending,
+			transparent: true
+		}   );
+		//luminiMaterial.uniforms.visibility.value.generateMipalphaMaps = false;
+		//luminiMaterial.uniforms.visibility.value.magFilter = THREE.LinearFilter;
+		//luminiMaterial.uniforms.visibility.value.minFilter = THREE.LinearFilter;
+		//luminiMaterial.needsUpdate = true;
+		var lumini_1 = new THREE.Mesh(luminiGeometry_1, luminiMaterial_1);
+		//let moonGlow_geometry = new THREE.SphereGeometry(635, 300, 300, 0, Math.PI*2, 0, Math.PI);
+		//var moonGlow = new THREE.Mesh( moonGlow_geometry, customMaterial );
+		//moonGlow.scale.multiplyScalar(1.2);
+		scene.add( lumini_1 );
+		//EARTH_AUREOLE_END
+	};
+	function addAureole_3(){
+		//EARTH_AUREOLE
+		var luminiGeometry_2 = new THREE.SphereBufferGeometry(620, 300, 150);
+		var lumini_loader = new THREE.TextureLoader();
+			lumini_loader.setCrossOrigin('');
+
+		var lumini_texture = lumini_loader.load('contour2_15_1.png');
+		lumini_texture.wrapS = THREE.RepeatWrapping;
+		lumini_texture.wrapT = THREE.RepeatWrapping;
+		lumini_texture.repeat.set(1, 1);
+
+
+		var luminiMaterial_2 = new THREE.ShaderMaterial( 
+		{
+			vertexColors: THREE.VertexColors,
+		    uniforms: 
+			{ 
+				visibility: {
+					value: lumini_texture
+				},
+				shift: {
+					value: 0
+				},
+				size: {
+					value: 45
+				},
+				scale: {
+					value: window.innerHeight / 8
+				},
+				"c":   { type: "f", value: 1.0 },
+				"p":   { type: "f", value: 0.95 },
+				glowColor: { type: "c", value: new THREE.Color(0xffffff) },
+				viewVector: { type: "v3", value: camera.position }
+			},
+			vertexShader: `
+				uniform float scale;
+				uniform float size;
+
+				varying vec2 vUv;
+				varying vec3 vColor;
+
+				uniform vec3 viewVector;
+				uniform float c;
+				uniform float p;
+				varying float intensity;
+				void main() 
+				{
+					vUv = uv;
+					vColor = color;
+					vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 );
+
+					vec3 vNormal = normalize( normalMatrix * normal );
+					vec3 vNormel = normalize( normalMatrix * viewVector );
+					intensity = pow( c - dot(vNormal, vNormel), p );
+
+					gl_PointSize = size * ( scale / length( mvPosition.xyz ));
+					gl_Position = projectionMatrix * mvPosition;
+				}
+			`,
+			fragmentShader: `
+				uniform sampler2D visibility;
+				uniform float shift;
+
+				varying vec2 vUv;
+				varying vec3 vColor;
+
+				uniform vec3 glowColor;
+				varying float intensity;
+
+				void main() 
+				{
+					vec2 uv = vUv;
+					uv.x += shift;
+					vec4 v = texture2D(visibility, uv);
+					if (length(v.rgb) > 0.6) discard;
+
+					vec3 glow = glowColor * intensity;
+					gl_FragColor = vec4( glow, 1.0 );
+
+				}
+			`,
+			side: THREE.FrontSide,
+			blending: THREE.AdditiveBlending,
+			transparent: true
+		}   );
+		//luminiMaterial.uniforms.visibility.value.generateMipalphaMaps = false;
+		//luminiMaterial.uniforms.visibility.value.magFilter = THREE.LinearFilter;
+		//luminiMaterial.uniforms.visibility.value.minFilter = THREE.LinearFilter;
+		//luminiMaterial.needsUpdate = true;
+		var lumini_2 = new THREE.Mesh(luminiGeometry_2, luminiMaterial_2);
+		//let moonGlow_geometry = new THREE.SphereGeometry(635, 300, 300, 0, Math.PI*2, 0, Math.PI);
+		//var moonGlow = new THREE.Mesh( moonGlow_geometry, customMaterial );
+		//moonGlow.scale.multiplyScalar(1.2);
+		scene.add( lumini_2 );
+		//EARTH_AUREOLE_END
+	};
+	function addAureole_4(){
+		//EARTH_AUREOLE
+		var luminiGeometry_3 = new THREE.SphereBufferGeometry(612, 300, 150);
+		var lumini_loader = new THREE.TextureLoader();
+			lumini_loader.setCrossOrigin('');
+
+		var lumini_texture = lumini_loader.load('contour2_15_1.png');
+		lumini_texture.wrapS = THREE.RepeatWrapping;
+		lumini_texture.wrapT = THREE.RepeatWrapping;
+		lumini_texture.repeat.set(1, 1);
+
+
+		var luminiMaterial_3 = new THREE.ShaderMaterial( 
+		{
+			vertexColors: THREE.VertexColors,
+		    uniforms: 
+			{ 
+				visibility: {
+					value: lumini_texture
+				},
+				shift: {
+					value: 0
+				},
+				size: {
+					value: 45
+				},
+				scale: {
+					value: window.innerHeight / 8
+				},
+				"c":   { type: "f", value: 1.0 },
+				"p":   { type: "f", value: 0.95 },
+				glowColor: { type: "c", value: new THREE.Color(0xffffff) },
+				viewVector: { type: "v3", value: camera.position }
+			},
+			vertexShader: `
+				uniform float scale;
+				uniform float size;
+
+				varying vec2 vUv;
+				varying vec3 vColor;
+
+				uniform vec3 viewVector;
+				uniform float c;
+				uniform float p;
+				varying float intensity;
+				void main() 
+				{
+					vUv = uv;
+					vColor = color;
+					vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 );
+
+					vec3 vNormal = normalize( normalMatrix * normal );
+					vec3 vNormel = normalize( normalMatrix * viewVector );
+					intensity = pow( c - dot(vNormal, vNormel), p );
+
+					gl_PointSize = size * ( scale / length( mvPosition.xyz ));
+					gl_Position = projectionMatrix * mvPosition;
+				}
+			`,
+			fragmentShader: `
+				uniform sampler2D visibility;
+				uniform float shift;
+
+				varying vec2 vUv;
+				varying vec3 vColor;
+
+				uniform vec3 glowColor;
+				varying float intensity;
+
+				void main() 
+				{
+					vec2 uv = vUv;
+					uv.x += shift;
+					vec4 v = texture2D(visibility, uv);
+					if (length(v.rgb) > 0.6) discard;
+
+					vec3 glow = glowColor * intensity;
+					gl_FragColor = vec4( glow, 1.0 );
+
+				}
+			`,
+			side: THREE.FrontSide,
+			blending: THREE.AdditiveBlending,
+			transparent: true
+		}   );
+		//luminiMaterial.uniforms.visibility.value.generateMipalphaMaps = false;
+		//luminiMaterial.uniforms.visibility.value.magFilter = THREE.LinearFilter;
+		//luminiMaterial.uniforms.visibility.value.minFilter = THREE.LinearFilter;
+		//luminiMaterial.needsUpdate = true;
+		var lumini_3 = new THREE.Mesh(luminiGeometry_3, luminiMaterial_3);
+		//let moonGlow_geometry = new THREE.SphereGeometry(635, 300, 300, 0, Math.PI*2, 0, Math.PI);
+		//var moonGlow = new THREE.Mesh( moonGlow_geometry, customMaterial );
+		//moonGlow.scale.multiplyScalar(1.2);
+		scene.add( lumini_3 );
+		//EARTH_AUREOLE_END
+	};
+	function addAureole_5(){
+		//EARTH_AUREOLE
+		var luminiGeometry_4 = new THREE.SphereBufferGeometry(611, 300, 150);
+		var lumini_loader = new THREE.TextureLoader();
+			lumini_loader.setCrossOrigin('');
+
+		var lumini_texture = lumini_loader.load('contour2_15_1.png');
+		lumini_texture.wrapS = THREE.RepeatWrapping;
+		lumini_texture.wrapT = THREE.RepeatWrapping;
+		lumini_texture.repeat.set(1, 1);
+
+
+		var luminiMaterial_4 = new THREE.ShaderMaterial( 
+		{
+			vertexColors: THREE.VertexColors,
+		    uniforms: 
+			{ 
+				visibility: {
+					value: lumini_texture
+				},
+				shift: {
+					value: 0
+				},
+				size: {
+					value: 45
+				},
+				scale: {
+					value: window.innerHeight / 8
+				},
+				"c":   { type: "f", value: 1.0 },
+				"p":   { type: "f", value: 0.95 },
+				glowColor: { type: "c", value: new THREE.Color(0xffffff) },
+				viewVector: { type: "v3", value: camera.position }
+			},
+			vertexShader: `
+				uniform float scale;
+				uniform float size;
+
+				varying vec2 vUv;
+				varying vec3 vColor;
+
+				uniform vec3 viewVector;
+				uniform float c;
+				uniform float p;
+				varying float intensity;
+				void main() 
+				{
+					vUv = uv;
+					vColor = color;
+					vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 );
+
+					vec3 vNormal = normalize( normalMatrix * normal );
+					vec3 vNormel = normalize( normalMatrix * viewVector );
+					intensity = pow( c - dot(vNormal, vNormel), p );
+
+					gl_PointSize = size * ( scale / length( mvPosition.xyz ));
+					gl_Position = projectionMatrix * mvPosition;
+				}
+			`,
+			fragmentShader: `
+				uniform sampler2D visibility;
+				uniform float shift;
+
+				varying vec2 vUv;
+				varying vec3 vColor;
+
+				uniform vec3 glowColor;
+				varying float intensity;
+
+				void main() 
+				{
+					vec2 uv = vUv;
+					uv.x += shift;
+					vec4 v = texture2D(visibility, uv);
+					if (length(v.rgb) > 0.6) discard;
+
+					vec3 glow = glowColor * intensity;
+					gl_FragColor = vec4( glow, 1.0 );
+
+				}
+			`,
+			side: THREE.FrontSide,
+			blending: THREE.AdditiveBlending,
+			transparent: true
+		}   );
+		//luminiMaterial.uniforms.visibility.value.generateMipalphaMaps = false;
+		//luminiMaterial.uniforms.visibility.value.magFilter = THREE.LinearFilter;
+		//luminiMaterial.uniforms.visibility.value.minFilter = THREE.LinearFilter;
+		//luminiMaterial.needsUpdate = true;
+		var lumini_4 = new THREE.Mesh(luminiGeometry_4, luminiMaterial_4);
+		//let moonGlow_geometry = new THREE.SphereGeometry(635, 300, 300, 0, Math.PI*2, 0, Math.PI);
+		//var moonGlow = new THREE.Mesh( moonGlow_geometry, customMaterial );
+		//moonGlow.scale.multiplyScalar(1.2);
+		scene.add( lumini_4 );
+		//EARTH_AUREOLE_END
+	};
+	function addAureole_6(){
+		//EARTH_AUREOLE
+		var luminiGeometry_5 = new THREE.SphereBufferGeometry(610, 300, 150);
+		var lumini_loader = new THREE.TextureLoader();
+			lumini_loader.setCrossOrigin('');
+
+		var lumini_texture = lumini_loader.load('contour2_15_1.png');
+		lumini_texture.wrapS = THREE.RepeatWrapping;
+		lumini_texture.wrapT = THREE.RepeatWrapping;
+		lumini_texture.repeat.set(1, 1);
+
+
+		var luminiMaterial_5 = new THREE.ShaderMaterial( 
+		{
+			vertexColors: THREE.VertexColors,
+		    uniforms: 
+			{ 
+				visibility: {
+					value: lumini_texture
+				},
+				shift: {
+					value: 0
+				},
+				size: {
+					value: 45
+				},
+				scale: {
+					value: window.innerHeight / 8
+				},
+				"c":   { type: "f", value: 1.0 },
+				"p":   { type: "f", value: 0.95 },
+				glowColor: { type: "c", value: new THREE.Color(0xffffff) },
+				viewVector: { type: "v3", value: camera.position }
+			},
+			vertexShader: `
+				uniform float scale;
+				uniform float size;
+
+				varying vec2 vUv;
+				varying vec3 vColor;
+
+				uniform vec3 viewVector;
+				uniform float c;
+				uniform float p;
+				varying float intensity;
+				void main() 
+				{
+					vUv = uv;
+					vColor = color;
+					vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 );
+
+					vec3 vNormal = normalize( normalMatrix * normal );
+					vec3 vNormel = normalize( normalMatrix * viewVector );
+					intensity = pow( c - dot(vNormal, vNormel), p );
+
+					gl_PointSize = size * ( scale / length( mvPosition.xyz ));
+					gl_Position = projectionMatrix * mvPosition;
+				}
+			`,
+			fragmentShader: `
+				uniform sampler2D visibility;
+				uniform float shift;
+
+				varying vec2 vUv;
+				varying vec3 vColor;
+
+				uniform vec3 glowColor;
+				varying float intensity;
+
+				void main() 
+				{
+					vec2 uv = vUv;
+					uv.x += shift;
+					vec4 v = texture2D(visibility, uv);
+					if (length(v.rgb) > 0.6) discard;
+
+					vec3 glow = glowColor * intensity;
+					gl_FragColor = vec4( glow, 1.0 );
+
+				}
+			`,
+			side: THREE.FrontSide,
+			blending: THREE.AdditiveBlending,
+			transparent: true
+		}   );
+		//luminiMaterial.uniforms.visibility.value.generateMipalphaMaps = false;
+		//luminiMaterial.uniforms.visibility.value.magFilter = THREE.LinearFilter;
+		//luminiMaterial.uniforms.visibility.value.minFilter = THREE.LinearFilter;
+		//luminiMaterial.needsUpdate = true;
+		var lumini_5 = new THREE.Mesh(luminiGeometry_5, luminiMaterial_5);
+		//let moonGlow_geometry = new THREE.SphereGeometry(635, 300, 300, 0, Math.PI*2, 0, Math.PI);
+		//var moonGlow = new THREE.Mesh( moonGlow_geometry, customMaterial );
+		//moonGlow.scale.multiplyScalar(1.2);
+		scene.add( lumini_5 );
+		//EARTH_AUREOLE_END
+	};
+
+
 	function init() {
 
 		createScene();
 		createRenderer();
+		addAureole();
 		addEarthTexture();
 		addEarthContour();
 		addEarthPoints();
-		addAureole();
+		
 		addAureole_1();
-		addClouds();
-		addConnector();
-		addProvod();
+		addAureole_2();
+		addAureole_3();
+		addAureole_4();
+		addAureole_5();
+		addAureole_6();
+		//addClouds();
+		//addConnector();
+		//addProvod();
 		addLights();
 
 		Render();
