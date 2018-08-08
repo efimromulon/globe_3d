@@ -169,7 +169,7 @@ mounted(){
 		let earth_contour_shadow_geometry = new THREE.SphereGeometry(603, 50, 50, 0, Math.PI*2, 0, Math.PI);
 		let earth_contour_shadow_material = new THREE.MeshPhongMaterial({
 			map: new THREE.TextureLoader().load('EarthMap_transparent.png'),
-			side: THREE.DoubletSide,
+			side: THREE.DoubleSide,
 			shininess: 0.0,
 			transparent: true,
 			opacity: 1.0,
@@ -200,7 +200,7 @@ mounted(){
 		let earth_contour_geometry = new THREE.SphereGeometry(615, 50, 50, 0, Math.PI*2, 0, Math.PI);
 		let earth_contour_material = new THREE.MeshPhongMaterial({
 			map: new THREE.TextureLoader().load('EarthMap_transparent.png'),
-			side: THREE.FrontSide,
+			side: THREE.DoubleSide,
 			shininess: 0.0,
 			transparent: true,
 			opacity: 1.0,
@@ -877,6 +877,7 @@ mounted(){
 		//luminiMaterial.uniforms.visibility.value.magFilter = THREE.LinearFilter;
 		//luminiMaterial.uniforms.visibility.value.minFilter = THREE.LinearFilter;
 		//luminiMaterial.needsUpdate = true;
+		luminiMaterial.depthWrite = true;
 		var lumini = new THREE.Mesh(luminiGeometry, luminiMaterial);
 		//let moonGlow_geometry = new THREE.SphereGeometry(635, 300, 300, 0, Math.PI*2, 0, Math.PI);
 		//var moonGlow = new THREE.Mesh( moonGlow_geometry, customMaterial );
@@ -973,6 +974,7 @@ mounted(){
 		//luminiMaterial.uniforms.visibility.value.magFilter = THREE.LinearFilter;
 		//luminiMaterial.uniforms.visibility.value.minFilter = THREE.LinearFilter;
 		//luminiMaterial.needsUpdate = true;
+		luminiMaterial_1.depthWrite = true;
 		var lumini_1 = new THREE.Mesh(luminiGeometry_1, luminiMaterial_1);
 		//let moonGlow_geometry = new THREE.SphereGeometry(635, 300, 300, 0, Math.PI*2, 0, Math.PI);
 		//var moonGlow = new THREE.Mesh( moonGlow_geometry, customMaterial );
@@ -1069,6 +1071,7 @@ mounted(){
 		//luminiMaterial.uniforms.visibility.value.magFilter = THREE.LinearFilter;
 		//luminiMaterial.uniforms.visibility.value.minFilter = THREE.LinearFilter;
 		//luminiMaterial.needsUpdate = true;
+		luminiMaterial_2.depthWrite = true;
 		var lumini_2 = new THREE.Mesh(luminiGeometry_2, luminiMaterial_2);
 		//let moonGlow_geometry = new THREE.SphereGeometry(635, 300, 300, 0, Math.PI*2, 0, Math.PI);
 		//var moonGlow = new THREE.Mesh( moonGlow_geometry, customMaterial );
@@ -1165,6 +1168,7 @@ mounted(){
 		//luminiMaterial.uniforms.visibility.value.magFilter = THREE.LinearFilter;
 		//luminiMaterial.uniforms.visibility.value.minFilter = THREE.LinearFilter;
 		//luminiMaterial.needsUpdate = true;
+		luminiMaterial_3.depthWrite = true;
 		var lumini_3 = new THREE.Mesh(luminiGeometry_3, luminiMaterial_3);
 		//let moonGlow_geometry = new THREE.SphereGeometry(635, 300, 300, 0, Math.PI*2, 0, Math.PI);
 		//var moonGlow = new THREE.Mesh( moonGlow_geometry, customMaterial );
@@ -1261,6 +1265,7 @@ mounted(){
 		//luminiMaterial.uniforms.visibility.value.magFilter = THREE.LinearFilter;
 		//luminiMaterial.uniforms.visibility.value.minFilter = THREE.LinearFilter;
 		//luminiMaterial.needsUpdate = true;
+		luminiMaterial_4.depthWrite = true;
 		var lumini_4 = new THREE.Mesh(luminiGeometry_4, luminiMaterial_4);
 		//let moonGlow_geometry = new THREE.SphereGeometry(635, 300, 300, 0, Math.PI*2, 0, Math.PI);
 		//var moonGlow = new THREE.Mesh( moonGlow_geometry, customMaterial );
@@ -1357,6 +1362,7 @@ mounted(){
 		//luminiMaterial.uniforms.visibility.value.magFilter = THREE.LinearFilter;
 		//luminiMaterial.uniforms.visibility.value.minFilter = THREE.LinearFilter;
 		//luminiMaterial.needsUpdate = true;
+		luminiMaterial_5.depthWrite = true;
 		var lumini_5 = new THREE.Mesh(luminiGeometry_5, luminiMaterial_5);
 		//let moonGlow_geometry = new THREE.SphereGeometry(635, 300, 300, 0, Math.PI*2, 0, Math.PI);
 		//var moonGlow = new THREE.Mesh( moonGlow_geometry, customMaterial );
