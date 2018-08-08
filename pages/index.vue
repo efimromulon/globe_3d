@@ -138,8 +138,8 @@ mounted(){
 			shininess: 0.0,
 			wireframe: false,
 			transparent: true,
-			opacity: 0.64,
-			color: 0x000003,
+			opacity: 0.94,
+			color: 0x1F2A44,
 			//diffuse: color_of_bright_side,
 			//emissive: color_of_dark_side,
 			//specular: color_of_direct_light,
@@ -648,7 +648,7 @@ mounted(){
 		//directionalLight.target = earth_texture;
 		camera.add( directionalLight.target );
 		directionalLight.target.position.set(150, 40, -2000);
-		camera.add(directionalLight);
+		//camera.add(directionalLight);
 		//LIGHTS_DIRECTIONAL_LIGHT_END
 		//LIGHTS_DIRECTIONAL_LIGHT
 		//var pointColor = "#4C709A";
@@ -909,7 +909,7 @@ mounted(){
 					value: 0
 				},
 				size: {
-					value: 45
+					value: 25
 				},
 				scale: {
 					value: window.innerHeight / 8
@@ -1006,7 +1006,7 @@ mounted(){
 					value: 0
 				},
 				size: {
-					value: 45
+					value: 25
 				},
 				scale: {
 					value: window.innerHeight / 8
@@ -1103,7 +1103,7 @@ mounted(){
 					value: 0
 				},
 				size: {
-					value: 45
+					value: 25
 				},
 				scale: {
 					value: window.innerHeight / 8
@@ -1200,7 +1200,7 @@ mounted(){
 					value: 0
 				},
 				size: {
-					value: 45
+					value: 25
 				},
 				scale: {
 					value: window.innerHeight / 8
@@ -1297,7 +1297,7 @@ mounted(){
 					value: 0
 				},
 				size: {
-					value: 45
+					value: 25
 				},
 				scale: {
 					value: window.innerHeight / 8
@@ -1368,6 +1368,11 @@ mounted(){
 		//var moonGlow = new THREE.Mesh( moonGlow_geometry, customMaterial );
 		//moonGlow.scale.multiplyScalar(1.2);
 		scene.add( lumini_5 );
+				let conj = new THREE.Quaternion();
+		conj.copy(group.quaternion);
+		conj.conjugate();
+
+		lumini_5.quaternion.multiplyQuaternions( conj, camera.quaternion);
 		//EARTH_AUREOLE_END
 	};
 
@@ -1381,16 +1386,18 @@ mounted(){
 		addEarthContour();
 		addEarthPoints();
 		
-		addAureole_1();
+		//addAureole_1();
 		addAureole_2();
 		addAureole_3();
-		addAureole_4();
+		//addAureole_4();
 		addAureole_5();
 		addAureole_6();
 		//addClouds();
 		//addConnector();
 		//addProvod();
 		addLights();
+
+
 
 		Render();
 
