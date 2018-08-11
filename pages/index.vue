@@ -79,7 +79,7 @@ mounted(){
 	var color = 0x000000;
 	var mouse = new THREE.Vector2(), INTERSECTED;
 
-	var camera, scene, renderer, backgroundScene, backgroundCamera, group, controls;
+	var camera, scene, renderer, backgroundScene, backgroundCamera, group, controls, earth_texture;
 	init();
 
 //CREATE_SCENE
@@ -149,11 +149,11 @@ mounted(){
 			//normalMapScale: 1.65,
 		});
 
-		var earth_texture = new THREE.Mesh(earth_texture_geometry, earth_texture_material);
+			earth_texture = new THREE.Mesh(earth_texture_geometry, earth_texture_material);
 			earth_texture.recieveShadow = false;
 			earth_texture.castShadow = false;
 			earth_texture_material.fog = false;
-			earth_texture_material.depthWrite = false;
+			earth_texture_material.depthWrite = true;
 
 			//earth_texture_material.map.generateMipalphaMaps = false;
 			//earth_texture_material.map.magFilter = THREE.LinearFilter;
@@ -429,12 +429,11 @@ mounted(){
 
 			var mtlLoader = new MTLLoader();
 			mtlLoader.load('3.mtl', function (materials) {
-
 				materials.preload();
 				var objLoader = new THREE.OBJLoader();
 				objLoader.setMaterials(materials);
 				objLoader.load('3.obj', function (object) {		
-						
+					
 					group.add(object);
 					object.translate(0, 0, 0.25 + 595);
 					var startVector = new THREE.Vector3(0, 0, 0);
@@ -502,6 +501,11 @@ mounted(){
 					object.position.set(xrad, zrad, yrad);
 
 					object.scale.multiplyScalar(0.25);
+					object.getObjectByName( "Cylinder030" ).material = new THREE.MeshPhongMaterial({
+						color: 0x000000,
+						shininess: 100,
+						lights: false
+					});
 					
 				});
 
@@ -537,13 +541,16 @@ mounted(){
 
 			var mtlLoader = new MTLLoader();
 			mtlLoader.load('1.mtl', function (materials) {
-
+				materials.flatShading = true;
+				//
+				console.log(materials);
 				materials.preload();
 				var objLoader = new THREE.OBJLoader();
 				objLoader.setMaterials(materials);
 				objLoader.load('1.obj', function (object) {		
 						
 					group.add(object);
+					console.log(object);
 					object.translate(0, 0, 0.25 + 595);
 					var startVector = new THREE.Vector3(0, 0, 0);
 					var endVector = new THREE.Vector3(xrad,  yrad,  zrad);
@@ -608,9 +615,24 @@ mounted(){
 						object.applyMatrix(	xyzrot );
 					};
 					object.position.set(xrad, zrad, yrad);
-
+					object.receiveShadow = true;
 					object.scale.multiplyScalar(0.25);
-					
+					//object.getObjectByName( "Line012" ).material = new THREE.MeshPhongMaterial({
+					//	color: 0x000000,
+					//	shininess: 100,
+					//	lights: true
+					//});
+					//object.lights =  true;
+
+					object.traverse (function (child) {
+					        if (child instanceof THREE.Mesh) {
+					          child.material.emissive.setHex( 0x00ff00 );
+					          child.material.specular.setHex( 0xff0000 );
+					          child.material.lights=true;
+					          child.material.shininess=300;
+					        }
+					     });		
+
 				});
 
 			});
@@ -648,43 +670,43 @@ mounted(){
 		directionalLight.shadow.mapSize.width = 1024;
 		//var target = new THREE.Object3D();
 		//directionalLight.target = earth_texture;
-		camera.add( directionalLight.target );
-		directionalLight.target.position.set(150, 40, -2000);
+		//camera.add( directionalLight.target );
+		//directionalLight.target.position.set(150, 40, -2000);
 		//camera.add(directionalLight);
 		//LIGHTS_DIRECTIONAL_LIGHT_END
 		//LIGHTS_DIRECTIONAL_LIGHT
 		//var pointColor = "#4C709A";
-		var directionalLightColor_1 = new THREE.Color("hsl(170, 20%, 62%)");
-		var directionalLight_1 = new THREE.DirectionalLight(directionalLightColor_1);
-		directionalLight_1.position.set(2000, 300, -2200);
-		directionalLight_1.castShadow = true;
-		directionalLight_1.shadow.camera.near = 0.1;
-		directionalLight_1.shadow.camera.far = 1300;
-		directionalLight_1.shadow.camera.left = -600;
-		directionalLight_1.shadow.camera.right = 600;
-		directionalLight_1.shadow.camera.top = 600;
-		directionalLight_1.shadow.camera.bottom = -600;
+		//var directionalLightColor_1 = new THREE.Color("hsl(170, 20%, 62%)");
+		//var directionalLight_1 = new THREE.DirectionalLight(directionalLightColor_1);
+		//directionalLight_1.position.set(2000, 300, -2200);
+		//directionalLight_1.castShadow = true;
+		//directionalLight_1.shadow.camera.near = 0.1;
+		//directionalLight_1.shadow.camera.far = 1300;
+		//directionalLight_1.shadow.camera.left = -600;
+		//directionalLight_1.shadow.camera.right = 600;
+		//directionalLight_1.shadow.camera.top = 600;
+		//directionalLight_1.shadow.camera.bottom = -600;
 
-		directionalLight_1.distance = 10;
-		directionalLight_1.intensity = 0.5;
-		directionalLight_1.shadow.mapSize.height = 1024;
-		directionalLight_1.shadow.mapSize.width = 1024;
+		//directionalLight_1.distance = 10;
+		//directionalLight_1.intensity = 0.5;
+		//directionalLight_1.shadow.mapSize.height = 1024;
+		//directionalLight_1.shadow.mapSize.width = 1024;
 		//var target = new THREE.Object3D();
 		//directionalLight.target = earth_texture;
 		//camera.add(directionalLight_1);
 		//LIGHTS_DIRECTIONAL_LIGHT_END
 		//LIGHTS_SPOT_LIGHT
-		var spotLight = new THREE.SpotLight( 0xffffff );
-		spotLight.position.set( -1000, 100, 1800 );
+		//var spotLight = new THREE.SpotLight( 0xffffff );
+		//spotLight.position.set( -1000, 100, 1800 );
 
-		spotLight.castShadow = true;
-		spotLight.intensity = 0.75;
-		spotLight.shadow.mapSize.width = 1024;
-		spotLight.shadow.mapSize.height = 1024;
+		//spotLight.castShadow = true;
+		//spotLight.intensity = 0.75;
+		//spotLight.shadow.mapSize.width = 1024;
+		//spotLight.shadow.mapSize.height = 1024;
 
-		spotLight.shadow.camera.near = 500;
-		spotLight.shadow.camera.far = 4000;
-		spotLight.shadow.camera.fov = 30;
+		//spotLight.shadow.camera.near = 500;
+		//spotLight.shadow.camera.far = 4000;
+		//spotLight.shadow.camera.fov = 30;
 
 	};
 
@@ -1389,14 +1411,14 @@ mounted(){
 		addEarthPoints();
 		
 		//addAureole_1();
-		addAureole_2();
-		addAureole_3();
+		//addAureole_2();
+		//addAureole_3();
 		//addAureole_4();
-		addAureole_5();
-		addAureole_6();
-		//addClouds();
-		//addConnector();
-		//addProvod();
+		//addAureole_5();
+		//addAureole_6();
+		addClouds();
+		addConnector();
+		addProvod();
 
 
 		addLights();
