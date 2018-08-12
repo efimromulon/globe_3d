@@ -501,11 +501,10 @@ mounted(){
 					object.position.set(xrad, zrad, yrad);
 
 					object.scale.multiplyScalar(0.25);
-					//object.getObjectByName( "Cylinder030" ).material = new THREE.MeshPhongMaterial({
-					//	color: 0x000000,
-					//	shininess: 100,
-					//	lights: false
-					//});
+					object.getObjectByName( "Cylinder030" ).material = new THREE.MeshPhongMaterial({
+						color: 0x000000,
+						shininess: 100
+					});
 					
 				});
 
@@ -594,21 +593,23 @@ mounted(){
 					object.position.set(xrad, zrad, yrad);
 					object.receiveShadow = true;
 					object.scale.multiplyScalar(0.25);
+					console.log(object);
 					//object.getObjectByName( "Line012" ).material = new THREE.MeshPhongMaterial({
 					//	color: 0x000000,
-					//	shininess: 100,
-					//	lights: true
+					//	shininess: 100
 					//});
 					//object.lights =  true;
 
-					//object.traverse (function (child) {
-					//        if (child instanceof THREE.Mesh) {
-					//          child.material.emissive.setHex( 0x00ff00 );
-					//          child.material.specular.setHex( 0xff0000 );
-					//          child.material.lights=true;
-					//          child.material.shininess=300;
-					//        }
-					//     });		
+					object.traverse (function (child) {
+					        if (child instanceof THREE.Mesh) {
+					          child.material.emissive.setHex( 0x000000 );
+					          child.material.specular.setHex( 0x000000 );
+					          child.material.color.setHex( 0x000000 );
+					          child.material.lights=true;
+					          child.material.shininess=900;
+					          child.material.flatShading=false;
+					        }
+					     });		
 
 				});
 
