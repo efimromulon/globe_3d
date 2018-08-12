@@ -79,8 +79,8 @@ mounted(){
 	var color = 0x000000;
 	var mouse = new THREE.Vector2(), INTERSECTED;
 
-	var camera, scene, renderer, backgroundScene, backgroundCamera, group, controls, earth_texture;
-	init();
+	var camera, scene, renderer, group, controls, earth_texture;
+
 
 //CREATE_SCENE
 
@@ -88,23 +88,23 @@ mounted(){
 
 		scene = new THREE.Scene();
 		scene.fog = new THREE.FogExp2( 0x000104, 0.0000675 );
-
+		scene.background = new THREE.TextureLoader().load( 'background_map.jpg' );
 		group = new THREE.Object3D();	
 
 		camera = new THREE.PerspectiveCamera( fov, width / height, near, far );
 		camera.position.set( pos_x, pos_y, pos_z );
 
-		let backgroundSceneMap = new THREE.TextureLoader().load( 'background_map.jpg' );
-		var backgroundSceneMesh = new THREE.Mesh( new THREE.PlaneGeometry(2, 2, 0),	new THREE.MeshBasicMaterial( { map: backgroundSceneMap } ) );
+		//let backgroundSceneMap = new THREE.TextureLoader().load( 'background_map.jpg' );
+		//var backgroundSceneMesh = new THREE.Mesh( new THREE.PlaneGeometry(2, 2, 0),	new THREE.MeshBasicMaterial( { map: backgroundSceneMap } ) );
 
-		backgroundSceneMesh.material.depthTest = false;
-		backgroundSceneMesh.material.depthWrite = false;
+		//backgroundSceneMesh.material.depthTest = false;
+		//backgroundSceneMesh.material.depthWrite = false;
 
-		backgroundScene = new THREE.Scene();
-		backgroundCamera = new THREE.Camera();
+		//backgroundScene = new THREE.Scene();
+		//backgroundCamera = new THREE.Camera();
 
-		backgroundScene.add(backgroundCamera);
-		backgroundScene.add(backgroundSceneMesh);
+		//backgroundScene.add(backgroundCamera);
+		//backgroundScene.add(backgroundSceneMesh);
 
 		scene.add(group);
 		scene.add(camera);
@@ -113,11 +113,11 @@ mounted(){
 
 	function createRenderer() {
 
-		renderer = new THREE.WebGLRenderer( { canvas: canvas, alpha: true, antialias: true } );
+		renderer = new THREE.WebGLRenderer( { canvas: canvas, antialias: true } );
 
 		renderer.setPixelRatio(window.devicePixelRatio > 1 ? 2 : 1);
 		renderer.setSize(width, height);
-		renderer.shadowMap.enabled = true;
+		renderer.shadowMap.enabled = false;
 		renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
 		controls = new OrbitControls(camera, renderer.domElement);
@@ -642,72 +642,46 @@ mounted(){
 	};
 
 	function addLights() {
-
-		//LIGHTS_AMBIENT
 		var ambiColor = "#ffffff";
 		var ambientLight = new THREE.AmbientLight(ambiColor, 0.5);
-		ambientLight.wrapAround = true;
 		scene.add(ambientLight);
-		
-		//LIGHTS_AMBIENT_END
-		//LIGHTS_DIRECTIONAL_LIGHT
-		//var pointColor = "#4C709A";
-		//var directionalLightColor = new THREE.Color("hsl(29, 100%, 95%)");
-		var directionalLightColor = new THREE.Color(0xffffff);
-		var directionalLight = new THREE.DirectionalLight(directionalLightColor);
-		directionalLight.position.set(300, 80, -2000);
-		directionalLight.castShadow = true;
-		directionalLight.shadow.camera.near = 0.5;
-		directionalLight.shadow.camera.far = 1300;
-		directionalLight.shadow.camera.left = -600;
-		directionalLight.shadow.camera.right = 600;
-		directionalLight.shadow.camera.top = 600;
-		directionalLight.shadow.camera.bottom = -600;
+	};
 
-		directionalLight.distance = 10;
-		directionalLight.intensity = 14.0;
+	function addDirLight(){
+		//var directionalLightColor = new THREE.Color(0xffffff);
+		//var directionalLight = new THREE.DirectionalLight(directionalLightColor);
+		//directionalLight.position.set(300, 80, -2000);
+		//directionalLight.castShadow = true;
+		//directionalLight.shadow.camera.near = 0.5;
+		//directionalLight.shadow.camera.far = 1300;
+		//directionalLight.shadow.camera.left = -600;
+		//directionalLight.shadow.camera.right = 600;
+		//directionalLight.shadow.camera.top = 600;
+		//directionalLight.shadow.camera.bottom = -600;
+
+		//directionalLight.distance = 10;
+		//directionalLight.intensity = 14.0;
+		//directionalLight.shadow.mapSize.height = 1024;
+		//directionalLight.shadow.mapSize.width = 1024;
+		//camera.add(directionalLight);
+
+		var directionalLightColor = new THREE.Color( 0xffffff );
+		var directionalLight = new THREE.DirectionalLight( directionalLightColor, 0.6 );
+		
+		directionalLight.castShadow = true;
+		directionalLight.shadow.camera.near = 1;
+		directionalLight.shadow.camera.far = 10;
+		directionalLight.shadow.camera.left = -5;
+		directionalLight.shadow.camera.right = 5;
+		directionalLight.shadow.camera.top = 5;
+		directionalLight.shadow.camera.bottom = -5;
+
+		// directionalLight.distance = 10; this proeprty does not exist
+		// directionalLight.intensity = 14.0; the value 14 is way too high
 		directionalLight.shadow.mapSize.height = 1024;
 		directionalLight.shadow.mapSize.width = 1024;
-		//var target = new THREE.Object3D();
-		//directionalLight.target = earth_texture;
-		//camera.add( directionalLight.target );
-		//directionalLight.target.position.set(150, 40, -2000);
-		//camera.add(directionalLight);
-		//LIGHTS_DIRECTIONAL_LIGHT_END
-		//LIGHTS_DIRECTIONAL_LIGHT
-		//var pointColor = "#4C709A";
-		//var directionalLightColor_1 = new THREE.Color("hsl(170, 20%, 62%)");
-		//var directionalLight_1 = new THREE.DirectionalLight(directionalLightColor_1);
-		//directionalLight_1.position.set(2000, 300, -2200);
-		//directionalLight_1.castShadow = true;
-		//directionalLight_1.shadow.camera.near = 0.1;
-		//directionalLight_1.shadow.camera.far = 1300;
-		//directionalLight_1.shadow.camera.left = -600;
-		//directionalLight_1.shadow.camera.right = 600;
-		//directionalLight_1.shadow.camera.top = 600;
-		//directionalLight_1.shadow.camera.bottom = -600;
-
-		//directionalLight_1.distance = 10;
-		//directionalLight_1.intensity = 0.5;
-		//directionalLight_1.shadow.mapSize.height = 1024;
-		//directionalLight_1.shadow.mapSize.width = 1024;
-		//var target = new THREE.Object3D();
-		//directionalLight.target = earth_texture;
-		//camera.add(directionalLight_1);
-		//LIGHTS_DIRECTIONAL_LIGHT_END
-		//LIGHTS_SPOT_LIGHT
-		//var spotLight = new THREE.SpotLight( 0xffffff );
-		//spotLight.position.set( -1000, 100, 1800 );
-
-		//spotLight.castShadow = true;
-		//spotLight.intensity = 0.75;
-		//spotLight.shadow.mapSize.width = 1024;
-		//spotLight.shadow.mapSize.height = 1024;
-
-		//spotLight.shadow.camera.near = 500;
-		//spotLight.shadow.camera.far = 4000;
-		//spotLight.shadow.camera.fov = 30;
-
+		
+		scene.add( directionalLight );
 	};
 
 	function addClouds(){
@@ -908,7 +882,9 @@ mounted(){
 		//moonGlow.scale.multiplyScalar(1.2);
 		group.add( lumini );
 		//EARTH_AUREOLE_END
+
 	};
+
 	function addAureole_2(){
 		//EARTH_AUREOLE
 		var luminiGeometry_1 = new THREE.SphereBufferGeometry(619, 300, 150);
@@ -1005,7 +981,9 @@ mounted(){
 		//moonGlow.scale.multiplyScalar(1.2);
 		group.add( lumini_1 );
 		//EARTH_AUREOLE_END
+
 	};
+
 	function addAureole_3(){
 		//EARTH_AUREOLE
 		var luminiGeometry_2 = new THREE.SphereBufferGeometry(620, 300, 150);
@@ -1102,7 +1080,9 @@ mounted(){
 		//moonGlow.scale.multiplyScalar(1.2);
 		group.add( lumini_2 );
 		//EARTH_AUREOLE_END
+
 	};
+
 	function addAureole_4(){
 		//EARTH_AUREOLE
 		var luminiGeometry_3 = new THREE.SphereBufferGeometry(612, 300, 150);
@@ -1199,7 +1179,9 @@ mounted(){
 		//moonGlow.scale.multiplyScalar(1.2);
 		group.add( lumini_3 );
 		//EARTH_AUREOLE_END
+
 	};
+
 	function addAureole_5(){
 		//EARTH_AUREOLE
 		var luminiGeometry_4 = new THREE.SphereBufferGeometry(611, 300, 150);
@@ -1296,7 +1278,9 @@ mounted(){
 		//moonGlow.scale.multiplyScalar(1.2);
 		group.add( lumini_4 );
 		//EARTH_AUREOLE_END
+
 	};
+
 	function addAureole_6(){
 		//EARTH_AUREOLE
 		var luminiGeometry_5 = new THREE.SphereBufferGeometry(610, 300, 150);
@@ -1398,9 +1382,11 @@ mounted(){
 
 		lumini_5.quaternion.multiplyQuaternions( conj, camera.quaternion);
 		//EARTH_AUREOLE_END
+
 	};
 
-
+	init();
+	animate();
 	function init() {
 
 		createScene();
@@ -1409,7 +1395,6 @@ mounted(){
 		addEarthTexture();
 		addEarthContour();
 		addEarthPoints();
-		
 		//addAureole_1();
 		//addAureole_2();
 		//addAureole_3();
@@ -1419,43 +1404,25 @@ mounted(){
 		addClouds();
 		addConnector();
 		addProvod();
-
-
 		addLights();
-
-
-		Render();
+		//addDirLight();
 
 	};
-
+	function animate() {
+		window.requestAnimationFrame(animate);
+		Render();
+	};
 	function Render() {
-
-		window.requestAnimationFrame(Render);
-		//group.rotation.y = 90*(Math.PI/180);
-		//group.rotation.x = 30*(Math.PI/180);
-		//camera.rotation.z = 11*(Math.PI/180);
-//
-		//camera.position.x = - width*3/5;
-		//camera.position.y = 0;
-		//camera.position.z = 1800;
-		//group.rotation.y += 0.002;
-
-
-
-
 		renderer.autoClear = false;
 		renderer.clear();
-		renderer.render(backgroundScene , backgroundCamera );
-		renderer.render(scene, camera);
-
+		//renderer.render(backgroundScene , backgroundCamera );
+		renderer.render( scene, camera );
 	};
 
 	function onResize() {
-
 		renderer.setSize(window.innerWidth, window.innerHeight);
 		camera.aspect = (window.innerWidth / window.innerHeight);
 		camera.updateProjectionMatrix();
-
 	};
 
 window.addEventListener('resize', onResize, false);
