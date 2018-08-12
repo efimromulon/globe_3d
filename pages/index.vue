@@ -403,8 +403,6 @@ mounted(){
 		//EARTH_POINTS_END
 
 	};
-
-	function addConnector() {
 		let coords = [
 			{
 				lat: 18,	long: 24//
@@ -425,6 +423,8 @@ mounted(){
 				lat: 73,	long: -102
 			}
 		];
+	function addConnector() {
+
 		coords.forEach(function(item, i, coords) {
 
 			var mtlLoader = new MTLLoader();
@@ -501,11 +501,11 @@ mounted(){
 					object.position.set(xrad, zrad, yrad);
 
 					object.scale.multiplyScalar(0.25);
-					object.getObjectByName( "Cylinder030" ).material = new THREE.MeshPhongMaterial({
-						color: 0x000000,
-						shininess: 100,
-						lights: false
-					});
+					//object.getObjectByName( "Cylinder030" ).material = new THREE.MeshPhongMaterial({
+					//	color: 0x000000,
+					//	shininess: 100,
+					//	lights: false
+					//});
 					
 				});
 
@@ -517,33 +517,10 @@ mounted(){
 
 	function addProvod() {
 
-		let coords = [
-			{
-				lat: 18,	long: 24//
-			},
-			{
-				lat: -8,	long: -3//
-			},
-			{
-				lat: -15,	long:-101//
-			},
-			{
-				lat: 50,	long: 18//
-			},
-			{
-				lat: 35,	long: -105//
-			},
-			{
-				lat: 73,	long: -102
-			}
-		];
 		coords.forEach(function(item, i, coords) {
 
 			var mtlLoader = new MTLLoader();
 			mtlLoader.load('1.mtl', function (materials) {
-				materials.flatShading = true;
-				//
-				console.log(materials);
 				materials.preload();
 				var objLoader = new THREE.OBJLoader();
 				objLoader.setMaterials(materials);
@@ -624,14 +601,14 @@ mounted(){
 					//});
 					//object.lights =  true;
 
-					object.traverse (function (child) {
-					        if (child instanceof THREE.Mesh) {
-					          child.material.emissive.setHex( 0x00ff00 );
-					          child.material.specular.setHex( 0xff0000 );
-					          child.material.lights=true;
-					          child.material.shininess=300;
-					        }
-					     });		
+					//object.traverse (function (child) {
+					//        if (child instanceof THREE.Mesh) {
+					//          child.material.emissive.setHex( 0x00ff00 );
+					//          child.material.specular.setHex( 0xff0000 );
+					//          child.material.lights=true;
+					//          child.material.shininess=300;
+					//        }
+					//     });		
 
 				});
 
@@ -648,40 +625,39 @@ mounted(){
 	};
 
 	function addDirLight(){
-		//var directionalLightColor = new THREE.Color(0xffffff);
-		//var directionalLight = new THREE.DirectionalLight(directionalLightColor);
-		//directionalLight.position.set(300, 80, -2000);
-		//directionalLight.castShadow = true;
-		//directionalLight.shadow.camera.near = 0.5;
-		//directionalLight.shadow.camera.far = 1300;
-		//directionalLight.shadow.camera.left = -600;
-		//directionalLight.shadow.camera.right = 600;
-		//directionalLight.shadow.camera.top = 600;
-		//directionalLight.shadow.camera.bottom = -600;
+		var directionalLightColor = new THREE.Color(0xffffff);
+		var directionalLight = new THREE.DirectionalLight(directionalLightColor);
+		directionalLight.position.set(300, 80, -2000);
+		directionalLight.castShadow = true;
+		directionalLight.shadow.camera.near = 0.5;
+		directionalLight.shadow.camera.far = 1300;
+		directionalLight.shadow.camera.left = -600;
+		directionalLight.shadow.camera.right = 600;
+		directionalLight.shadow.camera.top = 600;
+		directionalLight.shadow.camera.bottom = -600;
 
 		//directionalLight.distance = 10;
 		//directionalLight.intensity = 14.0;
-		//directionalLight.shadow.mapSize.height = 1024;
-		//directionalLight.shadow.mapSize.width = 1024;
-		//camera.add(directionalLight);
-
-		var directionalLightColor = new THREE.Color( 0xffffff );
-		var directionalLight = new THREE.DirectionalLight( directionalLightColor, 0.6 );
-		
-		directionalLight.castShadow = true;
-		directionalLight.shadow.camera.near = 1;
-		directionalLight.shadow.camera.far = 10;
-		directionalLight.shadow.camera.left = -5;
-		directionalLight.shadow.camera.right = 5;
-		directionalLight.shadow.camera.top = 5;
-		directionalLight.shadow.camera.bottom = -5;
-
-		// directionalLight.distance = 10; this proeprty does not exist
-		// directionalLight.intensity = 14.0; the value 14 is way too high
 		directionalLight.shadow.mapSize.height = 1024;
 		directionalLight.shadow.mapSize.width = 1024;
+		camera.add(directionalLight);
+
+		//var directionalLightColor = new THREE.Color( 0xffffff );
+		//var directionalLight = new THREE.DirectionalLight( directionalLightColor, 0.6 );
 		
-		scene.add( directionalLight );
+		//directionalLight.castShadow = true;
+		//directionalLight.shadow.camera.near = 1;
+		//directionalLight.shadow.camera.far = 10;
+		//directionalLight.shadow.camera.left = -5;
+		//directionalLight.shadow.camera.right = 5;
+		//directionalLight.shadow.camera.top = 5;
+		//directionalLight.shadow.camera.bottom = -5;
+		//directionalLight.distance = 10; this proeprty does not exist
+		//directionalLight.intensity = 14.0; the value 14 is way too high
+		//directionalLight.shadow.mapSize.height = 1024;
+		//directionalLight.shadow.mapSize.width = 1024;
+		
+		//scene.add( directionalLight );
 	};
 
 	function addClouds(){
@@ -1405,7 +1381,7 @@ mounted(){
 		addConnector();
 		addProvod();
 		addLights();
-		//addDirLight();
+		addDirLight();
 
 	};
 	function animate() {
