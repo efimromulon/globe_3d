@@ -79,7 +79,7 @@ mounted(){
 	var color = 0x000000;
 	var mouse = new THREE.Vector2(), INTERSECTED;
 
-	var camera, scene, renderer, group, controls, earth_texture;
+	var camera, scene, renderer, group, controls, earth_texture, group_models;
 
 
 //CREATE_SCENE
@@ -89,7 +89,8 @@ mounted(){
 		scene = new THREE.Scene();
 		scene.fog = new THREE.FogExp2( 0x000104, 0.0000675 );
 		scene.background = new THREE.TextureLoader().load( 'background_map.jpg' );
-		group = new THREE.Object3D();	
+		group = new THREE.Object3D();
+		group_models = new THREE.Object3D();
 
 		camera = new THREE.PerspectiveCamera( fov, width / height, near, far );
 		camera.position.set( pos_x, pos_y, pos_z );
@@ -107,6 +108,7 @@ mounted(){
 		//backgroundScene.add(backgroundSceneMesh);
 
 		scene.add(group);
+		scene.add(group_models);
 		scene.add(camera);
 
 	};
@@ -434,7 +436,7 @@ mounted(){
 				objLoader.setMaterials(materials);
 				objLoader.load('3.obj', function (object) {		
 					
-					group.add(object);
+					group_models.add(object);
 					object.translate(0, 0, 0.25 + 595);
 					var startVector = new THREE.Vector3(0, 0, 0);
 					var endVector = new THREE.Vector3(xrad,  yrad,  zrad);
@@ -503,7 +505,7 @@ mounted(){
 					object.scale.multiplyScalar(0.25);
 					object.getObjectByName( "Cylinder030" ).material = new THREE.MeshPhongMaterial({
 						color: 0x000000,
-						shininess: 100
+						shininess: 300
 					});
 					
 				});
@@ -525,7 +527,7 @@ mounted(){
 				objLoader.setMaterials(materials);
 				objLoader.load('1.obj', function (object) {		
 						
-					group.add(object);
+					group_models.add(object);
 					console.log(object);
 					object.translate(0, 0, 0.25 + 595);
 					var startVector = new THREE.Vector3(0, 0, 0);
@@ -609,8 +611,17 @@ mounted(){
 					          child.material.shininess=900;
 					          child.material.flatShading=false;
 					        }
-					     });		
-
+					        //for (var i = 0; i < elements.length; i++) {
+						    //    if ((child instanceof THREE.Mesh)&(i > 10)) {
+						    //      child.material.emissive.setHex( 0x000000 );
+						    //      child.material.specular.setHex( 0x000000 );
+						    //      child.material.color.setHex( 0x000000 );
+						    //      child.material.lights=true;
+						    //      child.material.shininess=900;
+						    //      child.material.flatShading=false;
+						    //    }
+					        //}
+					     });
 				});
 
 			});
@@ -1388,8 +1399,26 @@ mounted(){
 	function animate() {
 		window.requestAnimationFrame(animate);
 		Render();
+		//for (var i = 0; i < geometry.vertices.length; i++) {
+		//	let vec_1 = geometry.vertices[i];
+		//	vec_1.z= 100 * 
+		//}
+		//group_models.rotation.y += 0.006;
 	};
 	function Render() {
+
+		camera.rotation.y = 8*(Math.PI/180);
+		camera.rotation.x = -28*(Math.PI/180);
+		camera.rotation.z = 11*(Math.PI/180);
+		camera.position.x = -900;
+		camera.position.y = 1200;
+		camera.position.z = 2300;
+		group_models.rotation.x = -20*(Math.PI/180);
+		group_models.rotation.y = 8*(Math.PI/180);
+		group_models.rotation.z = 11*(Math.PI/180);
+	//	camera.position.x=width *2 / 3;
+	//	camera.position.y=500;
+	//	camera.position.z=height *1 / 3;
 		renderer.autoClear = false;
 		renderer.clear();
 		//renderer.render(backgroundScene , backgroundCamera );
