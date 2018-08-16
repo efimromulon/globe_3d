@@ -405,26 +405,28 @@ mounted(){
 		//EARTH_POINTS_END
 
 	};
-		let coords = [
-			{
-				lat: 18,	long: 24//
-			},
-			{
-				lat: -8,	long: -3//
-			},
-			{
-				lat: -15,	long:-101//
-			},
-			{
-				lat: 50,	long: 18//
-			},
-			{
-				lat: 35,	long: -105//
-			},
-			{
-				lat: 73,	long: -102
-			}
-		];
+
+	let coords = [
+		{
+			lat: 18,	long: 24//
+		},
+		{
+			lat: -8,	long: -3//
+		},
+		{
+			lat: -39,	long:-44//
+		},
+		{
+			lat: 50,	long: 18//
+		},
+		{
+			lat: 35,	long: -105//
+		},
+		{
+			lat: 73,	long: -102
+		}
+	];
+
 	function addConnector() {
 
 		coords.forEach(function(item, i, coords) {
@@ -1413,8 +1415,8 @@ mounted(){
 		camera.position.x = -900;
 		camera.position.y = 1200;
 		camera.position.z = 2300;
-		group_models.rotation.x = -20*(Math.PI/180);
-		group_models.rotation.y = 8*(Math.PI/180);
+		group_models.rotation.x = 90*(Math.PI/180);
+		group_models.rotation.y = 138*(Math.PI/180);
 		group_models.rotation.z = 11*(Math.PI/180);
 	//	camera.position.x=width *2 / 3;
 	//	camera.position.y=500;
