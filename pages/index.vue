@@ -79,7 +79,7 @@ mounted(){
 	var color = 0x000000;
 	var mouse = new THREE.Vector2(), INTERSECTED;
 
-	var camera, scene, renderer, group, controls, earth_texture, group_models;
+	var camera, scene, renderer, group, controls, earth_texture, group_models, Wire, wire;
 
 
 //CREATE_SCENE
@@ -406,236 +406,11 @@ mounted(){
 
 	};
 
-	let coords = [
-		{
-			lat: 18,	long: 24//
-		},
-		{
-			lat: -8,	long: -3//
-		},
-		{
-			lat: -39,	long:-44//
-		},
-		{
-			lat: 50,	long: 18//
-		},
-		{
-			lat: 35,	long: -105//
-		},
-		{
-			lat: 73,	long: -102
-		}
-	];
-
-	function addConnector() {
-
-		coords.forEach(function(item, i, coords) {
-
-			var mtlLoader = new MTLLoader();
-			mtlLoader.load('3.mtl', function (materials) {
-				materials.preload();
-				var objLoader = new THREE.OBJLoader();
-				objLoader.setMaterials(materials);
-				objLoader.load('3.obj', function (object) {		
-					
-					group_models.add(object);
-					object.translate(0, 0, 0.25 + 595);
-					var startVector = new THREE.Vector3(0, 0, 0);
-					var endVector = new THREE.Vector3(xrad,  yrad,  zrad);
-
-					var phi   = (90-item.lat)*(Math.PI/180);
-					var theta = (item.long-180)*(Math.PI/180);
-					let xrad = -((595) * Math.sin(phi)*Math.cos(theta));
-					let zrad = ((595) * Math.sin(phi)*Math.sin(theta));
-					let yrad = ((595) * Math.cos(phi));
-					if ((item.lat < 0)&(item.lat > -45)&(item.long < 0)&(item.long > -45)){
-						var xrot = new THREE.Matrix4().makeRotationX( (180)*(Math.PI/180) - (90-item.lat)*(Math.PI/180) );
-						var yrot = new THREE.Matrix4().makeRotationY( (270)*(Math.PI/180) - (item.long-180)*(Math.PI/180) );
-						var xyrot = xrot.multiply(yrot);
-						var zrot = new THREE.Matrix4().makeRotationZ( 0 );
-						var xyzrot = xyrot.multiply(zrot);
-
-						object.applyMatrix(	xyzrot );
-					};
-					if ((item.lat < 0)&(item.lat > -45)&(item.long < -90)&(item.long > -135)){
-						var xrot = new THREE.Matrix4().makeRotationX( (180)*(Math.PI/180) - (90-item.lat)*(Math.PI/180) );
-						var yrot = new THREE.Matrix4().makeRotationY( (270)*(Math.PI/180) - (item.long-180)*(Math.PI/180) );
-						var xyrot = xrot.multiply(yrot);
-						var zrot = new THREE.Matrix4().makeRotationZ( 0 );
-						var xyzrot = xyrot.multiply(zrot);
-
-						object.applyMatrix(	xyzrot );
-					};
-					if ((item.lat > 0)&(item.lat < 45)&(item.long < -90)&(item.long > -135)){
-						var xrot = new THREE.Matrix4().makeRotationX( (180)*(Math.PI/180) - (90-item.lat)*(Math.PI/180) );
-						var yrot = new THREE.Matrix4().makeRotationY( (270)*(Math.PI/180) - (item.long-180)*(Math.PI/180) );
-						var xyrot = xrot.multiply(yrot);
-						var zrot = new THREE.Matrix4().makeRotationZ( 0 );
-						var xyzrot = xyrot.multiply(zrot);
-
-						object.applyMatrix(	xyzrot );
-					};
-					if ((item.lat > 45)&(item.lat < 90)&(item.long < -90)&(item.long > -135)){
-						var xrot = new THREE.Matrix4().makeRotationX( (180)*(Math.PI/180) - (90-item.lat)*(Math.PI/180) );
-						var yrot = new THREE.Matrix4().makeRotationY( (264)*(Math.PI/180) - (item.long-180)*(Math.PI/180) );
-						var xyrot = xrot.multiply(yrot);
-						var zrot = new THREE.Matrix4().makeRotationZ( 0 );
-						var xyzrot = xyrot.multiply(zrot);
-
-						object.applyMatrix(	xyzrot );
-					};
-					if ((item.lat > 0)&(item.lat < 45)&(item.long > 0)){
-						var xrot = new THREE.Matrix4().makeRotationX( (300)*(Math.PI/180) - (90-item.lat)*(Math.PI/180) );
-						var yrot = new THREE.Matrix4().makeRotationY( (-35)*(Math.PI/180) - (item.long-180)*(Math.PI/180) );
-						var xyrot = xrot.multiply(yrot);
-						var zrot = new THREE.Matrix4().makeRotationZ( 0 );
-						var xyzrot = xyrot.multiply(zrot);
-
-						object.applyMatrix(	xyzrot );
-					};
-					if ((item.lat > 45)&(item.lat < 90)&(item.long > 0)){
-						var xrot = new THREE.Matrix4().makeRotationX( (-25)*(Math.PI/180) + (90-item.lat)*(Math.PI/180) );
-						var yrot = new THREE.Matrix4().makeRotationY( (-160)*(Math.PI/180) + (item.long-180)*(Math.PI/180) );
-						var xyrot = xrot.multiply(yrot);
-						var zrot = new THREE.Matrix4().makeRotationZ( 0 );
-						var xyzrot = xyrot.multiply(zrot);
-
-						object.applyMatrix(	xyzrot );
-					};
-					object.position.set(xrad, zrad, yrad);
-
-					object.scale.multiplyScalar(0.25);
-					object.getObjectByName( "Cylinder030" ).material = new THREE.MeshPhongMaterial({
-						color: 0x000000,
-						shininess: 300
-					});
-					
-				});
-
-			});
-
-		});
-	
-	};
-
-	function addProvod() {
-
-		coords.forEach(function(item, i, coords) {
-
-			var mtlLoader = new MTLLoader();
-			mtlLoader.load('1.mtl', function (materials) {
-				materials.preload();
-				var objLoader = new THREE.OBJLoader();
-				objLoader.setMaterials(materials);
-				objLoader.load('1.obj', function (object) {		
-						
-					group_models.add(object);
-					console.log(object);
-					object.translate(0, 0, 0.25 + 595);
-					var startVector = new THREE.Vector3(0, 0, 0);
-					var endVector = new THREE.Vector3(xrad,  yrad,  zrad);
-
-					var phi   = (90-item.lat)*(Math.PI/180);
-					var theta = (item.long-180)*(Math.PI/180);
-					let xrad = -((595) * Math.sin(phi)*Math.cos(theta));
-					let zrad = ((595) * Math.sin(phi)*Math.sin(theta));
-					let yrad = ((595) * Math.cos(phi));
-					if ((item.lat < 0)&(item.lat > -45)&(item.long < 0)&(item.long > -45)){
-						var xrot = new THREE.Matrix4().makeRotationX( (180)*(Math.PI/180) - (90-item.lat)*(Math.PI/180) );
-						var yrot = new THREE.Matrix4().makeRotationY( (270)*(Math.PI/180) - (item.long-180)*(Math.PI/180) );
-						var xyrot = xrot.multiply(yrot);
-						var zrot = new THREE.Matrix4().makeRotationZ( 0 );
-						var xyzrot = xyrot.multiply(zrot);
-
-						object.applyMatrix(	xyzrot );
-					};
-					if ((item.lat < 0)&(item.lat > -45)&(item.long < -90)&(item.long > -135)){
-						var xrot = new THREE.Matrix4().makeRotationX( (180)*(Math.PI/180) - (90-item.lat)*(Math.PI/180) );
-						var yrot = new THREE.Matrix4().makeRotationY( (270)*(Math.PI/180) - (item.long-180)*(Math.PI/180) );
-						var xyrot = xrot.multiply(yrot);
-						var zrot = new THREE.Matrix4().makeRotationZ( 0 );
-						var xyzrot = xyrot.multiply(zrot);
-
-						object.applyMatrix(	xyzrot );
-					};
-					if ((item.lat > 0)&(item.lat < 45)&(item.long < -90)&(item.long > -135)){
-						var xrot = new THREE.Matrix4().makeRotationX( (180)*(Math.PI/180) - (90-item.lat)*(Math.PI/180) );
-						var yrot = new THREE.Matrix4().makeRotationY( (270)*(Math.PI/180) - (item.long-180)*(Math.PI/180) );
-						var xyrot = xrot.multiply(yrot);
-						var zrot = new THREE.Matrix4().makeRotationZ( 0 );
-						var xyzrot = xyrot.multiply(zrot);
-
-						object.applyMatrix(	xyzrot );
-					};
-					if ((item.lat > 45)&(item.lat < 90)&(item.long < -90)&(item.long > -135)){
-						var xrot = new THREE.Matrix4().makeRotationX( (180)*(Math.PI/180) - (90-item.lat)*(Math.PI/180) );
-						var yrot = new THREE.Matrix4().makeRotationY( (264)*(Math.PI/180) - (item.long-180)*(Math.PI/180) );
-						var xyrot = xrot.multiply(yrot);
-						var zrot = new THREE.Matrix4().makeRotationZ( 0 );
-						var xyzrot = xyrot.multiply(zrot);
-
-						object.applyMatrix(	xyzrot );
-					};
-					if ((item.lat > 0)&(item.lat < 45)&(item.long > 0)){
-						var xrot = new THREE.Matrix4().makeRotationX( (300)*(Math.PI/180) - (90-item.lat)*(Math.PI/180) );
-						var yrot = new THREE.Matrix4().makeRotationY( (-35)*(Math.PI/180) - (item.long-180)*(Math.PI/180) );
-						var xyrot = xrot.multiply(yrot);
-						var zrot = new THREE.Matrix4().makeRotationZ( 0 );
-						var xyzrot = xyrot.multiply(zrot);
-
-						object.applyMatrix(	xyzrot );
-					};
-					if ((item.lat > 45)&(item.lat < 90)&(item.long > 0)){
-						var xrot = new THREE.Matrix4().makeRotationX( (-25)*(Math.PI/180) + (90-item.lat)*(Math.PI/180) );
-						var yrot = new THREE.Matrix4().makeRotationY( (-160)*(Math.PI/180) + (item.long-180)*(Math.PI/180) );
-						var xyrot = xrot.multiply(yrot);
-						var zrot = new THREE.Matrix4().makeRotationZ( 0 );
-						var xyzrot = xyrot.multiply(zrot);
-
-						object.applyMatrix(	xyzrot );
-					};
-					object.position.set(xrad, zrad, yrad);
-					object.receiveShadow = true;
-					object.scale.multiplyScalar(0.25);
-					console.log(object);
-					//object.getObjectByName( "Line012" ).material = new THREE.MeshPhongMaterial({
-					//	color: 0x000000,
-					//	shininess: 100
-					//});
-					//object.lights =  true;
-
-					object.traverse (function (child) {
-					        if (child instanceof THREE.Mesh) {
-					          child.material.emissive.setHex( 0x000000 );
-					          child.material.specular.setHex( 0x000000 );
-					          child.material.color.setHex( 0x000000 );
-					          child.material.lights=true;
-					          child.material.shininess=900;
-					          child.material.flatShading=false;
-					        }
-					        //for (var i = 0; i < elements.length; i++) {
-						    //    if ((child instanceof THREE.Mesh)&(i > 10)) {
-						    //      child.material.emissive.setHex( 0x000000 );
-						    //      child.material.specular.setHex( 0x000000 );
-						    //      child.material.color.setHex( 0x000000 );
-						    //      child.material.lights=true;
-						    //      child.material.shininess=900;
-						    //      child.material.flatShading=false;
-						    //    }
-					        //}
-					     });
-				});
-
-			});
-
-		});
-
-	};
-
 	function addLights() {
 		var ambiColor = "#ffffff";
 		var ambientLight = new THREE.AmbientLight(ambiColor, 0.5);
 		scene.add(ambientLight);
+
 	};
 
 	function addDirLight(){
@@ -649,29 +424,10 @@ mounted(){
 		directionalLight.shadow.camera.right = 600;
 		directionalLight.shadow.camera.top = 600;
 		directionalLight.shadow.camera.bottom = -600;
-
-		//directionalLight.distance = 10;
-		//directionalLight.intensity = 14.0;
 		directionalLight.shadow.mapSize.height = 1024;
 		directionalLight.shadow.mapSize.width = 1024;
 		camera.add(directionalLight);
 
-		//var directionalLightColor = new THREE.Color( 0xffffff );
-		//var directionalLight = new THREE.DirectionalLight( directionalLightColor, 0.6 );
-		
-		//directionalLight.castShadow = true;
-		//directionalLight.shadow.camera.near = 1;
-		//directionalLight.shadow.camera.far = 10;
-		//directionalLight.shadow.camera.left = -5;
-		//directionalLight.shadow.camera.right = 5;
-		//directionalLight.shadow.camera.top = 5;
-		//directionalLight.shadow.camera.bottom = -5;
-		//directionalLight.distance = 10; this proeprty does not exist
-		//directionalLight.intensity = 14.0; the value 14 is way too high
-		//directionalLight.shadow.mapSize.height = 1024;
-		//directionalLight.shadow.mapSize.width = 1024;
-		
-		//scene.add( directionalLight );
 	};
 
 	function addClouds(){
@@ -1375,6 +1131,70 @@ mounted(){
 
 	};
 
+Wire = function(){
+
+	var geom = new THREE.CylinderGeometry(50,50,2800,40,40);
+	geom.applyMatrix(new THREE.Matrix4().makeRotationX(-Math.PI/2));
+	geom.mergeVertices();
+	var l = geom.vertices.length;
+
+	this.waves = [];
+
+	for (var i=0;i<l;i++){
+
+		var v = geom.vertices[i];
+
+		this.waves.push({y:v.y,
+			x:v.x,
+			z:v.z,
+			ang:Math.random()*Math.PI*2,
+			amp:5 + Math.random()*15,
+			speed:0.016 + Math.random()*0.032
+		});
+
+	};
+
+	var mat = new THREE.MeshPhongMaterial({
+		color: 0x0000ff,
+		transparent:true,
+		opacity:.8,
+		shading:THREE.FlatShading,
+	});
+
+	this.mesh = new THREE.Mesh(geom, mat);
+	this.mesh.receiveShadow = true;
+
+};
+
+	Wire.prototype.moveWaves = function (){
+
+		var verts = this.mesh.geometry.vertices;
+		var l = verts.length;
+
+		for (var i=0; i<l; i++){
+
+			var v = verts[i];
+			var vprops = this.waves[i];
+			v.x =  vprops.x + Math.cos(vprops.ang)*vprops.amp;
+			v.y = vprops.y + Math.sin(vprops.ang)*vprops.amp;
+			vprops.ang += vprops.speed;
+
+		};
+
+		this.mesh.geometry.verticesNeedUpdate=true;
+		wire.mesh.rotation.z += .005;
+
+	};
+
+	function createWire(){
+
+		wire = new Wire();
+		wire.mesh.position.y = -600;
+
+		scene.add(wire.mesh);
+
+	};
+
 	init();
 	animate();
 	function init() {
@@ -1391,14 +1211,14 @@ mounted(){
 		//addAureole_4();
 		//addAureole_5();
 		//addAureole_6();
+		createWire();
 		addClouds();
-		addConnector();
-		addProvod();
 		addLights();
 		addDirLight();
 
 	};
 	function animate() {
+		wire.moveWaves();
 		window.requestAnimationFrame(animate);
 		Render();
 		//for (var i = 0; i < geometry.vertices.length; i++) {
@@ -1409,15 +1229,18 @@ mounted(){
 	};
 	function Render() {
 
-		camera.rotation.y = 8*(Math.PI/180);
-		camera.rotation.x = -28*(Math.PI/180);
-		camera.rotation.z = 11*(Math.PI/180);
-		camera.position.x = -900;
-		camera.position.y = 1200;
-		camera.position.z = 2300;
-		group_models.rotation.x = 90*(Math.PI/180);
-		group_models.rotation.y = 138*(Math.PI/180);
-		group_models.rotation.z = 11*(Math.PI/180);
+		//camera.rotation.y = 8*(Math.PI/180);
+		//camera.rotation.x = -28*(Math.PI/180);
+		//camera.rotation.z = 11*(Math.PI/180);
+		//camera.position.x = -900;
+		//camera.position.y = 1200;
+		//camera.position.z = 2300;
+		//group_models.rotation.x = 90*(Math.PI/180);
+		//group_models.rotation.y = 138*(Math.PI/180);
+		//group_models.rotation.z = 11*(Math.PI/180);
+		//group_models.position.x--;
+		//group_models.position.y--;
+
 	//	camera.position.x=width *2 / 3;
 	//	camera.position.y=500;
 	//	camera.position.z=height *1 / 3;
