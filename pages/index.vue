@@ -1139,7 +1139,7 @@ mounted(){
 		var l = geom.vertices.length;
 		var r = 10;
 		this.waves = [];
-
+		this.waves_1 = [];
 		for (var i=0;i<l;i++){
 
 			var v = geom.vertices[i];
@@ -1148,7 +1148,7 @@ mounted(){
 				y:v.y,
 				x:v.x,
 				z:v.z,
-				amp:0
+				offset:0
 			});
 
 		};
@@ -1161,6 +1161,39 @@ mounted(){
 		});
 
 		this.mesh = new THREE.Mesh(geom, mat);
+
+		var verts = this.mesh.geometry.vertices;
+		var l = verts.length;
+		var vzarr=[], vz;
+		for (var i=0; i<l; i++){
+			vz = this.waves[i].z;
+			vzarr.push(vz);
+		}
+		for (var i=0; i<l; i++){
+
+			var v, vprops;
+
+			v = verts[i];
+			vprops = this.waves[i];
+
+			var	offset;
+			vzarr.forEach(e =>{
+				if(e == this.waves[i].z){
+					offset = i*0.02*Math.cos( e );
+						v.x =  vprops.x + offset;
+						v.y = vprops.y + offset;
+					this.waves_1.push({
+						y:v.y,
+						x:v.x,
+						z:v.z,
+						offset: offset
+					});
+				};
+			});
+			console.log(this.waves_1);
+
+		};
+
 		this.mesh.receiveShadow = true;
 	};
 	Connector1 = function(){
@@ -1321,46 +1354,27 @@ mounted(){
 		var l = verts.length;
 		var vzarr=[], vz;
 		for (var i=0; i<l; i++){
-			vz = this.waves[i].z;
+			vz = this.waves_1[i].z;
 			vzarr.push(vz);
 		}
-		console.log(vzarr);
 		for (var i=0; i<l; i++){
 
 			var v, vprops;
 
 			v = verts[i];
-			vprops = this.waves[i];
+			vprops = this.waves_1[i];
 
-
+			var	offset_1;
+			var fuck = 0.02;
+			//var fuck = Math.random() * (0.02 - 0.01) + 0.01;
 			vzarr.forEach(e =>{
-				if(e == this.waves[i].z){
+				if(e == this.waves_1[i].z){
 
-					var	offset = 50*Math.cos( e );	
-
-					if ((vprops.x < 0)&(vprops.y < 0)){
-						v.x =  vprops.x + offset;
-						v.y = vprops.y + offset;
-					};
-					if ((vprops.x >= 0)&(vprops.y >= 0)){
-						v.x =  vprops.x + offset;
-						v.y = vprops.y + offset;
-					};
-					if ((vprops.x < 0)&(vprops.y >= 0)){
-						v.x =  vprops.x + offset;
-						v.y = vprops.y + offset;
-					};
-					if ((vprops.x >= 0)&(vprops.y < 0)){
-						v.x =  vprops.x + offset;
-						v.y = vprops.y + offset;
-					};
-					//	v.x =  vprops.x + offset;
-					//	v.y = vprops.y + offset;
+					offset_1 = this.waves_1[i].offset;
+						v.x =  vprops.x + offset_1*Math.random() * (0.02 - 0.01) + 0.01;
+						v.y = vprops.y + offset_1*Math.random() * (0.02 - 0.01) + 0.01;
 				};
 			});
-
-
-
 
 		};
 		
