@@ -79,7 +79,7 @@ mounted(){
 	var color = 0x000000;
 	var mouse = new THREE.Vector2(), INTERSECTED;
 
-	var camera, scene, renderer, group, controls, earth_texture, group_models, Wire, wire;
+	var camera, scene, renderer, group, controls, earth_texture, group_models, Wire, wire, Connector1, Connector2, connector1, connector2, sticker, Sticker, StickerGlow, stickerGlow;
 
 
 //CREATE_SCENE
@@ -1130,71 +1130,298 @@ mounted(){
 		//EARTH_AUREOLE_END
 
 	};
+//Wire animation----------------------------------------------------
+	Wire = function(){
 
-Wire = function(){
+		var geom = new THREE.CylinderGeometry(10,10,700,55,55);
+		geom.applyMatrix(new THREE.Matrix4().makeRotationX(-Math.PI/2));
+		geom.mergeVertices();
+		var l = geom.vertices.length;
+		var r = 10;
+		this.waves = [];
 
-	var geom = new THREE.CylinderGeometry(50,50,2800,40,40);
-	geom.applyMatrix(new THREE.Matrix4().makeRotationX(-Math.PI/2));
-	geom.mergeVertices();
-	var l = geom.vertices.length;
+		for (var i=0;i<l;i++){
 
-	this.waves = [];
+			var v = geom.vertices[i];
 
-	for (var i=0;i<l;i++){
+			this.waves.push({
+				y:v.y,
+				x:v.x,
+				z:v.z,
+				amp:0
+			});
 
-		var v = geom.vertices[i];
+		};
 
-		this.waves.push({y:v.y,
-			x:v.x,
-			z:v.z,
-			ang:Math.random()*Math.PI*2,
-			amp:5 + Math.random()*15,
-			speed:0.016 + Math.random()*0.032
+		var mat = new THREE.MeshPhongMaterial({
+			color: 0xff0000,
+			transparent:true,
+			opacity:1.0,
+			shading:THREE.FlatShading,
 		});
 
+		this.mesh = new THREE.Mesh(geom, mat);
+		this.mesh.receiveShadow = true;
 	};
+	Connector1 = function(){
 
-	var mat = new THREE.MeshPhongMaterial({
-		color: 0x0000ff,
-		transparent:true,
-		opacity:.8,
-		shading:THREE.FlatShading,
-	});
+		var geom = new THREE.CylinderGeometry(20,20,100,80,80);
+		geom.applyMatrix(new THREE.Matrix4().makeRotationX(-Math.PI/2));
+		geom.mergeVertices();
+		var l = geom.vertices.length;
 
-	this.mesh = new THREE.Mesh(geom, mat);
-	this.mesh.receiveShadow = true;
+		//this.waves = [];
 
-};
+		//for (var i=0;i<l;i++){
+
+		//	var v = geom.vertices[i];
+
+		//	this.waves.push({y:v.y,
+		//		x:v.x,
+		//		z:v.z,
+		//		ang:Math.random()*Math.PI*2,
+		//		amp:5 + Math.random()*15,
+		//		speed:0.016 + Math.random()*0.032
+		//	});
+
+		//};
+
+		var mat = new THREE.MeshPhongMaterial({
+			color: 0x030303,
+			transparent:true,
+			opacity:1.0,
+			shading:THREE.FlatShading,
+		});
+
+		this.mesh = new THREE.Mesh(geom, mat);
+		this.mesh.receiveShadow = true;
+
+	};
+	Connector2 = function(){
+
+		var geom = new THREE.CylinderGeometry(30,30,15,80,80);
+		geom.applyMatrix(new THREE.Matrix4().makeRotationX(-Math.PI/2));
+		geom.mergeVertices();
+		var l = geom.vertices.length;
+
+		//this.waves = [];
+
+		//for (var i=0;i<l;i++){
+
+		//	var v = geom.vertices[i];
+
+		//	this.waves.push({y:v.y,
+		//		x:v.x,
+		//		z:v.z,
+		//		ang:Math.random()*Math.PI*2,
+		//		amp:5 + Math.random()*15,
+		//		speed:0.016 + Math.random()*0.032
+		//	});
+
+		//};
+
+		var mat = new THREE.MeshPhongMaterial({
+			color: 0x030303,
+			transparent:true,
+			opacity:1.0,
+			shading:THREE.FlatShading,
+		});
+
+		this.mesh = new THREE.Mesh(geom, mat);
+		this.mesh.receiveShadow = true;
+
+	};
+	Sticker = function(){
+
+		var geom = new THREE.CylinderGeometry(20.2,20.2,60,80,80);
+		geom.applyMatrix(new THREE.Matrix4().makeRotationX(-Math.PI/2));
+		geom.mergeVertices();
+		var l = geom.vertices.length;
+
+		//this.waves = [];
+
+		//for (var i=0;i<l;i++){
+
+		//	var v = geom.vertices[i];
+
+		//	this.waves.push({y:v.y,
+		//		x:v.x,
+		//		z:v.z,
+		//		ang:Math.random()*Math.PI*2,
+		//		amp:5 + Math.random()*15,
+		//		speed:0.016 + Math.random()*0.032
+		//	});
+
+		//};
+
+		var mat = new THREE.MeshPhongMaterial({
+			color: 0x16202b,
+			transparent:true,
+			opacity:1.0,
+			shading:THREE.FlatShading,
+		});
+
+		this.mesh = new THREE.Mesh(geom, mat);
+		this.mesh.receiveShadow = true;
+
+	};
+	StickerGlow = function(){
+
+		//EARTH_AUREOLE
+		var customMaterial = new THREE.ShaderMaterial( 
+		{
+		    uniforms: 
+			{ 
+				"c":   { type: "f", value: 1.4 },
+				"p":   { type: "f", value: 1.6 },
+				glowColor: { type: "c", value: new THREE.Color(0x304a62) },
+				viewVector: { type: "v3", value: camera.position }
+			},
+			vertexShader: `
+				uniform vec3 viewVector;
+				uniform float c;
+				uniform float p;
+				varying float intensity;
+				void main() 
+				{
+					vec3 vNormal = normalize( normalMatrix * normal );
+					vec3 vNormel = normalize( normalMatrix * viewVector );
+					intensity = pow( c - dot(vNormal, vNormel), p );
+
+					gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
+				}
+			`,
+			fragmentShader: `
+				uniform vec3 glowColor;
+				varying float intensity;
+				void main() 
+				{
+					vec3 glow = glowColor * intensity;
+					gl_FragColor = vec4( glow, 1.0 );
+				}
+			`,
+			side: THREE.DoubleSide,
+			blending: THREE.AdditiveBlending,
+			transparent: true
+		}   );
+		let moonGlow_geometry = new THREE.CylinderGeometry(22,22,60,80,80);
+
+		moonGlow_geometry.applyMatrix(new THREE.Matrix4().makeRotationX(-Math.PI/2));
+		this.mesh = new THREE.Mesh( moonGlow_geometry, customMaterial );
+		//moonGlow.scale.multiplyScalar(1.2);
+				customMaterial.fog = false;
+		customMaterial.depthWrite = false;
+		//EARTH_AUREOLE_END
+
+	};
 
 	Wire.prototype.moveWaves = function (){
 
 		var verts = this.mesh.geometry.vertices;
 		var l = verts.length;
-
+		var vzarr=[], vz;
+		for (var i=0; i<l; i++){
+			vz = this.waves[i].z;
+			vzarr.push(vz);
+		}
+		console.log(vzarr);
 		for (var i=0; i<l; i++){
 
-			var v = verts[i];
-			var vprops = this.waves[i];
-			v.x =  vprops.x + Math.cos(vprops.ang)*vprops.amp;
-			v.y = vprops.y + Math.sin(vprops.ang)*vprops.amp;
-			vprops.ang += vprops.speed;
+			var v, vprops;
+
+			v = verts[i];
+			vprops = this.waves[i];
+
+
+			vzarr.forEach(e =>{
+				if(e == this.waves[i].z){
+
+					var	offset = 50*Math.cos( e );	
+
+					if ((vprops.x < 0)&(vprops.y < 0)){
+						v.x =  vprops.x + offset;
+						v.y = vprops.y + offset;
+					};
+					if ((vprops.x >= 0)&(vprops.y >= 0)){
+						v.x =  vprops.x + offset;
+						v.y = vprops.y + offset;
+					};
+					if ((vprops.x < 0)&(vprops.y >= 0)){
+						v.x =  vprops.x + offset;
+						v.y = vprops.y + offset;
+					};
+					if ((vprops.x >= 0)&(vprops.y < 0)){
+						v.x =  vprops.x + offset;
+						v.y = vprops.y + offset;
+					};
+					//	v.x =  vprops.x + offset;
+					//	v.y = vprops.y + offset;
+				};
+			});
+
+
+
 
 		};
-
+		
 		this.mesh.geometry.verticesNeedUpdate=true;
-		wire.mesh.rotation.z += .005;
-
+		//wire.mesh.rotation.z += .005;
+		
 	};
 
 	function createWire(){
 
 		wire = new Wire();
-		wire.mesh.position.y = -600;
+		//wire.mesh.position.x = -600;
+		//wire.mesh.position.y = -300;
+		wire.mesh.position.z = 465;
 
-		scene.add(wire.mesh);
+		group_models.add(wire.mesh);
+	};
+	function createConnector1(){
+
+		connector1 = new Connector1();
+		//connector1.mesh.position.x = -600;
+		//connector1.mesh.position.y = -300;
+		connector1.mesh.position.z = 65;
+
+		group_models.add(connector1.mesh);
 
 	};
+	function createSticker(){
 
+		sticker = new Sticker();
+		//connector1.mesh.position.x = -600;
+		//connector1.mesh.position.y = -300;
+		sticker.mesh.position.z = 65;
+
+		group_models.add(sticker.mesh);
+
+	};
+	function createStickerGlow(){
+
+		stickerGlow = new StickerGlow();
+		//connector1.mesh.position.x = -600;
+		//connector1.mesh.position.y = -300;
+		stickerGlow.mesh.position.z = 65;
+
+		group_models.add(stickerGlow.mesh);
+
+	};
+	function createConnector2(){
+
+		connector2 = new Connector2();
+		//connector2.mesh.position.x = -600;
+		//connector2.mesh.position.y = -300;
+		connector2.mesh.position.z = 7.5;
+
+		group_models.add(connector2.mesh);
+
+	};
+	function moveGroup_models() {
+		group_models.position.z = 800;
+	};
+//---------------------------------------------------------
 	init();
 	animate();
 	function init() {
@@ -1211,21 +1438,25 @@ Wire = function(){
 		//addAureole_4();
 		//addAureole_5();
 		//addAureole_6();
+
 		createWire();
+		createConnector1();
+		createSticker();
+		createStickerGlow();
+		createConnector2();
+
 		addClouds();
 		addLights();
 		addDirLight();
 
 	};
 	function animate() {
+
 		wire.moveWaves();
+		moveGroup_models();
+
 		window.requestAnimationFrame(animate);
 		Render();
-		//for (var i = 0; i < geometry.vertices.length; i++) {
-		//	let vec_1 = geometry.vertices[i];
-		//	vec_1.z= 100 * 
-		//}
-		//group_models.rotation.y += 0.006;
 	};
 	function Render() {
 
@@ -1246,7 +1477,6 @@ Wire = function(){
 	//	camera.position.z=height *1 / 3;
 		renderer.autoClear = false;
 		renderer.clear();
-		//renderer.render(backgroundScene , backgroundCamera );
 		renderer.render( scene, camera );
 	};
 
