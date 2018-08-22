@@ -109,6 +109,7 @@ mounted(){
 
 		scene.add(group);
 		scene.add(group_models);
+		group_models.position.z = 600;
 		scene.add(camera);
 
 	};
@@ -1139,7 +1140,7 @@ mounted(){
 		var l = geom.vertices.length;
 		var r = 10;
 		this.waves = [];
-		this.waves_1 = [];
+		this.wavesNew = [];
 		for (var i=0;i<l;i++){
 
 			var v = geom.vertices[i];
@@ -1148,13 +1149,14 @@ mounted(){
 				y:v.y,
 				x:v.x,
 				z:v.z,
-				offset:0
+				amp: -0.02,
+				speed: 0.0001
 			});
 
 		};
 
 		var mat = new THREE.MeshPhongMaterial({
-			color: 0xff0000,
+			color: 0x030303,
 			transparent:true,
 			opacity:1.0,
 			shading:THREE.FlatShading,
@@ -1162,37 +1164,6 @@ mounted(){
 
 		this.mesh = new THREE.Mesh(geom, mat);
 
-		var verts = this.mesh.geometry.vertices;
-		var l = verts.length;
-		var vzarr=[], vz;
-		for (var i=0; i<l; i++){
-			vz = this.waves[i].z;
-			vzarr.push(vz);
-		}
-		for (var i=0; i<l; i++){
-
-			var v, vprops;
-
-			v = verts[i];
-			vprops = this.waves[i];
-
-			var	offset;
-			vzarr.forEach(e =>{
-				if(e == this.waves[i].z){
-					offset = i*0.02*Math.cos( e );
-						v.x =  vprops.x + offset;
-						v.y = vprops.y + offset;
-					this.waves_1.push({
-						y:v.y,
-						x:v.x,
-						z:v.z,
-						offset: offset
-					});
-				};
-			});
-			console.log(this.waves_1);
-
-		};
 
 		this.mesh.receiveShadow = true;
 	};
@@ -1348,41 +1319,76 @@ mounted(){
 
 	};
 
-	Wire.prototype.moveWaves = function (){
 
+
+	Wire.prototype.moveWaves = function (newpos){
+	
 		var verts = this.mesh.geometry.vertices;
 		var l = verts.length;
 		var vzarr=[], vz;
+		
 		for (var i=0; i<l; i++){
-			vz = this.waves_1[i].z;
+			vz = this.waves[i].z;
 			vzarr.push(vz);
-		}
+		};
+
 		for (var i=0; i<l; i++){
 
-			var v, vprops;
-
+			var v, vprops, param, f;
 			v = verts[i];
-			vprops = this.waves_1[i];
+			vprops = this.waves[i];
+			var	offset, offset2;
+			var ampd = vprops.amp * newpos;
 
-			var	offset_1;
-			var fuck = 0.02;
-			//var fuck = Math.random() * (0.02 - 0.01) + 0.01;
-			vzarr.forEach(e =>{
-				if(e == this.waves_1[i].z){
 
-					offset_1 = this.waves_1[i].offset;
-						v.x =  vprops.x + offset_1*Math.random() * (0.02 - 0.01) + 0.01;
-						v.y = vprops.y + offset_1*Math.random() * (0.02 - 0.01) + 0.01;
-				};
-			});
+
+			offset = ampd*Math.cos( vprops.z );
+			offset2 = ampd*Math.sin( vprops.z );
+			v.x =  vprops.x + offset-offset2;
+			v.y = vprops.y + offset;
 
 		};
-		
+
 		this.mesh.geometry.verticesNeedUpdate=true;
 		//wire.mesh.rotation.z += .005;
 		
 	};
+	Wire.prototype.moveWavesOut = function (){
 
+		var verts = this.mesh.geometry.vertices;
+		var l = verts.length;
+		var vzarr=[], vz;
+		
+		for (var i=0; i<l; i++){
+			vz = this.waves[i].z;
+			vzarr.push(vz);
+		}
+		for (var i=0; i<l; i++){
+
+			var v, vprops, param;
+
+			v = verts[i];
+			param = -0.02;
+			vprops = this.waves[i];
+
+			var	offset;
+			vzarr.forEach(e =>{
+				if(e == this.waves[i].z){
+					offset = i*vprops.amp*Math.cos( e );
+						v.x =  vprops.x + offset;
+						v.y = vprops.y + offset;
+				};
+			});
+			if ((vprops.amp >= 0.02) || (vprops.amp <= (-0.02)))
+				{
+					param = (-1)*vprops.speed;
+				};
+			vprops.amp += vprops.speed
+		};
+		
+		this.mesh.geometry.verticesNeedUpdate=true;
+		
+	};
 	function createWire(){
 
 		wire = new Wire();
@@ -1433,7 +1439,9 @@ mounted(){
 
 	};
 	function moveGroup_models() {
-		group_models.position.z = 800;
+		
+
+		group_models.position.z += 8;
 	};
 //---------------------------------------------------------
 	init();
@@ -1464,14 +1472,21 @@ mounted(){
 		addDirLight();
 
 	};
+	let newpos = 0.01;
+	let q = 2;
 	function animate() {
 
-		wire.moveWaves();
-		moveGroup_models();
-
+		wire.moveWaves(newpos);
+		//wire.moveWavesOut();
+		//moveGroup_models();
+		if(newpos >= 1500){q = -2};
+		if(newpos <= -1500){q = 2};
+		newpos = newpos + q;
+		console.log(newpos);
 		window.requestAnimationFrame(animate);
 		Render();
 	};
+
 	function Render() {
 
 		//camera.rotation.y = 8*(Math.PI/180);
