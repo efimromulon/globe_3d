@@ -1329,7 +1329,6 @@ mounted(){
 			vz = this.waves[i].z;
 			vzarr.push(vz);
 		};
-
 		for (var i=0; i<l; i++){
 
 			var v, vprops, param, f;
@@ -1345,16 +1344,18 @@ mounted(){
 
 			var newz = ( (vprops.z + max_v)*2 /  (max_v) );
 
-			if((qe <= 0.01)&&(vprops.z < -320)){qe = 0};
+			//if((qe <= 0.01)&&(vprops.z < -320)){qe = 0};
 
-			offset = Math.cos( vprops.z );
-			offset2 = Math.sin( vprops.z );
-			offset3 = Math.cos( vprops.z );
+			//if((Math.cos( vprops.z ) <=0.3)||(Math.cos( vprops.z ) >=-0.3)) {};
 
-			v.x =  vprops.x + newz*(offset - offset2);
-			v.y = vprops.y + newz*(offset + offset3);	
+			offset = ampd*(Math.cos( vprops.z + ampd ));
+			offset2 = ampd*(Math.sin( vprops.z + ampd ));
 
+			//v.x =  vprops.x + newz*(offset - offset2);
+			//v.y = vprops.y + newz*(offset2 - offset);	
 
+			v.x = vprops.x + (newz) * (offset);
+			v.y = vprops.y + (newz) * (offset2);
 
 		};
 
@@ -1488,7 +1489,8 @@ mounted(){
 	let q = 2;
 	function animate() {
 		var np_max=(Math.random() * (1500 - 500 + 1)) + 500;
-		var np_min=(-1)*((Math.random() * (1500 - 500 + 1)) + 500);
+		//var np_min=(-1)*((Math.random() * (1500 - 500 + 1)) + 500);
+		var np_min=(-1)*(np_max/5);
 
 		wire.moveWaves(newpos);
 		//wire.moveWavesOut();
