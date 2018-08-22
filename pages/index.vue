@@ -1134,7 +1134,7 @@ mounted(){
 //Wire animation----------------------------------------------------
 	Wire = function(){
 
-		var geom = new THREE.CylinderGeometry(10,10,700,55,55);
+		var geom = new THREE.CylinderGeometry(10,10,1700,55,55);
 		geom.applyMatrix(new THREE.Matrix4().makeRotationX(-Math.PI/2));
 		geom.mergeVertices();
 		var l = geom.vertices.length;
@@ -1156,7 +1156,7 @@ mounted(){
 		};
 
 		var mat = new THREE.MeshPhongMaterial({
-			color: 0x030303,
+			color: 0xff0303,
 			transparent:true,
 			opacity:1.0,
 			shading:THREE.FlatShading,
@@ -1203,7 +1203,7 @@ mounted(){
 	};
 	Connector2 = function(){
 
-		var geom = new THREE.CylinderGeometry(30,30,15,80,80);
+		var geom = new THREE.CylinderGeometry(30,30,17,80,80);
 		geom.applyMatrix(new THREE.Matrix4().makeRotationX(-Math.PI/2));
 		geom.mergeVertices();
 		var l = geom.vertices.length;
@@ -1319,8 +1319,6 @@ mounted(){
 
 	};
 
-
-
 	Wire.prototype.moveWaves = function (newpos){
 	
 		var verts = this.mesh.geometry.vertices;
@@ -1337,15 +1335,22 @@ mounted(){
 			var v, vprops, param, f;
 			v = verts[i];
 			vprops = this.waves[i];
-			var	offset, offset2;
+			var	offset, offset2, offset3;
 			var ampd = vprops.amp * newpos;
-
-
+			var min_v = Math.min.apply(null, vzarr);
+			var max_v = Math.max.apply(null, vzarr);
+			var qe = Math.abs(vprops.z / min_v);
+			var newz = ( (vprops.z + max_v) /  (max_v) );
+			if((qe <= 0.01)&&(vprops.z < -320)){qe = 0};
 
 			offset = ampd*Math.cos( vprops.z );
 			offset2 = ampd*Math.sin( vprops.z );
-			v.x =  vprops.x + offset-offset2;
-			v.y = vprops.y + offset;
+			offset3 = ampd*Math.cos( vprops.z );
+
+			v.x =  vprops.x + newz*(offset - offset2);
+			v.y = vprops.y + newz*(offset + offset3);	
+
+
 
 		};
 
@@ -1394,7 +1399,7 @@ mounted(){
 		wire = new Wire();
 		//wire.mesh.position.x = -600;
 		//wire.mesh.position.y = -300;
-		wire.mesh.position.z = 465;
+		wire.mesh.position.z = 917;
 
 		group_models.add(wire.mesh);
 	};
@@ -1403,7 +1408,7 @@ mounted(){
 		connector1 = new Connector1();
 		//connector1.mesh.position.x = -600;
 		//connector1.mesh.position.y = -300;
-		connector1.mesh.position.z = 65;
+		connector1.mesh.position.z = 67;
 
 		group_models.add(connector1.mesh);
 
@@ -1413,7 +1418,7 @@ mounted(){
 		sticker = new Sticker();
 		//connector1.mesh.position.x = -600;
 		//connector1.mesh.position.y = -300;
-		sticker.mesh.position.z = 65;
+		sticker.mesh.position.z = 67;
 
 		group_models.add(sticker.mesh);
 
@@ -1433,7 +1438,7 @@ mounted(){
 		connector2 = new Connector2();
 		//connector2.mesh.position.x = -600;
 		//connector2.mesh.position.y = -300;
-		connector2.mesh.position.z = 7.5;
+		connector2.mesh.position.z = 8.5;
 
 		group_models.add(connector2.mesh);
 
@@ -1473,16 +1478,20 @@ mounted(){
 
 	};
 	let newpos = 0.01;
+
+	let np_max=1500;
+	let np_min=-1500;
 	let q = 2;
 	function animate() {
+		var np_max=(Math.random() * (1500 - 500 + 1)) + 500;
+		var np_min=(-1)*((Math.random() * (1500 - 500 + 1)) + 500);
 
 		wire.moveWaves(newpos);
 		//wire.moveWavesOut();
 		//moveGroup_models();
-		if(newpos >= 1500){q = -2};
-		if(newpos <= -1500){q = 2};
-		newpos = newpos + q;
-		console.log(newpos);
+		if(newpos >= np_max){q = -2};
+		if(newpos <= np_min){q = 2};
+		newpos = newpos + q*4;
 		window.requestAnimationFrame(animate);
 		Render();
 	};
