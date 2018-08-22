@@ -1156,7 +1156,7 @@ mounted(){
 		};
 
 		var mat = new THREE.MeshPhongMaterial({
-			color: 0xff0303,
+			color: 0x030303,
 			transparent:true,
 			opacity:1.0,
 			shading:THREE.FlatShading,
@@ -1340,7 +1340,7 @@ mounted(){
 			var min_v = Math.min.apply(null, vzarr);
 			var max_v = Math.max.apply(null, vzarr);
 			var qe = Math.abs(vprops.z / min_v);
-			var newz = ( (vprops.z + max_v) /  (max_v) );
+			var newz = ( (vprops.z + max_v)*2 /  (max_v) );
 			if((qe <= 0.01)&&(vprops.z < -320)){qe = 0};
 
 			offset = ampd*Math.cos( vprops.z );
