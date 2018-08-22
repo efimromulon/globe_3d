@@ -1348,8 +1348,8 @@ mounted(){
 
 			//if((Math.cos( vprops.z ) <=0.3)||(Math.cos( vprops.z ) >=-0.3)) {};
 
-			offset = ampd*(Math.cos( vprops.z + ampd ));
-			offset2 = ampd*(Math.sin( vprops.z + ampd ));
+			offset = ampd*(Math.cos( vprops.z - ampd ));
+			offset2 = ampd*(Math.sin( vprops.z - ampd ));
 
 			//v.x =  vprops.x + newz*(offset - offset2);
 			//v.y = vprops.y + newz*(offset2 - offset);	
@@ -1488,16 +1488,16 @@ mounted(){
 	let np_min=-1500;
 	let q = 2;
 	function animate() {
-		var np_max=(Math.random() * (1500 - 500 + 1)) + 500;
+		//var np_max=(Math.random() * (1500 - 500 + 1)) + 500;
 		//var np_min=(-1)*((Math.random() * (1500 - 500 + 1)) + 500);
-		var np_min=(-1)*(np_max/5);
+		//var np_min=(-1)*(np_max/5);
 
 		wire.moveWaves(newpos);
 		//wire.moveWavesOut();
 		//moveGroup_models();
 		if(newpos >= np_max){q = -2};
 		if(newpos <= np_min){q = 2};
-		newpos = newpos + q*4;
+		newpos = newpos + q*1.5;
 		window.requestAnimationFrame(animate);
 		Render();
 	};
