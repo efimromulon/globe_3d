@@ -1134,7 +1134,7 @@ mounted(){
 //Wire animation----------------------------------------------------
 	Wire = function(){
 
-		var geom = new THREE.CylinderGeometry(10,10,1700,55,55);
+		var geom = new THREE.CylinderGeometry(16,16,1700,55,55);
 		geom.applyMatrix(new THREE.Matrix4().makeRotationX(-Math.PI/2));
 		geom.mergeVertices();
 		var l = geom.vertices.length;
@@ -1169,7 +1169,7 @@ mounted(){
 	};
 	Connector1 = function(){
 
-		var geom = new THREE.CylinderGeometry(20,20,100,80,80);
+		var geom = new THREE.CylinderGeometry(30,30,100,80,80);
 		geom.applyMatrix(new THREE.Matrix4().makeRotationX(-Math.PI/2));
 		geom.mergeVertices();
 		var l = geom.vertices.length;
@@ -1203,7 +1203,7 @@ mounted(){
 	};
 	Connector2 = function(){
 
-		var geom = new THREE.CylinderGeometry(30,30,17,80,80);
+		var geom = new THREE.CylinderGeometry(45,45,17,80,80);
 		geom.applyMatrix(new THREE.Matrix4().makeRotationX(-Math.PI/2));
 		geom.mergeVertices();
 		var l = geom.vertices.length;
@@ -1237,7 +1237,7 @@ mounted(){
 	};
 	Sticker = function(){
 
-		var geom = new THREE.CylinderGeometry(20.2,20.2,60,80,80);
+		var geom = new THREE.CylinderGeometry(31,31,60,80,80);
 		geom.applyMatrix(new THREE.Matrix4().makeRotationX(-Math.PI/2));
 		geom.mergeVertices();
 		var l = geom.vertices.length;
@@ -1308,7 +1308,7 @@ mounted(){
 			blending: THREE.AdditiveBlending,
 			transparent: true
 		}   );
-		let moonGlow_geometry = new THREE.CylinderGeometry(22,22,60,80,80);
+		let moonGlow_geometry = new THREE.CylinderGeometry(34,34,60,80,80);
 
 		moonGlow_geometry.applyMatrix(new THREE.Matrix4().makeRotationX(-Math.PI/2));
 		this.mesh = new THREE.Mesh( moonGlow_geometry, customMaterial );
@@ -1337,15 +1337,19 @@ mounted(){
 			vprops = this.waves[i];
 			var	offset, offset2, offset3;
 			var ampd = vprops.amp * newpos;
+
 			var min_v = Math.min.apply(null, vzarr);
 			var max_v = Math.max.apply(null, vzarr);
+
 			var qe = Math.abs(vprops.z / min_v);
+
 			var newz = ( (vprops.z + max_v)*2 /  (max_v) );
+
 			if((qe <= 0.01)&&(vprops.z < -320)){qe = 0};
 
-			offset = ampd*Math.cos( vprops.z );
-			offset2 = ampd*Math.sin( vprops.z );
-			offset3 = ampd*Math.cos( vprops.z );
+			offset = Math.cos( vprops.z );
+			offset2 = Math.sin( vprops.z );
+			offset3 = Math.cos( vprops.z );
 
 			v.x =  vprops.x + newz*(offset - offset2);
 			v.y = vprops.y + newz*(offset + offset3);	
