@@ -79,9 +79,39 @@ mounted(){
 	var color = 0x000000;
 	var mouse = new THREE.Vector2(), INTERSECTED;
 
-	var camera, scene, renderer, group, controls, earth_texture, group_models, Wire, wire, Connector1, Connector2, connector1, connector2, sticker, Sticker, StickerGlow, stickerGlow;
-
-
+	var camera, scene, renderer, group, controls, earth_texture;
+	var group_wire_1, group_wire_2, group_wire_3,
+		group_wire_4, group_wire_5, group_wire_6;
+	var Wire, wire,
+		Connector1, Connector2,
+		connector1, connector2,
+		sticker, Sticker,
+		StickerGlow, stickerGlow;
+	var Wire_2, wire_2,
+		Connector1_2, Connector2_2,
+		connector1_2, connector2_2,
+		sticker_2, Sticker_2,
+		StickerGlow_2, stickerGlow_2;
+	var Wire_3, wire_3,
+		Connector1_3, Connector2_3,
+		connector1_3, connector2_3,
+		sticker_3, Sticker_3,
+		StickerGlow_3, stickerGlow_3;
+	var Wire_4, wire_4,
+		Connector1_4, Connector2_4,
+		connector1_4, connector2_4,
+		sticker_4, Sticker_4,
+		StickerGlow_4, stickerGlow_4;
+	var Wire_5, wire_5,
+		Connector1_5, Connector2_5,
+		connector1_5, connector2_5,
+		sticker_5, Sticker_5,
+		StickerGlow_5, stickerGlow_5;
+	var Wire_6, wire_6,
+		Connector1_6, Connector2_6,
+		connector1_6, connector2_6,
+		sticker_6, Sticker_6,
+		StickerGlow_6, stickerGlow_6;
 //CREATE_SCENE
 
 	function createScene() {
@@ -90,7 +120,12 @@ mounted(){
 		scene.fog = new THREE.FogExp2( 0x000104, 0.0000675 );
 		scene.background = new THREE.TextureLoader().load( 'background_map.jpg' );
 		group = new THREE.Object3D();
-		group_models = new THREE.Object3D();
+		group_wire_1 = new THREE.Object3D();
+		group_wire_2 = new THREE.Object3D();
+		group_wire_3 = new THREE.Object3D();
+		group_wire_4 = new THREE.Object3D();
+		group_wire_5 = new THREE.Object3D();
+		group_wire_6 = new THREE.Object3D();
 
 		camera = new THREE.PerspectiveCamera( fov, width / height, near, far );
 		camera.position.set( pos_x, pos_y, pos_z );
@@ -108,8 +143,12 @@ mounted(){
 		//backgroundScene.add(backgroundSceneMesh);
 
 		scene.add(group);
-		scene.add(group_models);
-		group_models.position.z = 600;
+		scene.add(group_wire_1);
+		scene.add(group_wire_2);
+		scene.add(group_wire_3);
+		scene.add(group_wire_4);
+		scene.add(group_wire_5);
+		scene.add(group_wire_6);
 		scene.add(camera);
 
 	};
@@ -1332,7 +1371,9 @@ let wire_l        = 1700,
 		//EARTH_AUREOLE_END
 
 	};
-let v,l;
+
+	let v,l;
+
 	Wire.prototype.moveWaves = function (n){
 	
 		v = this.mesh.geometry.vertices;
@@ -1370,49 +1411,290 @@ let v,l;
 	};
 //if((Math.cos( b.z ) <=0.3)||(Math.cos( b.z ) >=-0.3)) {};
 //offset = Math.sin(2*Math.PI*(qe))*(Math.exp(qe));
-	function createWire(){
 
-		wire = new Wire();
-		wire.mesh.position.z = Connector1_l + Connector2_l + (wire_l / 2);
-
-		group_models.add(wire.mesh);
-	};
-	function createConnector1(){
-
-		connector1 = new Connector1();
-		connector1.mesh.position.z = Connector2_l + (Connector1_l / 2);
-
-		group_models.add(connector1.mesh);
-
-	};
-	function createSticker(){
-
-		sticker = new Sticker();
-		sticker.mesh.position.z = Connector2_l + (Sticker_l / 2);
-
-		group_models.add(sticker.mesh);
-
-	};
-	function createStickerGlow(){
-
-		stickerGlow = new StickerGlow();
-		stickerGlow.mesh.position.z = Connector2_l + (StickerGlow_l / 2);
-
-		group_models.add(stickerGlow.mesh);
-
-	};
-	function createConnector2(){
+	function createWire_1(){
 
 		connector2 = new Connector2();
 		connector2.mesh.position.z = Connector2_l / 2;
 
-		group_models.add(connector2.mesh);
+		connector1 = new Connector1();
+		connector1.mesh.position.z = Connector2_l + (Connector1_l / 2);
+
+		sticker = new Sticker();
+		sticker.mesh.position.z = Connector2_l + (Sticker_l / 2);
+
+		stickerGlow = new StickerGlow();
+		stickerGlow.mesh.position.z = Connector2_l + (StickerGlow_l / 2);
+
+		wire = new Wire();
+		wire.mesh.position.z = Connector1_l + Connector2_l + (wire_l / 2);
+
+
+		group_wire_1.add(connector2.mesh);
+		group_wire_1.add(connector1.mesh);
+		group_wire_1.add(sticker.mesh);
+		group_wire_1.add(stickerGlow.mesh);
+		group_wire_1.add(wire.mesh);
+
 
 	};
-	function moveGroup_models() {
-		
 
-		group_models.position.z += 8;
+	function createWire_2(){
+
+		connector2_2 = new Connector2();
+		connector2_2.mesh.position.z = Connector2_l / 2;
+
+		connector1_2 = new Connector1();
+		connector1_2.mesh.position.z = Connector2_l + (Connector1_l / 2);
+
+		sticker_2 = new Sticker();
+		sticker_2.mesh.position.z = Connector2_l + (Sticker_l / 2);
+
+		stickerGlow_2 = new StickerGlow();
+		stickerGlow_2.mesh.position.z = Connector2_l + (StickerGlow_l / 2);
+
+		wire_2 = new Wire();
+		wire_2.mesh.position.z = Connector1_l + Connector2_l + (wire_l / 2);
+
+		group_wire_2.add(connector2_2.mesh);
+		group_wire_2.add(connector1_2.mesh);
+		group_wire_2.add(sticker_2.mesh);
+		group_wire_2.add(stickerGlow_2.mesh);
+		group_wire_2.add(wire_2.mesh);
+
+	};
+
+	function createWire_3(){
+
+		connector2_3 = new Connector2();
+		connector2_3.mesh.position.z = Connector2_l / 2;
+
+		connector1_3 = new Connector1();
+		connector1_3.mesh.position.z = Connector2_l + (Connector1_l / 2);
+
+		sticker_3 = new Sticker();
+		sticker_3.mesh.position.z = Connector2_l + (Sticker_l / 2);
+
+		stickerGlow_3 = new StickerGlow();
+		stickerGlow_3.mesh.position.z = Connector2_l + (StickerGlow_l / 2);
+
+		wire_3 = new Wire();
+		wire_3.mesh.position.z = Connector1_l + Connector2_l + (wire_l / 2);
+
+		group_wire_3.add(connector2_3.mesh);
+		group_wire_3.add(connector1_3.mesh);
+		group_wire_3.add(sticker_3.mesh);
+		group_wire_3.add(stickerGlow_3.mesh);
+		group_wire_3.add(wire_3.mesh);
+
+	};
+
+	function createWire_4(){
+
+		connector2_4 = new Connector2();
+		connector2_4.mesh.position.z = Connector2_l / 2;
+
+		connector1_4 = new Connector1();
+		connector1_4.mesh.position.z = Connector2_l + (Connector1_l / 2);
+
+		sticker_4 = new Sticker();
+		sticker_4.mesh.position.z = Connector2_l + (Sticker_l / 2);
+
+		stickerGlow_4 = new StickerGlow();
+		stickerGlow_4.mesh.position.z = Connector2_l + (StickerGlow_l / 2);
+
+		wire_4 = new Wire();
+		wire_4.mesh.position.z = Connector1_l + Connector2_l + (wire_l / 2);
+
+		group_wire_4.add(connector2_4.mesh);
+		group_wire_4.add(connector1_4.mesh);
+		group_wire_4.add(sticker_4.mesh);
+		group_wire_4.add(stickerGlow_4.mesh);
+		group_wire_4.add(wire_4.mesh);
+
+	};
+
+	function createWire_5(){
+
+		connector2_5 = new Connector2();
+		connector2_5.mesh.position.z = Connector2_l / 2;
+
+		connector1_5 = new Connector1();
+		connector1_5.mesh.position.z = Connector2_l + (Connector1_l / 2);
+
+		sticker_5 = new Sticker();
+		sticker_5.mesh.position.z = Connector2_l + (Sticker_l / 2);
+
+		stickerGlow_5 = new StickerGlow();
+		stickerGlow_5.mesh.position.z = Connector2_l + (StickerGlow_l / 2);
+
+		wire_5 = new Wire();
+		wire_5.mesh.position.z = Connector1_l + Connector2_l + (wire_l / 2);
+
+		group_wire_5.add(connector2_5.mesh);
+		group_wire_5.add(connector1_5.mesh);
+		group_wire_5.add(sticker_5.mesh);
+		group_wire_5.add(stickerGlow_5.mesh);
+		group_wire_5.add(wire_5.mesh);
+
+	};
+
+	function createWire_6(){
+
+		connector2_6 = new Connector2();
+		connector2_6.mesh.position.z = Connector2_l / 2;
+
+		connector1_6 = new Connector1();
+		connector1_6.mesh.position.z = Connector2_l + (Connector1_l / 2);
+
+		sticker_6 = new Sticker();
+		sticker_6.mesh.position.z = Connector2_l + (Sticker_l / 2);
+
+		stickerGlow_6 = new StickerGlow();
+		stickerGlow_6.mesh.position.z = Connector2_l + (StickerGlow_l / 2);
+
+		wire_6 = new Wire();
+		wire_6.mesh.position.z = Connector1_l + Connector2_l + (wire_l / 2);
+
+		group_wire_6.add(connector2_6.mesh);
+		group_wire_6.add(connector1_6.mesh);
+		group_wire_6.add(sticker_6.mesh);
+		group_wire_6.add(stickerGlow_6.mesh);
+		group_wire_6.add(wire_6.mesh);
+
+	};
+
+	function moveGroup_models_1() {
+		var startVector = new THREE.Vector3(0, 0, 0);
+		var endVector = new THREE.Vector3(xrad,  yrad,  zrad);
+		var lat = 18,	long = 24;
+		var phi   = (90-lat)*(Math.PI/180);
+		var theta = (long-180)*(Math.PI/180);
+		let xrad = -((595) * Math.sin(phi)*Math.cos(theta));
+		let zrad = ((595) * Math.sin(phi)*Math.sin(theta));
+		let yrad = ((595) * Math.cos(phi));
+
+		var xrot = new THREE.Matrix4().makeRotationX( (180)*(Math.PI/180) - (90-lat)*(Math.PI/180) );
+		var yrot = new THREE.Matrix4().makeRotationY( (270)*(Math.PI/180) - (long-180)*(Math.PI/180) );
+		var xyrot = xrot.multiply(yrot);
+		var zrot = new THREE.Matrix4().makeRotationZ( 0 );
+		var xyzrot = xyrot.multiply(zrot);
+		group_wire_1.translateX(600);
+		group_wire_1.applyMatrix(xyzrot);
+
+	};
+
+	function moveGroup_models_2() {
+		group_wire_2.translate(0, 0, 0.25 + 600);
+		var startVector = new THREE.Vector3(0, 0, 0);
+		var endVector = new THREE.Vector3(xrad,  yrad,  zrad);
+		var lat = -8,	long = -3;
+		var phi   = (90-lat)*(Math.PI/180);
+		var theta = (long-180)*(Math.PI/180);
+		let xrad = -((595) * Math.sin(phi)*Math.cos(theta));
+		let zrad = ((595) * Math.sin(phi)*Math.sin(theta));
+		let yrad = ((595) * Math.cos(phi));
+
+		var xrot = new THREE.Matrix4().makeRotationX( (180)*(Math.PI/180) - (90-lat)*(Math.PI/180) );
+		var yrot = new THREE.Matrix4().makeRotationY( (270)*(Math.PI/180) - (long-180)*(Math.PI/180) );
+		var xyrot = xrot.multiply(yrot);
+		var zrot = new THREE.Matrix4().makeRotationZ( 0 );
+		var xyzrot = xyrot.multiply(zrot);
+
+
+		group_wire_2.applyMatrix(	xyzrot );
+
+	};
+
+	function moveGroup_models_3() {
+		group_wire_3.translate(0, 0, 0.25 + 600);
+		var startVector = new THREE.Vector3(0, 0, 0);
+		var endVector = new THREE.Vector3(xrad,  yrad,  zrad);
+		var lat = -39,	long = -44;
+		var phi   = (90-lat)*(Math.PI/180);
+		var theta = (long-180)*(Math.PI/180);
+		let xrad = -((595) * Math.sin(phi)*Math.cos(theta));
+		let zrad = ((595) * Math.sin(phi)*Math.sin(theta));
+		let yrad = ((595) * Math.cos(phi));
+
+		var xrot = new THREE.Matrix4().makeRotationX( (180)*(Math.PI/180) - (90-lat)*(Math.PI/180) );
+		var yrot = new THREE.Matrix4().makeRotationY( (270)*(Math.PI/180) - (long-180)*(Math.PI/180) );
+		var xyrot = xrot.multiply(yrot);
+		var zrot = new THREE.Matrix4().makeRotationZ( 0 );
+		var xyzrot = xyrot.multiply(zrot);
+
+
+		group_wire_3.applyMatrix(	xyzrot );
+
+
+	};
+
+	function moveGroup_models_4() {
+		group_wire_4.translate(0, 0, 0.25 + 600);
+		var startVector = new THREE.Vector3(0, 0, 0);
+		var endVector = new THREE.Vector3(xrad,  yrad,  zrad);
+		var lat = -50,	long = 18;
+		var phi   = (90-lat)*(Math.PI/180);
+		var theta = (long-180)*(Math.PI/180);
+		let xrad = -((595) * Math.sin(phi)*Math.cos(theta));
+		let zrad = ((595) * Math.sin(phi)*Math.sin(theta));
+		let yrad = ((595) * Math.cos(phi));
+
+		var xrot = new THREE.Matrix4().makeRotationX( (180)*(Math.PI/180) - (90-lat)*(Math.PI/180) );
+		var yrot = new THREE.Matrix4().makeRotationY( (270)*(Math.PI/180) - (long-180)*(Math.PI/180) );
+		var xyrot = xrot.multiply(yrot);
+		var zrot = new THREE.Matrix4().makeRotationZ( 0 );
+		var xyzrot = xyrot.multiply(zrot);
+
+
+		group_wire_4.applyMatrix(	xyzrot );
+
+
+	};
+
+	function moveGroup_models_5() {
+		group_wire_5.translate(0, 0, 0.25 + 600);
+		var startVector = new THREE.Vector3(0, 0, 0);
+		var endVector = new THREE.Vector3(xrad,  yrad,  zrad);
+		var lat = 35,	long = -105;
+		var phi   = (90-lat)*(Math.PI/180);
+		var theta = (long-180)*(Math.PI/180);
+		let xrad = -((595) * Math.sin(phi)*Math.cos(theta));
+		let zrad = ((595) * Math.sin(phi)*Math.sin(theta));
+		let yrad = ((595) * Math.cos(phi));
+
+		var xrot = new THREE.Matrix4().makeRotationX( (180)*(Math.PI/180) - (90-lat)*(Math.PI/180) );
+		var yrot = new THREE.Matrix4().makeRotationY( (270)*(Math.PI/180) - (long-180)*(Math.PI/180) );
+		var xyrot = xrot.multiply(yrot);
+		var zrot = new THREE.Matrix4().makeRotationZ( 0 );
+		var xyzrot = xyrot.multiply(zrot);
+
+
+		group_wire_5.applyMatrix(	xyzrot );
+
+
+	};
+
+	function moveGroup_models_6() {
+		group_wire_6.translate(0, 0, 0.25 + 600);
+		var startVector = new THREE.Vector3(0, 0, 0);
+		var endVector = new THREE.Vector3(xrad,  yrad,  zrad);
+		var lat = 73,	long = -102;
+		var phi   = (90-lat)*(Math.PI/180);
+		var theta = (long-180)*(Math.PI/180);
+		let xrad = -((595) * Math.sin(phi)*Math.cos(theta));
+		let zrad = ((595) * Math.sin(phi)*Math.sin(theta));
+		let yrad = ((595) * Math.cos(phi));
+
+		var xrot = new THREE.Matrix4().makeRotationX( (180)*(Math.PI/180) - (90-lat)*(Math.PI/180) );
+		var yrot = new THREE.Matrix4().makeRotationY( (270)*(Math.PI/180) - (long-180)*(Math.PI/180) );
+		var xyrot = xrot.multiply(yrot);
+		var zrot = new THREE.Matrix4().makeRotationZ( 0 );
+		var xyzrot = xyrot.multiply(zrot);
+
+
+		group_wire_6.applyMatrix(	xyzrot );
+
 	};
 //---------------------------------------------------------
 	init();
@@ -1432,12 +1714,22 @@ let v,l;
 		//addAureole_5();
 		//addAureole_6();
 
-		createWire();
-		createConnector1();
-		createSticker();
-		createStickerGlow();
-		createConnector2();
-
+		createWire_1();
+		createWire_2();
+		createWire_3();
+		createWire_4();
+		createWire_5();
+		createWire_6();
+		//createConnector1();
+		//createSticker();
+		//createStickerGlow();
+		//createConnector2();
+		moveGroup_models_1();
+		moveGroup_models_2();
+		moveGroup_models_3();
+		moveGroup_models_4();
+		moveGroup_models_5();
+		moveGroup_models_6();
 		addClouds();
 		addLights();
 		addDirLight();
@@ -1461,7 +1753,7 @@ let v,l;
 		//var np_min=(-1)*((Math.random() * (1500 - 500 + 1)) + 500);
 		//var np_min=(-1)*(np_max/5);
 		wire.moveWaves(n);
-		console.log(q);
+		//wire_2.moveWaves(n);
 		if(n >= np_max){f = -1};
 		if(n <= np_min){f = 1};
 		n = n + f*(q);
