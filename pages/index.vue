@@ -1144,7 +1144,7 @@ let wire_l        = 1700,
 	StickerGlow_d = 34;
 	Wire = function(){
 
-		var g = new THREE.CylinderGeometry( wire_d,wire_d,wire_l, 55,55);
+		var g = new THREE.CylinderGeometry( wire_d,wire_d,wire_l, 110,55);
 
 			g.applyMatrix( new THREE.Matrix4().makeRotationX( -Math.PI/2 ) );
 			g.mergeVertices();
@@ -1354,7 +1354,9 @@ let v,l;
 			z_positive = b.z + max_v;
 
 			z_normalized = ((z_positive / z_length)) * c;
+//offset = 100*Math.sin(z_normalized) * ( Math.cos( b.z - c ) ); пиздатая рандомная функция
 
+			//offset = Math.sin(2*Math.PI*z_normalized)*Math.exp(-z_normalized);
 			offset = z_normalized * ( Math.cos( b.z - c ) );
 			offset2 = z_normalized * ( Math.sin( b.z - c ) );
 			
@@ -1442,10 +1444,12 @@ let v,l;
 
 	};
 
-	let n = 0.01;
 
-	let np_max=2000;
-	let np_min=500;
+
+	let np_max=2250 + 600;
+	let np_min=1000 + 600;
+
+	let n = np_max / 2 ;
 	let f = 1;
 	let q = 0;
 	for (var s = 0; s < 1; s=s+0.001) {
