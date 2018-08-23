@@ -1132,9 +1132,19 @@ mounted(){
 
 	};
 //Wire animation----------------------------------------------------
+let wire_l        = 1700,
+	wire_d        = 16,
+	Connector1_l  = 100,
+	Connector1_d  = 30,
+	Connector2_l  = 17,
+	Connector2_d  = 45,
+	Sticker_l     = 60,
+	Sticker_d     = 31,
+	StickerGlow_l = 60,
+	StickerGlow_d = 34;
 	Wire = function(){
 
-		var g = new THREE.CylinderGeometry( 16,16,1700, 55,55);
+		var g = new THREE.CylinderGeometry( wire_d,wire_d,wire_l, 55,55);
 
 			g.applyMatrix( new THREE.Matrix4().makeRotationX( -Math.PI/2 ) );
 			g.mergeVertices();
@@ -1172,7 +1182,7 @@ mounted(){
 
 	Connector1 = function(){
 
-		var geom = new THREE.CylinderGeometry(30,30,100,80,80);
+		var geom = new THREE.CylinderGeometry(Connector1_d,Connector1_d,Connector1_l,80,80);
 		geom.applyMatrix(new THREE.Matrix4().makeRotationX(-Math.PI/2));
 		geom.mergeVertices();
 		var l = geom.vertices.length;
@@ -1207,7 +1217,7 @@ mounted(){
 
 	Connector2 = function(){
 
-		var geom = new THREE.CylinderGeometry(45,45,17,80,80);
+		var geom = new THREE.CylinderGeometry(Connector2_d,Connector2_d,Connector2_l,80,80);
 		geom.applyMatrix(new THREE.Matrix4().makeRotationX(-Math.PI/2));
 		geom.mergeVertices();
 		var l = geom.vertices.length;
@@ -1241,7 +1251,7 @@ mounted(){
 	};
 	Sticker = function(){
 
-		var geom = new THREE.CylinderGeometry(31,31,60,80,80);
+		var geom = new THREE.CylinderGeometry(Sticker_d,Sticker_d,Sticker_l,80,80);
 		geom.applyMatrix(new THREE.Matrix4().makeRotationX(-Math.PI/2));
 		geom.mergeVertices();
 		var l = geom.vertices.length;
@@ -1312,7 +1322,7 @@ mounted(){
 			blending: THREE.AdditiveBlending,
 			transparent: true
 		}   );
-		let moonGlow_geometry = new THREE.CylinderGeometry(34,34,60,80,80);
+		let moonGlow_geometry = new THREE.CylinderGeometry(StickerGlow_d,StickerGlow_d,StickerGlow_l,80,80);
 
 		moonGlow_geometry.applyMatrix(new THREE.Matrix4().makeRotationX(-Math.PI/2));
 		this.mesh = new THREE.Mesh( moonGlow_geometry, customMaterial );
@@ -1322,66 +1332,53 @@ mounted(){
 		//EARTH_AUREOLE_END
 
 	};
-
-	Wire.prototype.moveWaves = function (newpos){
+let v,l;
+	Wire.prototype.moveWaves = function (n){
 	
-		var verts = this.mesh.geometry.vertices;
-		var l = verts.length;
-		var vzarr=[],vz;
-		
-		for (var i=0; i<l; i++){
-			//vz = this.waves[i].z;
+		v = this.mesh.geometry.vertices;
+		l = v.length;
+		var vzarr=[];
+		for ( var i = 0; i < l; i++ ){
 			vzarr.push(this.waves[i].z);
 		};
-		console.log(vzarr);
-		var min_v = Math.min.apply(null, this.waves.z);
-		var max_v = Math.max(vzarr.vz);
+		var min_v = Math.min.apply(null, vzarr);
+		var max_v = Math.max.apply(null, vzarr);
+		var z_length = Math.abs(min_v) + Math.abs(max_v);
 		for (var i=0; i<l; i++){
 
-			var v, vprops, param, f, offset, offset2, offset3;
+			var a, b, c, offset, offset2, offset3, z_positive, z_normalized;
+			//c - амплитуда, изм-я с помощью n из animate
+			a = v[i];
+			b = this.waves[i];
+			c = b.amp * n;
+			z_positive = b.z + max_v;
 
-			v = verts[i];
-			vprops = this.waves[i];
+			z_normalized = ((z_positive / z_length)) * c;
 
-			var ampd = vprops.amp * newpos;
-
-
-
-			var norm_z = Math.abs(vprops.z + max_v);
-			//console.log(max_v);
-
-			var newz = ( (vprops.z + max_v) /  (max_v) );
-
-			if((vprops.z < -400)){ampd = 0};
-
-			//if((Math.cos( vprops.z ) <=0.3)||(Math.cos( vprops.z ) >=-0.3)) {};
-
-			offset = ampd*(Math.cos( vprops.z - ampd ));
-			offset2 = ampd*(Math.sin( vprops.z - ampd ));
-			//offset = Math.sin(2*Math.PI*(qe))*(Math.exp(qe));
-			//offset2 = Math.sin(2*Math.PI*(qe))*(Math.exp(qe));
-			//v.x =  vprops.x + newz*(offset - offset2);
-			//v.y = vprops.y + newz*(offset2 - offset);	
-			v.x = vprops.x + (offset);
-			v.y = vprops.y + (offset2);
+			offset = z_normalized * ( Math.cos( b.z - c ) );
+			offset2 = z_normalized * ( Math.sin( b.z - c ) );
+			
+			a.x = b.x + (offset);
+			a.y = b.y + (offset2);
 
 		};
 
 		this.mesh.geometry.verticesNeedUpdate=true;
 		
 	};
-
+//if((Math.cos( b.z ) <=0.3)||(Math.cos( b.z ) >=-0.3)) {};
+//offset = Math.sin(2*Math.PI*(qe))*(Math.exp(qe));
 	function createWire(){
 
 		wire = new Wire();
-		wire.mesh.position.z = 917;
+		wire.mesh.position.z = Connector1_l + Connector2_l + (wire_l / 2);
 
 		group_models.add(wire.mesh);
 	};
 	function createConnector1(){
 
 		connector1 = new Connector1();
-		connector1.mesh.position.z = 67;
+		connector1.mesh.position.z = Connector2_l + (Connector1_l / 2);
 
 		group_models.add(connector1.mesh);
 
@@ -1389,7 +1386,7 @@ mounted(){
 	function createSticker(){
 
 		sticker = new Sticker();
-		sticker.mesh.position.z = 67;
+		sticker.mesh.position.z = Connector2_l + (Sticker_l / 2);
 
 		group_models.add(sticker.mesh);
 
@@ -1397,7 +1394,7 @@ mounted(){
 	function createStickerGlow(){
 
 		stickerGlow = new StickerGlow();
-		stickerGlow.mesh.position.z = 65;
+		stickerGlow.mesh.position.z = Connector2_l + (StickerGlow_l / 2);
 
 		group_models.add(stickerGlow.mesh);
 
@@ -1405,7 +1402,7 @@ mounted(){
 	function createConnector2(){
 
 		connector2 = new Connector2();
-		connector2.mesh.position.z = 8.5;
+		connector2.mesh.position.z = Connector2_l / 2;
 
 		group_models.add(connector2.mesh);
 
@@ -1445,21 +1442,27 @@ mounted(){
 
 	};
 
-	let newpos = 0.01;
+	let n = 0.01;
 
-	let np_max=1500;
-	let np_min=-1500;
-	let q = 2;
+	let np_max=2000;
+	let np_min=500;
+	let f = 1;
+	let q = 0;
+	for (var s = 0; s < 1; s=s+0.001) {
+		if ( s < 0.5 ) { q = 2*s } else { q = -1+(4-2*s)*s };
+	};
+	//function(t){return t<.5 ? 2*t*t : -1+(4-2*t)*t};
 	function animate() {
 		//var np_max=(Math.random() * (1500 - 500 + 1)) + 500;
 		//var np_min=(-1)*((Math.random() * (1500 - 500 + 1)) + 500);
 		//var np_min=(-1)*(np_max/5);
+		wire.moveWaves(n);
+		console.log(q);
+		if(n >= np_max){f = -1};
+		if(n <= np_min){f = 1};
+		n = n + f*(q);
 
-		wire.moveWaves(newpos);
-
-		if(newpos >= np_max){q = -2};
-		if(newpos <= np_min){q = 2};
-		newpos = newpos + q*1.5;
+		
 
 		window.requestAnimationFrame(animate);
 		Render();
