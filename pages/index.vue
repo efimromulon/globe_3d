@@ -1526,9 +1526,9 @@ let wire_l        = 1700,	wire_d        = 16,
 		var lat = 18,	long = 24;
 		var phi   = (90-lat)*(Math.PI/180);
 		var theta = (long-180)*(Math.PI/180);
-		let xrad = -((615) * Math.sin(phi)*Math.cos(theta));
-		let zrad = ((615) * Math.sin(phi)*Math.sin(theta));
-		let yrad = ((615) * Math.cos(phi));
+		let xrad = -((608.5) * Math.sin(phi)*Math.cos(theta));
+		let zrad = ((608.5) * Math.sin(phi)*Math.sin(theta));
+		let yrad = ((608.5) * Math.cos(phi));
 		var xrot = new THREE.Matrix4().makeRotationX( (180 - 320.9)*(Math.PI/180) );
 		var yrot = new THREE.Matrix4().makeRotationY( (270 + 150.2)*(Math.PI/180) );
 		var xyrot = xrot.multiply(yrot);
@@ -1547,12 +1547,12 @@ let wire_l        = 1700,	wire_d        = 16,
 		var lat = -8,	long = -3;
 		var phi   = (90-lat)*(Math.PI/180);
 		var theta = (long-180)*(Math.PI/180);
-		let xrad = -((595) * Math.sin(phi)*Math.cos(theta));
-		let zrad = ((595) * Math.sin(phi)*Math.sin(theta));
-		let yrad = ((595) * Math.cos(phi));
+		let xrad = -((608.5) * Math.sin(phi)*Math.cos(theta));
+		let zrad = ((608.5) * Math.sin(phi)*Math.sin(theta));
+		let yrad = ((608.5) * Math.cos(phi));
 
-		var xrot = new THREE.Matrix4().makeRotationX( (180)*(Math.PI/180) - (90-lat)*(Math.PI/180) );
-		var yrot = new THREE.Matrix4().makeRotationY( (270)*(Math.PI/180) - (long-180)*(Math.PI/180) );
+		var xrot = new THREE.Matrix4().makeRotationX( (180 - 280.9)*(Math.PI/180) );
+		var yrot = new THREE.Matrix4().makeRotationY( (270 + 190.2)*(Math.PI/180) );
 		var xyrot = xrot.multiply(yrot);
 		var zrot = new THREE.Matrix4().makeRotationZ( 0 );
 		var xyzrot = xyrot.multiply(zrot);
@@ -1661,7 +1661,7 @@ let wire_l        = 1700,	wire_d        = 16,
 		createRenderer();
 		addAureole();
 		addEarthTexture();
-		//addEarthContour();
+		addEarthContour();
 		//addEarthPoints();
 
 		//addAureole_1();
