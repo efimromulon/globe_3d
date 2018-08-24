@@ -141,7 +141,6 @@ mounted(){
 
 		//backgroundScene.add(backgroundCamera);
 		//backgroundScene.add(backgroundSceneMesh);
-group_wire_1.translate(0, 0, 595);
 		scene.add(group);
 		scene.add(group_wire_1);
 		scene.add(group_wire_2);
@@ -166,7 +165,8 @@ group_wire_1.translate(0, 0, 595);
 		controls = new OrbitControls(camera, renderer.domElement);
 
 	};
-
+//CREATE_SCENE end
+//TEXTURE AND CONTOUR
 	function addEarthTexture() {
 
 		//let color_99 = 0x04191b;//let color_99 = 0x020f10;//let color_99 = 0x031414;//let color_99 = 0x000f11;//let color_99 = 0x010f12;
@@ -274,7 +274,8 @@ group_wire_1.translate(0, 0, 595);
 		//EARTH_CONTOUR_END
 
 	};
-
+//TEXTURE AND CONTOUR end
+//ADD EARTH POINTS
 	function addEarthPoints(){
 		//EARTH_POINTS_SHADOW
 			var earth_shadow_points_geometry = new THREE.SphereBufferGeometry(603, 300, 150);
@@ -446,7 +447,8 @@ group_wire_1.translate(0, 0, 595);
 		//EARTH_POINTS_END
 
 	};
-
+//ADD EARTH POINTS end
+//LIGHTS AND CLOUDS
 	function addLights() {
 		var ambiColor = "#ffffff";
 		var ambientLight = new THREE.AmbientLight(ambiColor, 0.5);
@@ -523,7 +525,8 @@ group_wire_1.translate(0, 0, 595);
 		//CLOUDS_SPHERE_END
 
 	};
-
+//LIGHTS AND CLOUDS end
+//AUREOLE
 	function addAureole(){
 
 		//EARTH_AUREOLE
@@ -1171,17 +1174,13 @@ group_wire_1.translate(0, 0, 595);
 		//EARTH_AUREOLE_END
 
 	};
+//AUREOLE end
 //Wire animation----------------------------------------------------
-let wire_l        = 1700,
-	wire_d        = 16,
-	Connector1_l  = 100,
-	Connector1_d  = 30,
-	Connector2_l  = 17,
-	Connector2_d  = 45,
-	Sticker_l     = 60,
-	Sticker_d     = 31,
-	StickerGlow_l = 60,
-	StickerGlow_d = 34;
+let wire_l        = 1700,	wire_d        = 16,
+	Connector1_l  = 100,	Connector1_d  = 30,
+	Connector2_l  = 17,		Connector2_d  = 45,
+	Sticker_l     = 60,		Sticker_d     = 31,
+	StickerGlow_l = 60,		StickerGlow_d = 34;
 	Wire = function(){
 
 		var g = new THREE.CylinderGeometry( wire_d,wire_d,wire_l, 110,55);
@@ -1227,22 +1226,6 @@ let wire_l        = 1700,
 		geom.mergeVertices();
 		var l = geom.vertices.length;
 
-		//this.waves = [];
-
-		//for (var i=0;i<l;i++){
-
-		//	var v = geom.vertices[i];
-
-		//	this.waves.push({y:v.y,
-		//		x:v.x,
-		//		z:v.z,
-		//		ang:Math.random()*Math.PI*2,
-		//		amp:5 + Math.random()*15,
-		//		speed:0.016 + Math.random()*0.032
-		//	});
-
-		//};
-
 		var mat = new THREE.MeshPhongMaterial({
 			color: 0x030303,
 			transparent:true,
@@ -1262,22 +1245,6 @@ let wire_l        = 1700,
 		geom.mergeVertices();
 		var l = geom.vertices.length;
 
-		//this.waves = [];
-
-		//for (var i=0;i<l;i++){
-
-		//	var v = geom.vertices[i];
-
-		//	this.waves.push({y:v.y,
-		//		x:v.x,
-		//		z:v.z,
-		//		ang:Math.random()*Math.PI*2,
-		//		amp:5 + Math.random()*15,
-		//		speed:0.016 + Math.random()*0.032
-		//	});
-
-		//};
-
 		var mat = new THREE.MeshPhongMaterial({
 			color: 0x030303,
 			transparent:true,
@@ -1295,22 +1262,6 @@ let wire_l        = 1700,
 		geom.applyMatrix(new THREE.Matrix4().makeRotationX(-Math.PI/2));
 		geom.mergeVertices();
 		var l = geom.vertices.length;
-
-		//this.waves = [];
-
-		//for (var i=0;i<l;i++){
-
-		//	var v = geom.vertices[i];
-
-		//	this.waves.push({y:v.y,
-		//		x:v.x,
-		//		z:v.z,
-		//		ang:Math.random()*Math.PI*2,
-		//		amp:5 + Math.random()*15,
-		//		speed:0.016 + Math.random()*0.032
-		//	});
-
-		//};
 
 		var mat = new THREE.MeshPhongMaterial({
 			color: 0x16202b,
@@ -1396,7 +1347,7 @@ let wire_l        = 1700,
 			z_positive = b.z + max_v;
 
 			z_normalized = ((z_positive / z_length)) * c;
-//offset = 100*Math.sin(z_normalized) * ( Math.cos( b.z - c ) ); пиздатая рандомная функция
+			//offset = 100*Math.sin(z_normalized) * ( Math.cos( b.z - c ) ); пиздатая рандомная функция
 
 			//offset = Math.sin(2*Math.PI*z_normalized)*Math.exp(-z_normalized);
 			offset = z_normalized * ( Math.cos( b.z - c ) );
@@ -1436,7 +1387,7 @@ let wire_l        = 1700,
 		group_wire_1.add(sticker.mesh);
 		group_wire_1.add(stickerGlow.mesh);
 		group_wire_1.add(wire.mesh);
-
+		wire.mesh.material.color.setHex( 0xFF00CC );
 
 	};
 
@@ -1462,7 +1413,7 @@ let wire_l        = 1700,
 		group_wire_2.add(sticker_2.mesh);
 		group_wire_2.add(stickerGlow_2.mesh);
 		group_wire_2.add(wire_2.mesh);
-
+		wire_2.mesh.material.color.setHex( 0x0011FF );
 	};
 
 	function createWire_3(){
@@ -1487,6 +1438,8 @@ let wire_l        = 1700,
 		group_wire_3.add(sticker_3.mesh);
 		group_wire_3.add(stickerGlow_3.mesh);
 		group_wire_3.add(wire_3.mesh);
+		wire_3.mesh.material.color.setHex( 0x00FFE5 );
+		
 
 	};
 
@@ -1512,6 +1465,7 @@ let wire_l        = 1700,
 		group_wire_4.add(sticker_4.mesh);
 		group_wire_4.add(stickerGlow_4.mesh);
 		group_wire_4.add(wire_4.mesh);
+		wire_4.mesh.material.color.setHex( 0x22FF00 );
 
 	};
 
@@ -1537,7 +1491,7 @@ let wire_l        = 1700,
 		group_wire_5.add(sticker_5.mesh);
 		group_wire_5.add(stickerGlow_5.mesh);
 		group_wire_5.add(wire_5.mesh);
-
+		wire_5.mesh.material.color.setHex( 0xFFE600 );
 	};
 
 	function createWire_6(){
@@ -1562,10 +1516,11 @@ let wire_l        = 1700,
 		group_wire_6.add(sticker_6.mesh);
 		group_wire_6.add(stickerGlow_6.mesh);
 		group_wire_6.add(wire_6.mesh);
-
+		wire_6.mesh.material.color.setHex( 0xFF0000 );
 	};
 
 	function moveGroup_models_1() {
+
 		var startVector = new THREE.Vector3(0, 0, 0);
 		var endVector = new THREE.Vector3(xrad,  yrad,  zrad);
 		var lat = 18,	long = 24;
@@ -1575,13 +1530,15 @@ let wire_l        = 1700,
 		let zrad = ((595) * Math.sin(phi)*Math.sin(theta));
 		let yrad = ((595) * Math.cos(phi));
 
-		var xrot = new THREE.Matrix4().makeRotationX( (180)*(Math.PI/180) - (90-lat)*(Math.PI/180) );
-		var yrot = new THREE.Matrix4().makeRotationY( (270)*(Math.PI/180) - (long-180)*(Math.PI/180) );
+		var xrot = new THREE.Matrix4().makeRotationX( (180)*(Math.PI/180) - (210)*(Math.PI/180) );
+		var yrot = new THREE.Matrix4().makeRotationY( (270)*(Math.PI/180) + (210)*(Math.PI/180) );
 		var xyrot = xrot.multiply(yrot);
 		var zrot = new THREE.Matrix4().makeRotationZ( 0 );
 		var xyzrot = xyrot.multiply(zrot);
 		group_wire_1.translateX(600);
 		group_wire_1.applyMatrix(xyzrot);
+		group_wire_1.position.set(xrad,yrad,zrad);//0xFF00CC
+		console.log(group_wire_1);
 
 	};
 
@@ -1603,7 +1560,7 @@ let wire_l        = 1700,
 
 
 		group_wire_2.applyMatrix(	xyzrot );
-
+		group_wire_2.position.set(xrad,yrad,zrad);//0x0011FF
 	};
 
 	function moveGroup_models_3() {
@@ -1625,7 +1582,7 @@ let wire_l        = 1700,
 
 
 		group_wire_3.applyMatrix(	xyzrot );
-
+		group_wire_3.position.set(xrad,yrad,zrad);//0x00FFE5
 
 	};
 
@@ -1648,7 +1605,7 @@ let wire_l        = 1700,
 
 
 		group_wire_4.applyMatrix(	xyzrot );
-
+		group_wire_4.position.set(xrad,yrad,zrad);//0x22FF00
 
 	};
 
@@ -1671,7 +1628,7 @@ let wire_l        = 1700,
 
 
 		group_wire_5.applyMatrix(	xyzrot );
-
+		group_wire_5.position.set(xrad,yrad,zrad);//0xFFE600
 
 	};
 
@@ -1694,7 +1651,7 @@ let wire_l        = 1700,
 
 
 		group_wire_6.applyMatrix(	xyzrot );
-
+		group_wire_6.position.set(xrad,yrad,zrad);//0xFF0000
 	};
 //---------------------------------------------------------
 	init();
