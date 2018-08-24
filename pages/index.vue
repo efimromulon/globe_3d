@@ -141,7 +141,7 @@ mounted(){
 
 		//backgroundScene.add(backgroundCamera);
 		//backgroundScene.add(backgroundSceneMesh);
-
+group_wire_1.translate(0, 0, 595);
 		scene.add(group);
 		scene.add(group_wire_1);
 		scene.add(group_wire_2);
@@ -149,6 +149,7 @@ mounted(){
 		scene.add(group_wire_4);
 		scene.add(group_wire_5);
 		scene.add(group_wire_6);
+
 		scene.add(camera);
 
 	};
@@ -1585,7 +1586,6 @@ let wire_l        = 1700,
 	};
 
 	function moveGroup_models_2() {
-		group_wire_2.translate(0, 0, 0.25 + 600);
 		var startVector = new THREE.Vector3(0, 0, 0);
 		var endVector = new THREE.Vector3(xrad,  yrad,  zrad);
 		var lat = -8,	long = -3;
