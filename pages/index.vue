@@ -48,6 +48,7 @@
 <script>
 import * as THREE from 'three';
 import * as TWEEN from '@tweenjs/tween.js';
+import * as gsap from 'gsap';
 import * as MTLLoader from 'three-mtl-loader';
 import * as OBJLoader from 'three-obj-loader';
 let OrbitControls = require('three-orbit-controls')(THREE);
@@ -1397,38 +1398,48 @@ let wire_l        = 1700,	wire_d        = 16,
 	};
 //if((Math.cos( b.z ) <=0.3)||(Math.cos( b.z ) >=-0.3)) {};
 //offset = Math.sin(2*Math.PI*(qe))*(Math.exp(qe));
-var update;
-	EarthContour.prototype.update	= function(){
-		var yt = earthContour;
-			console.log(earthContour);
-		earthContour.mesh.rotation._y = current.y;
+	var update;
+	var userOpts	= {
+		range		: 18,
+		duration	: 2000,
+		delay		: 500
 	};
-	var hi = 10;
-	var current	= { y: hi };
+
 	let speed =0.1;	 
+	var angle1 = [];
 	EarthContour.prototype.moveEarth = function (){
+
 			var r = this.mesh;
-			//r.y += speed*(Math.PI/180);
-//
-			//for (var i = 0; i < elements.length; i++) {
-			//	expression
-			//}
+			var hu = r.rotation._y;
+			console.log(r.rotation._y);
 
 
-			//this.mesh.geometry.verticesNeedUpdate=true;
+		//TweenMax.set(sphere.position,{x:posX});
+		TweenLite.to(r.rotation,8,{_y:2100,ease:Power2.easeInOut});
+		this.mesh.geometry.verticesNeedUpdate=true;
+		//r.y += speed*(Math.PI/180);
+		//for (var i = 0; i < elements.length; i++) {
+		//	expression
+		//}
+		//this.mesh.geometry.verticesNeedUpdate=true;
+		//v = r.rotation;
+		//var vzarr=[];
+		//for ( var i = 0; i < l; i++ ){
+		//	vzarr.push(this.waves[i].z);
+		//};
+		//var tweenHead = new TWEEN.Tween(r.rotation)
+		//.to({x: 0, y: 15, z: 0}, userOpts.duration).easing(TWEEN.Easing.Quadratic.Out);
+		//var tweenBack = new TWEEN.Tween(r.rotation)
+		//.to({x: 0, y: -15, z: 0}, userOpts.duration).easing(TWEEN.Easing.Quadratic.Out);
+		//tweenHead.chain(tweenBack);
+		//tweenBack.chain(tweenHead);
+		//tweenHead.start();
+		//console.log(r.rotation);
+		//.easing(TWEEN.Easing.Quadratic.Out)
+		//.onUpdate(EarthContour.prototype.update);
 
-		var tweenHead = new TWEEN.Tween(r.rotation)
-		.to({x: 0, y: +hi, z: 0}, 1800)
-		.easing(TWEEN.Easing.Quadratic.Out).delay(1800).onUpdate(EarthContour.prototype.update);
-		var tweenBack = new TWEEN.Tween(r.rotation)
-		.to({x: 0, y: 0, z: 0}, 3600)
-		.easing(TWEEN.Easing.Quadratic.Out).delay(1800).onUpdate(EarthContour.prototype.update);
 
-		tweenHead.chain(tweenBack);
 
-		tweenBack.chain(tweenHead);
-
-		tweenHead.start();
 
 	//const getDiskFlip = disk => (
 	//    new Tween(r.rotation)
