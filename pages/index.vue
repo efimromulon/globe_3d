@@ -1385,9 +1385,11 @@ let wire_l        = 1700,	wire_d        = 16,
 			//offset = 100*Math.sin(z_normalized) * ( Math.cos( b.z - c ) ); пиздатая рандомная функция
 
 			//offset = Math.sin(2*Math.PI*z_normalized)*Math.exp(-z_normalized);
-			offset = z_normalized * ( Math.cos( b.z - c ) );
-			offset2 = z_normalized * ( Math.sin( b.z - c ) );
-			
+
+			//offset = z_normalized * ( Math.cos( b.z - c ) );
+			//offset2 = z_normalized * ( Math.sin( b.z - c ) );
+			offset = z_normalized*1.3*Math.cos( z_normalized - c ) * ( Math.sin( z_normalized * 2 -c) );
+			offset2 = z_normalized*1.3*Math.sin( z_normalized - c ) * ( Math.sin( z_normalized * 2 -c) );
 			a.x = b.x + (offset);
 			a.y = b.y + (offset2);
 
@@ -1407,16 +1409,24 @@ let wire_l        = 1700,	wire_d        = 16,
 
 	let speed =0.1;	 
 	var angle1 = [];
+	var ui = 1;
+	var yy;
+
 	EarthContour.prototype.moveEarth = function (){
 
 			var r = this.mesh;
-			var hu = r.rotation._y;
-			console.log(r.rotation._y);
+			var oo = r.rotation.y;
 
+			
+			if(oo >= 0.4){ui = -1; yy = 0.0015};
+			if(oo <= 0){ui = 1; yy = 0.005};
+			r.rotation.y = r.rotation.y + ui*yy;
 
 		//TweenMax.set(sphere.position,{x:posX});
-		TweenLite.to(r.rotation,8,{_y:2100,ease:Power2.easeInOut});
+
+
 		this.mesh.geometry.verticesNeedUpdate=true;
+
 		//r.y += speed*(Math.PI/180);
 		//for (var i = 0; i < elements.length; i++) {
 		//	expression
@@ -1856,6 +1866,7 @@ let wire_l        = 1700,	wire_d        = 16,
 	//	if ( s < 0.5 ) { q_2 = 2*s } else { q_2 = -1+(4-2*s)*s };
 	//};
 	//function(t){return t<.5 ? 2*t*t : -1+(4-2*t)*t};
+
 	function animate() {
 		//var np_max=(Math.random() * (1500 - 500 + 1)) + 500;
 		//var np_min=(-1)*((Math.random() * (1500 - 500 + 1)) + 500);
@@ -1883,7 +1894,7 @@ let wire_l        = 1700,	wire_d        = 16,
 		
 		TWEEN.update();
 	};
-
+	TweenLite.ticker.addEventListener("tick", Render);
 	function Render() {
 
 		//camera.rotation.y = 8*(Math.PI/180);
