@@ -47,6 +47,7 @@
 </template>
 <script>
 import * as THREE from 'three';
+import * as TWEEN from '@tweenjs/tween.js';
 import * as MTLLoader from 'three-mtl-loader';
 import * as OBJLoader from 'three-obj-loader';
 let OrbitControls = require('three-orbit-controls')(THREE);
@@ -79,7 +80,12 @@ mounted(){
 	var color = 0x000000;
 	var mouse = new THREE.Vector2(), INTERSECTED;
 
-	var camera, scene, renderer, group, controls, earth_texture;
+	var camera, scene, renderer, group, controls, mesh;
+	var EarthTexture, earthTexture;
+	var EarthContour, earthContour;
+	var EarthContourShadow, earthContourShadow;
+	var EarthPointsShadow, earthPointsShadow;
+	var EarthPoints, earthPoints;
 	var group_wire_1, group_wire_2, group_wire_3,
 		group_wire_4, group_wire_5, group_wire_6;
 	var Wire, wire,
@@ -167,14 +173,14 @@ mounted(){
 	};
 //CREATE_SCENE end
 //TEXTURE AND CONTOUR
-	function addEarthTexture() {
+	EarthTexture = function() {
 
 		//let color_99 = 0x04191b;//let color_99 = 0x020f10;//let color_99 = 0x031414;//let color_99 = 0x000f11;//let color_99 = 0x010f12;
 		var color_of_direct_light= 0x000c18;
 		var color_of_bright_side= 0x000c18;
 		var color_of_dark_side= 0x020b14;
-		let earth_texture_geometry = new THREE.SphereGeometry(600, 240, 240, 0, Math.PI*2, 0, Math.PI);
-		let earth_texture_material = new THREE.MeshPhongMaterial({
+		var g = new THREE.SphereGeometry(600, 240, 240, 0, Math.PI*2, 0, Math.PI);
+		var m = new THREE.MeshPhongMaterial({
 			map: new THREE.TextureLoader().load('Voda_normali.jpg'),
 			bumpMap: new THREE.TextureLoader().load('Shum_dlya_vody_bump.jpg'),
 			bumpScale: 1.65,
@@ -192,27 +198,24 @@ mounted(){
 			//normalMapScale: 1.65,
 		});
 
-			earth_texture = new THREE.Mesh(earth_texture_geometry, earth_texture_material);
-			earth_texture.recieveShadow = false;
-			earth_texture.castShadow = false;
-			earth_texture_material.fog = false;
-			earth_texture_material.depthWrite = true;
+			this.mesh = new THREE.Mesh(g, m);
 
-			//earth_texture_material.map.generateMipalphaMaps = false;
-			//earth_texture_material.map.magFilter = THREE.LinearFilter;
-			//earth_texture_material.map.minFilter = THREE.LinearFilter;
-			earth_texture_material.needsUpdate = true;
+			this.mesh.recieveShadow = false;
+			this.mesh.castShadow = false;
 
-			earth_texture.position.set(0, 0, 0);
-		group.add( earth_texture );
+			m.fog = false;
+			m.depthWrite = true;
+			//m.map.generateMipalphaMaps = false;
+			//m.map.magFilter = THREE.LinearFilter;
+			//m.map.minFilter = THREE.LinearFilter;
+			m.needsUpdate = true;
 
 	};
 
-	function addEarthContour(){
-		//EARTH_CONTOUR_SHADOW
-		//605
-		let earth_contour_shadow_geometry = new THREE.SphereGeometry(603, 50, 50, 0, Math.PI*2, 0, Math.PI);
-		let earth_contour_shadow_material = new THREE.MeshPhongMaterial({
+	EarthContourShadow = function() {
+
+		let g = new THREE.SphereGeometry(603, 50, 50, 0, Math.PI*2, 0, Math.PI);
+		let m = new THREE.MeshPhongMaterial({
 			map: new THREE.TextureLoader().load('EarthMap_transparent.png'),
 			side: THREE.DoubleSide,
 			shininess: 0.0,
@@ -228,22 +231,20 @@ mounted(){
 			//shading: THREE.FlatShading
 		});
 
-		earth_contour_shadow_material.map.generateMipalphaMaps = false;
-		earth_contour_shadow_material.map.magFilter = THREE.LinearFilter;
-		earth_contour_shadow_material.map.minFilter = THREE.LinearFilter;
-		earth_contour_shadow_material.needsUpdate = true;
-		earth_contour_shadow_material.fog = false;
-		earth_contour_shadow_material.depthWrite = true;
+		m.map.generateMipalphaMaps = false;
+		m.map.magFilter = THREE.LinearFilter;
+		m.map.minFilter = THREE.LinearFilter;
+		m.needsUpdate = true;
+		m.fog = false;
+		m.depthWrite = true;
 
-		earth_contour_shadow_material.blending = THREE.SubstractiveBlending;
-		var earth_contour_shadow = new THREE.Mesh( earth_contour_shadow_geometry, earth_contour_shadow_material );
+		m.blending = THREE.SubstractiveBlending;
+		this.mesh = new THREE.Mesh(g, m);
 
-		//group.add( earth_contour_shadow );
-		//EARTH_CONTOURR_SHADOW_END
-		//EARTH_CONTOUR
-		//605
-		let earth_contour_geometry = new THREE.SphereGeometry(615, 50, 50, 0, Math.PI*2, 0, Math.PI);
-		let earth_contour_material = new THREE.MeshPhongMaterial({
+	};
+	EarthContour = function() {	
+		let g = new THREE.SphereGeometry(615, 50, 50, 0, Math.PI*2, 0, Math.PI);
+		let m = new THREE.MeshPhongMaterial({
 			map: new THREE.TextureLoader().load('EarthMap_transparent.png'),
 			side: THREE.DoubleSide,
 			shininess: 0.0,
@@ -258,31 +259,27 @@ mounted(){
 			//shading: THREE.FlatShading
 		});
 
-		earth_contour_material.map.generateMipalphaMaps = false;
-		earth_contour_material.map.magFilter = THREE.LinearFilter;
-		earth_contour_material.map.minFilter = THREE.LinearFilter;
-		earth_contour_material.needsUpdate = true;
-		earth_contour_material.fog = false;
-		earth_contour_material.depthWrite = false;
-		//earth_contour_material.recieveShadow = true;
-		//earth_contour_material.castShadow = true;
+		m.map.generateMipalphaMaps = false;
+		m.map.magFilter = THREE.LinearFilter;
+		m.map.minFilter = THREE.LinearFilter;
+		m.needsUpdate = true;
+		m.fog = false;
+		m.depthWrite = false;
+		//m.recieveShadow = true;
+		//m.castShadow = true;
 
-		earth_contour_material.blending = THREE.SubstractiveBlending;
-		var earth_contour = new THREE.Mesh( earth_contour_geometry, earth_contour_material );
-
-		group.add( earth_contour );
-		//EARTH_CONTOUR_END
+		m.blending = THREE.SubstractiveBlending;
+		this.mesh = new THREE.Mesh(g, m);
 
 	};
 //TEXTURE AND CONTOUR end
 //ADD EARTH POINTS
-	function addEarthPoints(){
+	EarthPointsShadow = function (){
 		//EARTH_POINTS_SHADOW
-			var earth_shadow_points_geometry = new THREE.SphereBufferGeometry(603, 300, 150);
+			var g = new THREE.SphereBufferGeometry(603, 300, 150);
 
 			var colors = [];
 			var color = new THREE.Color(0xffffff);
-			var q = ["pink", "red", "red", "red", "maroon", "maroon", "maroon"];
 
 			var earth_shadow_points_loader = new THREE.TextureLoader();
 				earth_shadow_points_loader.setCrossOrigin('');
@@ -295,7 +292,7 @@ mounted(){
 			var earth_shadow_points_shape = earth_shadow_points_loader.load('030303.png');
 
 
-			var earth_shadow_points_material =  new THREE.ShaderMaterial({
+			var m =  new THREE.ShaderMaterial({
 					vertexColors: THREE.VertexColors,
 					uniforms: {
 						visibility: {
@@ -356,17 +353,18 @@ mounted(){
 					transparent: true,
 					lights: false
 				});
-			var earth_shadow_points = new THREE.Points(earth_shadow_points_geometry,earth_shadow_points_material);
-			earth_shadow_points_material.depthWrite = false;
+			var earth_shadow_points = new THREE.Points(g,m);
+			m.depthWrite = false;
+			this.mesh = new THREE.Mesh(g, m);
 				//gl_FragColor = vec4( vColor, 1.0 );
-			//group.add(earth_shadow_points);
+	};
 		//EARTH_POINTS_SHADOW_END
 		//EARTH_POINTS
-			var geom = new THREE.SphereBufferGeometry(615, 300, 150);
+	EarthPoints = function (){
+			var g = new THREE.SphereBufferGeometry(615, 300, 150);
 
 			var colors = [];
 			var color = new THREE.Color(0xffffff);
-			var q = ["pink", "red", "red", "red", "maroon", "maroon", "maroon"];
 
 			var loader = new THREE.TextureLoader();
 				loader.setCrossOrigin('');
@@ -380,7 +378,7 @@ mounted(){
 
 
 
-			var points_material = new THREE.ShaderMaterial({
+			var m = new THREE.ShaderMaterial({
 				vertexColors: THREE.VertexColors,
 				uniforms: {
 					visibility: {
@@ -441,10 +439,9 @@ mounted(){
 				lights: false,
 				opacity: 1.0
 				});
-			var points = new THREE.Points(geom, points_material);
-				//points_material.depthWrite = false;
-				group.add(points);
-		//EARTH_POINTS_END
+			var points = new THREE.Points(g, m);
+			this.mesh = new THREE.Mesh(g, m);
+				//m.depthWrite = false;
 
 	};
 //ADD EARTH POINTS end
@@ -1201,7 +1198,7 @@ let wire_l        = 1700,	wire_d        = 16,
 				y:v.y,
 				x:v.x,
 				z:v.z,
-				amp: -0.02,
+				amp: -0.02,//статичная амплитуда каждой точки
 				speed: 0.0001
 			});
 
@@ -1325,7 +1322,7 @@ let wire_l        = 1700,	wire_d        = 16,
 	};
 
 	let v,l;
-
+//САНЯ ЭТО АНИМАЦИЯ ДВИЖЕНИЯ ПРОВОДА
 	Wire.prototype.moveWaves = function (n){
 	
 		v = this.mesh.geometry.vertices;
@@ -1343,6 +1340,43 @@ let wire_l        = 1700,	wire_d        = 16,
 			//c - амплитуда, изм-я с помощью n из animate
 			a = v[i];
 			b = this.waves[i];
+			//
+			c = b.amp * n;
+			z_positive = b.z + max_v;
+
+			z_normalized = ((z_positive / z_length)) * c;
+			//offset = 100*Math.sin(z_normalized) * ( Math.cos( b.z - c ) ); пиздатая рандомная функция
+
+			//offset = Math.sin(2*Math.PI*z_normalized)*Math.exp(-z_normalized);
+			offset = z_normalized * ( Math.cos( b.z - c ) );
+			offset2 = z_normalized * ( Math.sin( b.z - c ) );
+			
+			a.x = b.x + (offset);
+			a.y = b.y + (offset2);
+
+		};
+
+		this.mesh.geometry.verticesNeedUpdate=true;
+		
+	};
+	Wire.prototype.moveWaves_2 = function (n){
+	
+		v = this.mesh.geometry.vertices;
+		l = v.length;
+		var vzarr=[];
+		for ( var i = 0; i < l; i++ ){
+			vzarr.push(this.waves[i].z);
+		};
+		var min_v = Math.min.apply(null, vzarr);
+		var max_v = Math.max.apply(null, vzarr);
+		var z_length = Math.abs(min_v) + Math.abs(max_v);
+		for (var i=0; i<l; i++){
+
+			var a, b, c, offset, offset2, offset3, z_positive, z_normalized;
+			//c - амплитуда, изм-я с помощью n из animate
+			a = v[i];
+			b = this.waves[i];
+			//
 			c = b.amp * n;
 			z_positive = b.z + max_v;
 
@@ -1363,6 +1397,97 @@ let wire_l        = 1700,	wire_d        = 16,
 	};
 //if((Math.cos( b.z ) <=0.3)||(Math.cos( b.z ) >=-0.3)) {};
 //offset = Math.sin(2*Math.PI*(qe))*(Math.exp(qe));
+var update;
+	EarthContour.prototype.update	= function(){
+		var yt = earthContour;
+			console.log(earthContour);
+		earthContour.mesh.rotation._y = current.y;
+	};
+	var hi = 10;
+	var current	= { y: hi };
+	let speed =0.1;	 
+	EarthContour.prototype.moveEarth = function (){
+			var r = this.mesh;
+			//r.y += speed*(Math.PI/180);
+//
+			//for (var i = 0; i < elements.length; i++) {
+			//	expression
+			//}
+
+
+			//this.mesh.geometry.verticesNeedUpdate=true;
+
+		var tweenHead = new TWEEN.Tween(r.rotation)
+		.to({x: 0, y: +hi, z: 0}, 1800)
+		.easing(TWEEN.Easing.Quadratic.Out).delay(1800).onUpdate(EarthContour.prototype.update);
+		var tweenBack = new TWEEN.Tween(r.rotation)
+		.to({x: 0, y: 0, z: 0}, 3600)
+		.easing(TWEEN.Easing.Quadratic.Out).delay(1800).onUpdate(EarthContour.prototype.update);
+
+		tweenHead.chain(tweenBack);
+
+		tweenBack.chain(tweenHead);
+
+		tweenHead.start();
+
+	//const getDiskFlip = disk => (
+	//    new Tween(r.rotation)
+	//    .to({ x: -r.rotation.x }, 400, Easing.Elastic.InOut)
+	//    .onStart(() => {
+	//        new Tween(r.position).to({ z: [40, r.position.z] }, 400).start();
+	//    })
+	//);
+
+	};
+
+	function createEarthTexture(){
+
+		earthTexture = new EarthTexture();
+		earthTexture.mesh.position.x = 0;
+		earthTexture.mesh.position.y = 0;
+		earthTexture.mesh.position.z = 0;
+		group.add( earthTexture.mesh );
+
+	};	
+//hui
+	function createEarthContour(){
+
+		earthContour = new EarthContour();
+		earthContour.mesh.position.x = 0;
+		earthContour.mesh.position.y = 0;
+		earthContour.mesh.position.z = 0;
+		group.add( earthContour.mesh );
+
+	};	
+
+	function createEarthContourShadow(){
+
+		earthContourShadow = new EarthContourShadow();
+		earthContourShadow.mesh.position.x = 0;
+		earthContourShadow.mesh.position.y = 0;
+		earthContourShadow.mesh.position.z = 0;
+		group.add( earthContourShadow.mesh );
+
+	};	
+	function createEarthPoints(){
+
+		earthPoints = new EarthPoints();
+		earthPoints.mesh.position.x = 0;
+		earthPoints.mesh.position.y = 0;
+		earthPoints.mesh.position.z = 0;
+		group.add( earthPoints.mesh );
+
+	};	
+
+	function createEarthPointsShadow(){
+
+		earthPointsShadow = new EarthPointsShadow();
+		earthPointsShadow.mesh.position.x = 0;
+		earthPointsShadow.mesh.position.y = 0;
+		earthPointsShadow.mesh.position.z = 0;
+		group.add( earthPointsShadow.mesh );
+
+	};
 
 	function createWire_1(){
 
@@ -1414,6 +1539,7 @@ let wire_l        = 1700,	wire_d        = 16,
 		group_wire_2.add(stickerGlow_2.mesh);
 		group_wire_2.add(wire_2.mesh);
 		wire_2.mesh.material.color.setHex( 0x0011FF );
+
 	};
 
 	function createWire_3(){
@@ -1440,7 +1566,6 @@ let wire_l        = 1700,	wire_d        = 16,
 		group_wire_3.add(wire_3.mesh);
 		wire_3.mesh.material.color.setHex( 0x00FFE5 );
 		
-
 	};
 
 	function createWire_4(){
@@ -1492,6 +1617,7 @@ let wire_l        = 1700,	wire_d        = 16,
 		group_wire_5.add(stickerGlow_5.mesh);
 		group_wire_5.add(wire_5.mesh);
 		wire_5.mesh.material.color.setHex( 0xFFE600 );
+
 	};
 
 	function createWire_6(){
@@ -1517,6 +1643,7 @@ let wire_l        = 1700,	wire_d        = 16,
 		group_wire_6.add(stickerGlow_6.mesh);
 		group_wire_6.add(wire_6.mesh);
 		wire_6.mesh.material.color.setHex( 0xFF0000 );
+
 	};
 
 	function moveGroup_models_1() {
@@ -1537,7 +1664,6 @@ let wire_l        = 1700,	wire_d        = 16,
 		group_wire_1.translateX(600);
 		group_wire_1.applyMatrix(xyzrot);
 		group_wire_1.position.set(xrad,yrad,zrad);//0xFF00CC
-		console.log(group_wire_1);
 
 	};
 
@@ -1560,6 +1686,7 @@ let wire_l        = 1700,	wire_d        = 16,
 
 		group_wire_2.applyMatrix(	xyzrot );
 		group_wire_2.position.set(xrad,yrad,zrad);//0x0011FF
+
 	};
 
 	function moveGroup_models_3() {
@@ -1651,6 +1778,7 @@ let wire_l        = 1700,	wire_d        = 16,
 
 		group_wire_6.applyMatrix(	xyzrot );
 		group_wire_6.position.set(xrad,yrad,zrad);//0xFF0000
+
 	};
 //---------------------------------------------------------
 	init();
@@ -1660,8 +1788,7 @@ let wire_l        = 1700,	wire_d        = 16,
 		createScene();
 		createRenderer();
 		addAureole();
-		addEarthTexture();
-		addEarthContour();
+		
 		//addEarthPoints();
 
 		//addAureole_1();
@@ -1670,13 +1797,20 @@ let wire_l        = 1700,	wire_d        = 16,
 		//addAureole_4();
 		//addAureole_5();
 		//addAureole_6();
-
 		createWire_1();
 		createWire_2();
 		createWire_3();
 		createWire_4();
 		createWire_5();
 		createWire_6();
+		createEarthTexture();
+		createEarthContourShadow();
+		
+		createEarthContour();
+
+		//createEarthPoints();
+		//createEarthPointsShadow();
+
 		//createConnector1();
 		//createSticker();
 		//createStickerGlow();
@@ -1692,38 +1826,51 @@ let wire_l        = 1700,	wire_d        = 16,
 		addDirLight();
 
 	};
-
-
-
-	let np_max=2250 + 600;
-	let np_min=1000 + 600;
-
-	let n = np_max / 2 ;
+	let n_max=2250 + 600;
+	let n_min=1000 + 600;
+	let n = n_max / 2 ;
 	let f = 1;
 	let q = 0;
 	for (var s = 0; s < 1; s=s+0.001) {
 		if ( s < 0.5 ) { q = 2*s } else { q = -1+(4-2*s)*s };
 	};
+
+	let n_2_max=60;
+	let n_2_min=0;
+	let n_2 = 1;
+	let f_2 = 1;
+	let q_2 = 1;
+	
+	//for (var s = 0; s < 1; s=s+0.001) {
+	//	if ( s < 0.5 ) { q_2 = 2*s } else { q_2 = -1+(4-2*s)*s };
+	//};
 	//function(t){return t<.5 ? 2*t*t : -1+(4-2*t)*t};
 	function animate() {
 		//var np_max=(Math.random() * (1500 - 500 + 1)) + 500;
 		//var np_min=(-1)*((Math.random() * (1500 - 500 + 1)) + 500);
 		//var np_min=(-1)*(np_max/5);
+		
+		earthContour.moveEarth();
 		wire.moveWaves(n);
-		wire_2.moveWaves(n);
+		wire_2.moveWaves_2(n);
 		wire_3.moveWaves(n);
 		wire_4.moveWaves(n);
 		wire_5.moveWaves(n);
 		wire_6.moveWaves(n);
 		//wire_2.moveWaves(n);
-		if(n >= np_max){f = -1};
-		if(n <= np_min){f = 1};
+		if(n >= n_max){f = -1};
+		if(n <= n_min){f = 1};
 		n = n + f*(q);
 
-		
+//		if(n_2 >= n_2_max){f_2 = -2};
+//		if(n_2 <= n_2_min){f_2 = 1};
+		n_2 = n_2;
+
+		Render();
 
 		window.requestAnimationFrame(animate);
-		Render();
+		
+		TWEEN.update();
 	};
 
 	function Render() {
@@ -1759,6 +1906,7 @@ window.addEventListener('resize', onResize, false);
 }//mounted end
 }
 </script>
+
 <style lang="sass">
 	body
 		margin: 0
