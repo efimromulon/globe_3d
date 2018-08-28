@@ -87,6 +87,8 @@ mounted(){
 	var EarthContourShadow, earthContourShadow;
 	var EarthPointsShadow, earthPointsShadow;
 	var EarthPoints, earthPoints;
+	var Clouds, clouds;
+	var CloudsShadow, cloudsShadow;
 	var group_wire_1, group_wire_2, group_wire_3,
 		group_wire_4, group_wire_5, group_wire_6;
 	var Wire, wire,
@@ -392,7 +394,7 @@ mounted(){
 						value: disk
 					},
 					size: {
-						value: 25
+						value: 1
 					},
 					scale: {
 						value: window.innerHeight / 8
@@ -471,15 +473,15 @@ mounted(){
 
 	};
 
-	function addClouds(){
+	Clouds = function (){
 
 		//CLOUDS_SPHERE_SHADOW
-		let clouds_shadow_texture = new THREE.TextureLoader().load('clouds_new_1.png');
-		let clouds_shadow_texture_alpha = new THREE.TextureLoader().load('clouds_new_1.png');
-		let clouds_shadow_geometry = new THREE.SphereGeometry(603, 50, 50, 0, 2*Math.PI, 0, Math.PI);
-		let clouds_shadow_material = new THREE.MeshLambertMaterial({
-			map: clouds_shadow_texture,
-			alphaMap: clouds_shadow_texture_alpha,
+		let mt = new THREE.TextureLoader().load('clouds_new_1.png');
+		let mta = new THREE.TextureLoader().load('clouds_new_1.png');
+		let g = new THREE.SphereGeometry(603, 50, 50, 0, 2*Math.PI, 0, Math.PI);
+		let m = new THREE.MeshLambertMaterial({
+			map: mt,
+			alphaMap: mta,
 			blending: 1,
 			side: THREE.DoubleSide,
 			transparent:true,
@@ -492,37 +494,30 @@ mounted(){
 			//clouds_material.map.minFilter = THREE.LinearFilter;
 			//clouds_material.needsUpdate = true;
 			//clouds_material.fog = false;
-		var clouds_shadow = new THREE.Mesh( clouds_shadow_geometry, clouds_shadow_material );
-
-
-		group.add( clouds_shadow );
-		//CLOUDS_SPHERE_SHADOW_END
-		//CLOUDS_SPHERE
-		let clouds_texture = new THREE.TextureLoader().load('clouds_new_1.png');
-		let clouds_texture_alpha = new THREE.TextureLoader().load('clouds_new_1.png');
-		let clouds_geometry = new THREE.SphereGeometry(618, 500, 500, 0, 2*Math.PI, 0, Math.PI);
-		let clouds_material = new THREE.MeshLambertMaterial({
-			map: clouds_texture,
-			alphaMap: clouds_texture_alpha,
-			blending: 2,
-			side: THREE.DoubleSide,
-			transparent:true,
-			opacity: 0.6,
-			color: 0x505050,
-			emissive: 0x090909
-		});
-			clouds_material.map.generateMipalphaMaps = false;
-			clouds_material.map.magFilter = THREE.LinearFilter;
-			clouds_material.map.minFilter = THREE.LinearFilter;
-			clouds_material.needsUpdate = true;
-			clouds_material.fog = false;
-		var clouds = new THREE.Mesh( clouds_geometry, clouds_material );
-
-
-		group.add( clouds );
-		//CLOUDS_SPHERE_END
-
+		this.mesh = new THREE.Mesh(g, m);
 	};
+	CloudsShadow = function (){
+
+			let mt = new THREE.TextureLoader().load('clouds_new_1.png');
+			let mta = new THREE.TextureLoader().load('clouds_new_1.png');
+			let g = new THREE.SphereGeometry(618, 500, 500, 0, 2*Math.PI, 0, Math.PI);
+			let m = new THREE.MeshLambertMaterial({
+				map: mt,
+				alphaMap: mta,
+				blending: 2,
+				side: THREE.DoubleSide,
+				transparent:true,
+				opacity: 0.6,
+				color: 0x505050,
+				emissive: 0x090909
+			});
+				m.map.generateMipalphaMaps = false;
+				m.map.magFilter = THREE.LinearFilter;
+				m.map.minFilter = THREE.LinearFilter;
+				m.needsUpdate = true;
+				m.fog = false;
+			this.mesh = new THREE.Mesh(g, m);
+		};
 //LIGHTS AND CLOUDS end
 //AUREOLE
 	function addAureole(){
@@ -1412,22 +1407,22 @@ let wire_l        = 1700,	wire_d        = 16,
 	var ui = 1;
 	var yy;
 
-	EarthContour.prototype.moveEarth = function (){
+	EarthTexture.prototype.moveEarth = function (){
 
 			var r = this.mesh;
 			var oo = r.rotation.y;
 
 			
 			if(oo >= 0.4){ui = -1; yy = 0.0015};
-			if(oo <= 0){ui = 1; yy = 0.005};
+			if(oo <= 0){ui = 1; yy = 0.0015};
 			r.rotation.y = r.rotation.y + ui*yy;
 
 		//TweenMax.set(sphere.position,{x:posX});
 
 
 		this.mesh.geometry.verticesNeedUpdate=true;
-
-		//r.y += speed*(Math.PI/180);
+	};
+	//r.y += speed*(Math.PI/180);
 		//for (var i = 0; i < elements.length; i++) {
 		//	expression
 		//}
@@ -1447,20 +1442,103 @@ let wire_l        = 1700,	wire_d        = 16,
 		//console.log(r.rotation);
 		//.easing(TWEEN.Easing.Quadratic.Out)
 		//.onUpdate(EarthContour.prototype.update);
-
-
-
-
-	//const getDiskFlip = disk => (
-	//    new Tween(r.rotation)
-	//    .to({ x: -r.rotation.x }, 400, Easing.Elastic.InOut)
-	//    .onStart(() => {
-	//        new Tween(r.position).to({ z: [40, r.position.z] }, 400).start();
-	//    })
+		//const getDiskFlip = disk => (
+		//    new Tween(r.rotation)
+		//    .to({ x: -r.rotation.x }, 400, Easing.Elastic.InOut)
+		//    .onStart(() => {
+		//        new Tween(r.position).to({ z: [40, r.position.z] }, 400).start();
+		//    })
 	//);
+	EarthContour.prototype.moveEarth = function (){
 
+			var r = this.mesh;
+			var oo = r.rotation.y;
+
+			
+			if(oo >= 0.4){ui = -1; yy = 0.0015};
+			if(oo <= 0){ui = 1; yy = 0.0015};
+			r.rotation.y = r.rotation.y + ui*yy;
+
+		//TweenMax.set(sphere.position,{x:posX});
+
+
+		this.mesh.geometry.verticesNeedUpdate=true;
 	};
+	EarthContourShadow.prototype.moveEarth = function (){
 
+			var r = this.mesh;
+			var oo = r.rotation.y;
+
+			
+			if(oo >= 0.4){ui = -1; yy = 0.0015};
+			if(oo <= 0){ui = 1; yy = 0.0015};
+			r.rotation.y = r.rotation.y + ui*yy;
+
+		//TweenMax.set(sphere.position,{x:posX});
+
+
+		this.mesh.geometry.verticesNeedUpdate=true;
+	};	
+	EarthPoints.prototype.moveEarth = function (){
+
+			var r = this.mesh;
+			var oo = r.rotation.y;
+
+			
+			if(oo >= 0.4){ui = -1; yy = 0.0015};
+			if(oo <= 0){ui = 1; yy = 0.0015};
+			r.rotation.y = r.rotation.y + ui*yy;
+
+		//TweenMax.set(sphere.position,{x:posX});
+
+
+		this.mesh.geometry.verticesNeedUpdate=true;
+	};
+	EarthPointsShadow.prototype.moveEarth = function (){
+
+			var r = this.mesh;
+			var oo = r.rotation.y;
+
+			
+			if(oo >= 0.4){ui = -1; yy = 0.0015};
+			if(oo <= 0){ui = 1; yy = 0.0015};
+			r.rotation.y = r.rotation.y + ui*yy;
+
+		//TweenMax.set(sphere.position,{x:posX});
+
+
+		this.mesh.geometry.verticesNeedUpdate=true;
+	};
+	Clouds.prototype.moveEarth = function (){
+
+			var r = this.mesh;
+			var oo = r.rotation.y;
+
+			
+			if(oo >= 0.4){ui = -1; yy = 0.0015};
+			if(oo <= 0){ui = 1; yy = 0.0015};
+			r.rotation.y = r.rotation.y + ui*yy;
+
+		//TweenMax.set(sphere.position,{x:posX});
+
+
+		this.mesh.geometry.verticesNeedUpdate=true;
+	};
+	CloudsShadow.prototype.moveEarth = function (){
+
+			var r = this.mesh;
+			var oo = r.rotation.y;
+
+			
+			if(oo >= 0.4){ui = -1; yy = 0.0015};
+			if(oo <= 0){ui = 1; yy = 0.0015};
+			r.rotation.y = r.rotation.y + ui*yy;
+
+		//TweenMax.set(sphere.position,{x:posX});
+
+
+		this.mesh.geometry.verticesNeedUpdate=true;
+	};
 	function createEarthTexture(){
 
 		earthTexture = new EarthTexture();
@@ -1509,6 +1587,26 @@ let wire_l        = 1700,	wire_d        = 16,
 		group.add( earthPointsShadow.mesh );
 
 	};
+
+	function createClouds(){
+
+		clouds = new Clouds();
+		clouds.mesh.position.x = 0;
+		clouds.mesh.position.y = 0;
+		clouds.mesh.position.z = 0;
+		group.add( clouds.mesh );
+
+	};	
+
+	function createCloudsShadow(){
+
+		cloudsShadow = new CloudsShadow();
+		cloudsShadow.mesh.position.x = 0;
+		cloudsShadow.mesh.position.y = 0;
+		cloudsShadow.mesh.position.z = 0;
+		group.add( cloudsShadow.mesh );
+
+	};	
 
 	function createWire_1(){
 
@@ -1829,20 +1927,18 @@ let wire_l        = 1700,	wire_d        = 16,
 		
 		createEarthContour();
 
-		//createEarthPoints();
-		//createEarthPointsShadow();
+		createEarthPoints();
+		createEarthPointsShadow();
 
-		//createConnector1();
-		//createSticker();
-		//createStickerGlow();
-		//createConnector2();
+
 		moveGroup_models_1();
 		moveGroup_models_2();
 		moveGroup_models_3();
 		moveGroup_models_4();
 		moveGroup_models_5();
 		moveGroup_models_6();
-		//addClouds();
+		createCloudsShadow();
+		createClouds();
 		addLights();
 		addDirLight();
 
@@ -1871,8 +1967,14 @@ let wire_l        = 1700,	wire_d        = 16,
 		//var np_max=(Math.random() * (1500 - 500 + 1)) + 500;
 		//var np_min=(-1)*((Math.random() * (1500 - 500 + 1)) + 500);
 		//var np_min=(-1)*(np_max/5);
-		
+
+		earthTexture.moveEarth();
 		earthContour.moveEarth();
+		earthContourShadow.moveEarth();
+		earthPoints.moveEarth();
+		earthPointsShadow.moveEarth();
+		clouds.moveEarth();
+		cloudsShadow.moveEarth();
 		wire.moveWaves(n);
 		wire_2.moveWaves_2(n);
 		wire_3.moveWaves(n);
