@@ -1318,8 +1318,8 @@ let wire_l        = 1700,	wire_d        = 16,
 
 	let v,l;
 //САНЯ ЭТО АНИМАЦИЯ ДВИЖЕНИЯ ПРОВОДА
-	Wire.prototype.moveWaves = function (n){
-	
+	Wire.prototype.moveWaves = function (n,tyy){
+		this.mesh.rotation.z = -90*(Math.PI/180);
 		v = this.mesh.geometry.vertices;
 		l = v.length;
 		var vzarr=[];
@@ -1331,7 +1331,7 @@ let wire_l        = 1700,	wire_d        = 16,
 		var z_length = Math.abs(min_v) + Math.abs(max_v);
 		for (var i=0; i<l; i++){
 
-			var a, b, c, offset, offset2, offset3, z_positive, z_normalized;
+			var a, b, c, offset, offset2, offsety, z_positive, z_normalized, offsety;
 			//c - амплитуда, изм-я с помощью n из animate
 			a = v[i];
 			b = this.waves[i];
@@ -1345,19 +1345,19 @@ let wire_l        = 1700,	wire_d        = 16,
 			//offset = Math.sin(2*Math.PI*z_normalized)*Math.exp(-z_normalized);
 			offset = z_normalized * ( Math.cos( b.z - c ) );
 			offset2 = z_normalized * ( Math.sin( b.z - c ) );
-			
-			a.x = b.x + (offset);
-			a.y = b.y + (offset2);
+			offsety = z_normalized*tyy;
+
+			a.x = b.x + (offset) - Math.pow(offsety, 3);
+			a.y = b.y + (offset2)- Math.pow(offsety, 3);
 
 		};
-
 
 
 		this.mesh.geometry.verticesNeedUpdate=true;
 		
 	};
-	Wire.prototype.moveWaves_2 = function (n){
-	
+	Wire.prototype.moveWaves_2 = function (n,tyy){
+		this.mesh.rotation.z = -120*(Math.PI/180);
 		v = this.mesh.geometry.vertices;
 		l = v.length;
 		var vzarr=[];
@@ -1369,7 +1369,7 @@ let wire_l        = 1700,	wire_d        = 16,
 		var z_length = Math.abs(min_v) + Math.abs(max_v);
 		for (var i=0; i<l; i++){
 
-			var a, b, c, offset, offset2, offset3, z_positive, z_normalized;
+			var a, b, c, offset, offset2, offsety, z_positive, z_normalized, offsety;
 			//c - амплитуда, изм-я с помощью n из animate
 			a = v[i];
 			b = this.waves[i];
@@ -1381,19 +1381,172 @@ let wire_l        = 1700,	wire_d        = 16,
 			//offset = 100*Math.sin(z_normalized) * ( Math.cos( b.z - c ) ); пиздатая рандомная функция
 
 			//offset = Math.sin(2*Math.PI*z_normalized)*Math.exp(-z_normalized);
+			offset = z_normalized * ( Math.cos( b.z - c ) );
+			offset2 = z_normalized * ( Math.sin( b.z - c ) );
+			offsety = z_normalized*tyy;
 
-			//offset = z_normalized * ( Math.cos( b.z - c ) );
-			//offset2 = z_normalized * ( Math.sin( b.z - c ) );
-			offset = z_normalized*1.3*Math.cos( z_normalized - c ) * ( Math.sin( z_normalized * 2 -c) );
-			offset2 = z_normalized*1.3*Math.sin( z_normalized - c ) * ( Math.sin( z_normalized * 2 -c) );
-			a.x = b.x + (offset);
-			a.y = b.y + (offset2);
+			a.x = b.x + (offset) - Math.pow(offsety, 3);
+			a.y = b.y + (offset2)- Math.pow(offsety, 3);
 
 		};
+
 
 		this.mesh.geometry.verticesNeedUpdate=true;
 		
 	};
+	Wire.prototype.moveWaves_3 = function (n,tyy){
+		this.mesh.rotation.z = -150*(Math.PI/180);
+		v = this.mesh.geometry.vertices;
+		l = v.length;
+		var vzarr=[];
+		for ( var i = 0; i < l; i++ ){
+			vzarr.push(this.waves[i].z);
+		};
+		var min_v = Math.min.apply(null, vzarr);
+		var max_v = Math.max.apply(null, vzarr);
+		var z_length = Math.abs(min_v) + Math.abs(max_v);
+		for (var i=0; i<l; i++){
+
+			var a, b, c, offset, offset2, offsety, z_positive, z_normalized, offsety;
+			//c - амплитуда, изм-я с помощью n из animate
+			a = v[i];
+			b = this.waves[i];
+			//
+			c = b.amp * n;
+			z_positive = b.z + max_v;
+
+			z_normalized = ((z_positive / z_length)) * c;
+			//offset = 100*Math.sin(z_normalized) * ( Math.cos( b.z - c ) ); пиздатая рандомная функция
+
+			//offset = Math.sin(2*Math.PI*z_normalized)*Math.exp(-z_normalized);
+			offset = z_normalized * ( Math.cos( b.z - c ) );
+			offset2 = z_normalized * ( Math.sin( b.z - c ) );
+			offsety = z_normalized*tyy;
+
+			a.x = b.x + (offset) - Math.pow(offsety, 3);
+			a.y = b.y + (offset2)- Math.pow(offsety, 3);
+
+		};
+
+
+		this.mesh.geometry.verticesNeedUpdate=true;
+		
+	};
+	Wire.prototype.moveWaves_4 = function (n,tyy){
+		this.mesh.rotation.z = -215*(Math.PI/180);
+		v = this.mesh.geometry.vertices;
+		l = v.length;
+		var vzarr=[];
+		for ( var i = 0; i < l; i++ ){
+			vzarr.push(this.waves[i].z);
+		};
+		var min_v = Math.min.apply(null, vzarr);
+		var max_v = Math.max.apply(null, vzarr);
+		var z_length = Math.abs(min_v) + Math.abs(max_v);
+		for (var i=0; i<l; i++){
+
+			var a, b, c, offset, offset2, offsety, z_positive, z_normalized, offsety;
+			//c - амплитуда, изм-я с помощью n из animate
+			a = v[i];
+			b = this.waves[i];
+			//
+			c = b.amp * n;
+			z_positive = b.z + max_v;
+
+			z_normalized = ((z_positive / z_length)) * c;
+			//offset = 100*Math.sin(z_normalized) * ( Math.cos( b.z - c ) ); пиздатая рандомная функция
+
+			//offset = Math.sin(2*Math.PI*z_normalized)*Math.exp(-z_normalized);
+			offset = z_normalized * ( Math.cos( b.z - c ) );
+			offset2 = z_normalized * ( Math.sin( b.z - c ) );
+			offsety = z_normalized*tyy;
+
+			a.x = b.x + (offset) - Math.pow(offsety, 3);
+			a.y = b.y + (offset2)- Math.pow(offsety, 3);
+
+		};
+
+
+		this.mesh.geometry.verticesNeedUpdate=true;
+		
+	};
+	Wire.prototype.moveWaves_5 = function (n,tyy){
+		this.mesh.rotation.z = -55*(Math.PI/180);
+		v = this.mesh.geometry.vertices;
+		l = v.length;
+		var vzarr=[];
+		for ( var i = 0; i < l; i++ ){
+			vzarr.push(this.waves[i].z);
+		};
+		var min_v = Math.min.apply(null, vzarr);
+		var max_v = Math.max.apply(null, vzarr);
+		var z_length = Math.abs(min_v) + Math.abs(max_v);
+		for (var i=0; i<l; i++){
+
+			var a, b, c, offset, offset2, offsety, z_positive, z_normalized, offsety;
+			//c - амплитуда, изм-я с помощью n из animate
+			a = v[i];
+			b = this.waves[i];
+			//
+			c = b.amp * n;
+			z_positive = b.z + max_v;
+
+			z_normalized = ((z_positive / z_length)) * c;
+			//offset = 100*Math.sin(z_normalized) * ( Math.cos( b.z - c ) ); пиздатая рандомная функция
+
+			//offset = Math.sin(2*Math.PI*z_normalized)*Math.exp(-z_normalized);
+			offset = z_normalized * ( Math.cos( b.z - c ) );
+			offset2 = z_normalized * ( Math.sin( b.z - c ) );
+			offsety = z_normalized*tyy;
+
+			a.x = b.x + (offset) - Math.pow(offsety, 3);
+			a.y = b.y + (offset2)- Math.pow(offsety, 3);
+
+		};
+
+
+		this.mesh.geometry.verticesNeedUpdate=true;
+		
+	};
+	Wire.prototype.moveWaves_6 = function (n,tyy){
+		this.mesh.rotation.z = 115*(Math.PI/180);
+		v = this.mesh.geometry.vertices;
+		l = v.length;
+		var vzarr=[];
+		for ( var i = 0; i < l; i++ ){
+			vzarr.push(this.waves[i].z);
+		};
+		var min_v = Math.min.apply(null, vzarr);
+		var max_v = Math.max.apply(null, vzarr);
+		var z_length = Math.abs(min_v) + Math.abs(max_v);
+		for (var i=0; i<l; i++){
+
+			var a, b, c, offset, offset2, offsety, z_positive, z_normalized, offsety;
+			//c - амплитуда, изм-я с помощью n из animate
+			a = v[i];
+			b = this.waves[i];
+			//
+			c = b.amp * n;
+			z_positive = b.z + max_v;
+
+			z_normalized = ((z_positive / z_length)) * c;
+			//offset = 100*Math.sin(z_normalized) * ( Math.cos( b.z - c ) ); пиздатая рандомная функция
+
+			//offset = Math.sin(2*Math.PI*z_normalized)*Math.exp(-z_normalized);
+			offset = z_normalized * ( Math.cos( b.z - c ) );
+			offset2 = z_normalized * ( Math.sin( b.z - c ) );
+			offsety = z_normalized*tyy;
+
+			a.x = b.x + (offset) - Math.pow(offsety, 3);
+			a.y = b.y + (offset2)- Math.pow(offsety, 3);
+
+		};
+
+
+		this.mesh.geometry.verticesNeedUpdate=true;
+		
+	};
+
 //if((Math.cos( b.z ) <=0.3)||(Math.cos( b.z ) >=-0.3)) {};
 //offset = Math.sin(2*Math.PI*(qe))*(Math.exp(qe));
 	var update;
@@ -1407,7 +1560,7 @@ let wire_l        = 1700,	wire_d        = 16,
 	var angle1 = [];
 	var ui = 1;
 	var yy;
-
+//---------------------------------------------------------
 	EarthTexture.prototype.moveEarth = function (){
 
 			var r = this.mesh;
@@ -1418,7 +1571,7 @@ let wire_l        = 1700,	wire_d        = 16,
 			if(oo <= 0){ui = 1; yy = 0.0015};
 			r.rotation.y = r.rotation.y + ui*yy;
 
-		//TweenMax.set(sphere.position,{x:posX});
+			//TweenMax.set(sphere.position,{x:posX});
 
 
 		this.mesh.geometry.verticesNeedUpdate=true;
@@ -1460,7 +1613,7 @@ let wire_l        = 1700,	wire_d        = 16,
 			if(oo <= 0){ui = 1; yy = 0.0015};
 			r.rotation.y = r.rotation.y + ui*yy;
 
-		//TweenMax.set(sphere.position,{x:posX});
+			//TweenMax.set(sphere.position,{x:posX});
 
 
 		this.mesh.geometry.verticesNeedUpdate=true;
@@ -1475,7 +1628,7 @@ let wire_l        = 1700,	wire_d        = 16,
 			if(oo <= 0){ui = 1; yy = 0.0015};
 			r.rotation.y = r.rotation.y + ui*yy;
 
-		//TweenMax.set(sphere.position,{x:posX});
+			//TweenMax.set(sphere.position,{x:posX});
 
 
 		this.mesh.geometry.verticesNeedUpdate=true;
@@ -1490,7 +1643,7 @@ let wire_l        = 1700,	wire_d        = 16,
 			if(oo <= 0){ui = 1; yy = 0.0015};
 			r.rotation.y = r.rotation.y + ui*yy;
 
-		//TweenMax.set(sphere.position,{x:posX});
+			//TweenMax.set(sphere.position,{x:posX});
 
 
 		this.points.geometry.verticesNeedUpdate=true;
@@ -1505,7 +1658,7 @@ let wire_l        = 1700,	wire_d        = 16,
 			if(oo <= 0){ui = 1; yy = 0.0015};
 			r.rotation.y = r.rotation.y + ui*yy;
 
-		//TweenMax.set(sphere.position,{x:posX});
+			//TweenMax.set(sphere.position,{x:posX});
 
 
 		this.points.geometry.verticesNeedUpdate=true;
@@ -1520,7 +1673,7 @@ let wire_l        = 1700,	wire_d        = 16,
 			if(oo <= 0){ui = 1; yy = 0.0015};
 			r.rotation.y = r.rotation.y + ui*yy;
 
-		//TweenMax.set(sphere.position,{x:posX});
+			//TweenMax.set(sphere.position,{x:posX});
 
 
 		this.mesh.geometry.verticesNeedUpdate=true;
@@ -1535,7 +1688,7 @@ let wire_l        = 1700,	wire_d        = 16,
 			if(oo <= 0){ui = 1; yy = 0.0015};
 			r.rotation.y = r.rotation.y + ui*yy;
 
-		//TweenMax.set(sphere.position,{x:posX});
+			//TweenMax.set(sphere.position,{x:posX});
 
 
 		this.mesh.geometry.verticesNeedUpdate=true;
@@ -1685,7 +1838,7 @@ let wire_l        = 1700,	wire_d        = 16,
 		group_wire_3.add(sticker_3.mesh);
 		group_wire_3.add(stickerGlow_3.mesh);
 		group_wire_3.add(wire_3.mesh);
-		wire_3.mesh.material.color.setHex( 0x00FFE5 );
+		//wire_3.mesh.material.color.setHex( 0x00FFE5 );
 		
 	};
 
@@ -1711,7 +1864,7 @@ let wire_l        = 1700,	wire_d        = 16,
 		group_wire_4.add(sticker_4.mesh);
 		group_wire_4.add(stickerGlow_4.mesh);
 		group_wire_4.add(wire_4.mesh);
-		wire_4.mesh.material.color.setHex( 0x22FF00 );
+		//wire_4.mesh.material.color.setHex( 0x22FF00 );
 
 	};
 
@@ -1737,7 +1890,7 @@ let wire_l        = 1700,	wire_d        = 16,
 		group_wire_5.add(sticker_5.mesh);
 		group_wire_5.add(stickerGlow_5.mesh);
 		group_wire_5.add(wire_5.mesh);
-		wire_5.mesh.material.color.setHex( 0xFFE600 );
+		//wire_5.mesh.material.color.setHex( 0xFFE600 );
 
 	};
 
@@ -1763,7 +1916,7 @@ let wire_l        = 1700,	wire_d        = 16,
 		group_wire_6.add(sticker_6.mesh);
 		group_wire_6.add(stickerGlow_6.mesh);
 		group_wire_6.add(wire_6.mesh);
-		wire_6.mesh.material.color.setHex( 0xFF0000 );
+		//wire_6.mesh.material.color.setHex( 0xFF0000 );
 
 	};
 //CREATION end
@@ -1902,6 +2055,29 @@ let wire_l        = 1700,	wire_d        = 16,
 		group_wire_6.position.set(xrad,yrad,zrad);//0xFF0000
 
 	};
+	function wiresingroup () {
+		group.add(group_wire_1);
+		group.add(group_wire_2);
+		group.add(group_wire_3);
+		group.add(group_wire_4);
+		group.add(group_wire_5);
+		group.add(group_wire_6);
+	};
+//---------------------------------------------------------
+	var ooarr=[];
+	let ty = 0;
+	function gh(){
+			var r = group;
+			var oo = group.rotation.y;
+
+			
+			if(oo >= 0.4){ui = -1; yy = 0.0015};
+			if(oo <= 0){ui = 1; yy = 0.0015};
+			r.rotation.y = r.rotation.y + ui*yy;
+			ty = oo;
+
+	};
+
 //---------------------------------------------------------
 	init();
 	animate();
@@ -1944,6 +2120,7 @@ let wire_l        = 1700,	wire_d        = 16,
 		createClouds();
 		addLights();
 		addDirLight();
+		wiresingroup();
 
 	};
 	let n_max=2250 + 600;
@@ -1965,34 +2142,34 @@ let wire_l        = 1700,	wire_d        = 16,
 	//	if ( s < 0.5 ) { q_2 = 2*s } else { q_2 = -1+(4-2*s)*s };
 	//};
 	//function(t){return t<.5 ? 2*t*t : -1+(4-2*t)*t};
-
+let tyy = 0;
 	function animate() {
 		//var np_max=(Math.random() * (1500 - 500 + 1)) + 500;
 		//var np_min=(-1)*((Math.random() * (1500 - 500 + 1)) + 500);
 		//var np_min=(-1)*(np_max/5);
 
-		earthTexture.moveEarth();
-		earthContour.moveEarth();
-		earthContourShadow.moveEarth();
-		earthPoints.moveEarth();
-		earthPointsShadow.moveEarth();
-		clouds.moveEarth();
-		cloudsShadow.moveEarth();
-		wire.moveWaves(n);
-		wire_2.moveWaves_2(n);
-		wire_3.moveWaves(n);
-		wire_4.moveWaves(n);
-		wire_5.moveWaves(n);
-		wire_6.moveWaves(n);
+		gh();
+		//earthTexture.moveEarth();
+		//earthContour.moveEarth();
+		//earthContourShadow.moveEarth();
+		//earthPoints.moveEarth();
+		//earthPointsShadow.moveEarth();
+		//clouds.moveEarth();
+		//cloudsShadow.moveEarth();
+		wire.moveWaves(n,tyy);
+		wire_2.moveWaves_2(n,tyy);
+		wire_3.moveWaves_3(n,tyy);
+		wire_4.moveWaves_4(n,tyy);
+		wire_5.moveWaves_5(n,tyy);
+		wire_6.moveWaves_6(n,tyy);
 		//wire_2.moveWaves(n);
 		if(n >= n_max){f = -1};
 		if(n <= n_min){f = 1};
 		n = n + f*(q);
-
 //		if(n_2 >= n_2_max){f_2 = -2};
 //		if(n_2 <= n_2_min){f_2 = 1};
 		n_2 = n_2;
-
+		tyy = ty;
 		Render();
 
 		window.requestAnimationFrame(animate);
