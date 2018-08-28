@@ -356,9 +356,9 @@ mounted(){
 					transparent: true,
 					lights: false
 				});
-			var earth_shadow_points = new THREE.Points(g,m);
-			m.depthWrite = false;
-			this.mesh = new THREE.Mesh(g, m);
+			//m.depthWrite = false;
+			this.points = new THREE.Points(g,m);
+			
 				//gl_FragColor = vec4( vColor, 1.0 );
 	};
 		//EARTH_POINTS_SHADOW_END
@@ -394,7 +394,7 @@ mounted(){
 						value: disk
 					},
 					size: {
-						value: 1
+						value: 25
 					},
 					scale: {
 						value: window.innerHeight / 8
@@ -428,7 +428,7 @@ mounted(){
 						vec2 uv = vUv;
 						uv.x += shift;
 						vec4 v = texture2D(visibility, uv);
-						if (length(v.rgb) > 1.0) discard;
+						if (length(v.rgb) > 1.1) discard;
 
 						gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
 						gl_FragColor.a = 0.8;
@@ -442,8 +442,7 @@ mounted(){
 				lights: false,
 				opacity: 1.0
 				});
-			var points = new THREE.Points(g, m);
-			this.mesh = new THREE.Mesh(g, m);
+			this.points = new THREE.Points(g, m);
 				//m.depthWrite = false;
 
 	};
@@ -1244,7 +1243,7 @@ let wire_l        = 1700,	wire_d        = 16,
 			opacity:1.0,
 			shading:THREE.FlatShading,
 		});
-
+		//mat.depthWrite = false;
 		this.mesh = new THREE.Mesh(geom, mat);
 		this.mesh.receiveShadow = true;
 
@@ -1351,6 +1350,8 @@ let wire_l        = 1700,	wire_d        = 16,
 			a.y = b.y + (offset2);
 
 		};
+
+
 
 		this.mesh.geometry.verticesNeedUpdate=true;
 		
@@ -1481,7 +1482,7 @@ let wire_l        = 1700,	wire_d        = 16,
 	};	
 	EarthPoints.prototype.moveEarth = function (){
 
-			var r = this.mesh;
+			var r = this.points;
 			var oo = r.rotation.y;
 
 			
@@ -1492,11 +1493,11 @@ let wire_l        = 1700,	wire_d        = 16,
 		//TweenMax.set(sphere.position,{x:posX});
 
 
-		this.mesh.geometry.verticesNeedUpdate=true;
+		this.points.geometry.verticesNeedUpdate=true;
 	};
 	EarthPointsShadow.prototype.moveEarth = function (){
 
-			var r = this.mesh;
+			var r = this.points;
 			var oo = r.rotation.y;
 
 			
@@ -1507,7 +1508,7 @@ let wire_l        = 1700,	wire_d        = 16,
 		//TweenMax.set(sphere.position,{x:posX});
 
 
-		this.mesh.geometry.verticesNeedUpdate=true;
+		this.points.geometry.verticesNeedUpdate=true;
 	};
 	Clouds.prototype.moveEarth = function (){
 
@@ -1539,6 +1540,7 @@ let wire_l        = 1700,	wire_d        = 16,
 
 		this.mesh.geometry.verticesNeedUpdate=true;
 	};
+//CREATION
 	function createEarthTexture(){
 
 		earthTexture = new EarthTexture();
@@ -1547,8 +1549,8 @@ let wire_l        = 1700,	wire_d        = 16,
 		earthTexture.mesh.position.z = 0;
 		group.add( earthTexture.mesh );
 
-	};	
-//hui
+	};
+
 	function createEarthContour(){
 
 		earthContour = new EarthContour();
@@ -1571,20 +1573,20 @@ let wire_l        = 1700,	wire_d        = 16,
 	function createEarthPoints(){
 
 		earthPoints = new EarthPoints();
-		earthPoints.mesh.position.x = 0;
-		earthPoints.mesh.position.y = 0;
-		earthPoints.mesh.position.z = 0;
-		group.add( earthPoints.mesh );
+		earthPoints.points.position.x = 0;
+		earthPoints.points.position.y = 0;
+		earthPoints.points.position.z = 0;
+		group.add( earthPoints.points );
 
 	};	
 
 	function createEarthPointsShadow(){
 
 		earthPointsShadow = new EarthPointsShadow();
-		earthPointsShadow.mesh.position.x = 0;
-		earthPointsShadow.mesh.position.y = 0;
-		earthPointsShadow.mesh.position.z = 0;
-		group.add( earthPointsShadow.mesh );
+		earthPointsShadow.points.position.x = 0;
+		earthPointsShadow.points.position.y = 0;
+		earthPointsShadow.points.position.z = 0;
+		group.add( earthPointsShadow.points );
 
 	};
 
@@ -1764,7 +1766,8 @@ let wire_l        = 1700,	wire_d        = 16,
 		wire_6.mesh.material.color.setHex( 0xFF0000 );
 
 	};
-
+//CREATION end
+//SHIFT OF WIRES
 	function moveGroup_models_1() {
 
 		var startVector = new THREE.Vector3(0, 0, 0);
@@ -1924,12 +1927,12 @@ let wire_l        = 1700,	wire_d        = 16,
 		createWire_6();
 		createEarthTexture();
 		createEarthContourShadow();
-		
+		createEarthPointsShadow();	
 		createEarthContour();
 
+		
+		
 		createEarthPoints();
-		createEarthPointsShadow();
-
 
 		moveGroup_models_1();
 		moveGroup_models_2();
