@@ -2062,6 +2062,9 @@ let wire_l        = 1700,	wire_d        = 16,
 		group.add(group_wire_4);
 		group.add(group_wire_5);
 		group.add(group_wire_6);
+		group.rotation.x = 0*(Math.PI/180);
+		group.rotation.y = -65*(Math.PI/180);
+		group.rotation.z = -15*(Math.PI/180);
 	};
 //---------------------------------------------------------
 	var ooarr=[];
