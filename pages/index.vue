@@ -81,7 +81,7 @@ mounted(){
 	var color = 0x000000;
 	var mouse = new THREE.Vector2(), INTERSECTED;
 
-	var camera, scene, renderer, group, controls, mesh;
+	var camera, scene, renderer, group, groupPlanet, controls, mesh;
 	var EarthTexture, earthTexture;
 	var EarthContour, earthContour;
 	var EarthContourShadow, earthContourShadow;
@@ -129,6 +129,7 @@ mounted(){
 		scene.fog = new THREE.FogExp2( 0x000104, 0.0000675 );
 		scene.background = new THREE.TextureLoader().load( 'background_map.jpg' );
 		group = new THREE.Object3D();
+		groupPlanet = new THREE.Object3D();
 		group_wire_1 = new THREE.Object3D();
 		group_wire_2 = new THREE.Object3D();
 		group_wire_3 = new THREE.Object3D();
@@ -151,6 +152,7 @@ mounted(){
 		//backgroundScene.add(backgroundCamera);
 		//backgroundScene.add(backgroundSceneMesh);
 		scene.add(group);
+		scene.add(groupPlanet);
 		scene.add(group_wire_1);
 		scene.add(group_wire_2);
 		scene.add(group_wire_3);
@@ -450,7 +452,7 @@ mounted(){
 //LIGHTS AND CLOUDS
 	function addLights() {
 		var ambiColor = "#ffffff";
-		var ambientLight = new THREE.AmbientLight(ambiColor, 5.5);//0.5
+		var ambientLight = new THREE.AmbientLight(ambiColor, 0.5);//0.5
 		scene.add(ambientLight);
 
 	};
@@ -564,6 +566,8 @@ mounted(){
 				customMaterial.fog = false;
 		customMaterial.depthWrite = false;
 		scene.add( moonGlow );
+		moonGlow.position.x = 618;
+		moonGlow.position.y = 12;
 		//EARTH_AUREOLE_END
 
 	};
@@ -1175,7 +1179,7 @@ let wire_l        = 1700,	wire_d        = 16,
 	StickerGlow_l = 60,		StickerGlow_d = 34;
 	Wire = function(){
 
-		var g = new THREE.CylinderGeometry( wire_d,wire_d,wire_l, 110,55);
+		var g = new THREE.CylinderGeometry( wire_d,wire_d,wire_l, 110,55);//110 55
 
 			g.applyMatrix( new THREE.Matrix4().makeRotationX( -Math.PI/2 ) );
 			g.mergeVertices();
@@ -1203,7 +1207,7 @@ let wire_l        = 1700,	wire_d        = 16,
 			color: 0x030303,
 			transparent:true,
 			opacity:1.0,
-			shading:THREE.FlatShading,
+			shading:THREE.SmoothShading,
 			shininess: 100
 		});
 
@@ -1382,12 +1386,12 @@ let wire_l        = 1700,	wire_d        = 16,
 			//offset = 100*Math.sin(z_normalized) * ( Math.cos( b.z - c ) ); пиздатая рандомная функция
 
 			//offset = Math.sin(2*Math.PI*z_normalized)*Math.exp(-z_normalized);
-			offset = z_normalized * ( Math.cos( b.z - c ) );
-			offset2 = z_normalized * ( Math.sin( b.z - c ) );
+			offset = z_normalized * Math.abs(( Math.cos( (b.z - c)/10 ) )* ( Math.sin( (b.z - c)/5 ) ));
+			offset2 = z_normalized * Math.abs(( Math.sin( (b.z - c)/10 ) )* ( Math.sin( (b.z - c)/5 ) ));
 			offsety = z_normalized*tyy;
 
-			a.x = b.x + (offset) - Math.pow(offsety, 3);
-			a.y = b.y + (offset2)- Math.pow(offsety, 3);
+			a.x = b.x + 10*(offset);
+			a.y = b.y + 10*(offset2);
 
 		};
 
@@ -1420,12 +1424,12 @@ let wire_l        = 1700,	wire_d        = 16,
 			//offset = 100*Math.sin(z_normalized) * ( Math.cos( b.z - c ) ); пиздатая рандомная функция
 
 			//offset = Math.sin(2*Math.PI*z_normalized)*Math.exp(-z_normalized);
-			offset = z_normalized * ( Math.cos( b.z - c ) );
-			offset2 = z_normalized * ( Math.sin( b.z - c ) );
+			offset = z_normalized * Math.abs(( Math.cos( (b.z - c)/10 ) )* ( Math.sin( (b.z - c)/5 ) ));
+			offset2 = z_normalized * Math.abs(( Math.sin( (b.z - c)/10 ) )* ( Math.sin( (b.z - c)/5 ) ));
 			offsety = z_normalized*tyy;
 
-			a.x = b.x + (offset) - Math.pow(offsety, 3);
-			a.y = b.y + (offset2)- Math.pow(offsety, 3);
+			a.x = b.x + 10*(offset);
+			a.y = b.y + 10*(offset2);
 
 		};
 
@@ -1458,12 +1462,12 @@ let wire_l        = 1700,	wire_d        = 16,
 			//offset = 100*Math.sin(z_normalized) * ( Math.cos( b.z - c ) ); пиздатая рандомная функция
 
 			//offset = Math.sin(2*Math.PI*z_normalized)*Math.exp(-z_normalized);
-			offset = z_normalized * ( Math.cos( b.z - c ) );
-			offset2 = z_normalized * ( Math.sin( b.z - c ) );
+			offset = z_normalized * Math.abs(( Math.cos( (b.z - c)/10 ) )* ( Math.sin( (b.z - c)/5 ) ));
+			offset2 = z_normalized * Math.abs(( Math.sin( (b.z - c)/10 ) )* ( Math.sin( (b.z - c)/5 ) ));
 			offsety = z_normalized*tyy;
 
-			a.x = b.x + (offset) - Math.pow(offsety, 3);
-			a.y = b.y + (offset2)- Math.pow(offsety, 3);
+			a.x = b.x + 10*(offset);
+			a.y = b.y + 10*(offset2);
 
 		};
 
@@ -1496,12 +1500,12 @@ let wire_l        = 1700,	wire_d        = 16,
 			//offset = 100*Math.sin(z_normalized) * ( Math.cos( b.z - c ) ); пиздатая рандомная функция
 
 			//offset = Math.sin(2*Math.PI*z_normalized)*Math.exp(-z_normalized);
-			offset = z_normalized * ( Math.cos( b.z - c ) );
-			offset2 = z_normalized * ( Math.sin( b.z - c ) );
+			offset = z_normalized * Math.abs(( Math.cos( (b.z - c)/10 ) )* ( Math.sin( (b.z - c)/5 ) ));
+			offset2 = z_normalized * Math.abs(( Math.sin( (b.z - c)/10 ) )* ( Math.sin( (b.z - c)/5 ) ));
 			offsety = z_normalized*tyy;
 
-			a.x = b.x + (offset) - Math.pow(offsety, 3);
-			a.y = b.y + (offset2)- Math.pow(offsety, 3);
+			a.x = b.x + 10*(offset);
+			a.y = b.y + 10*(offset2);
 
 		};
 
@@ -1534,12 +1538,12 @@ let wire_l        = 1700,	wire_d        = 16,
 			//offset = 100*Math.sin(z_normalized) * ( Math.cos( b.z - c ) ); пиздатая рандомная функция
 
 			//offset = Math.sin(2*Math.PI*z_normalized)*Math.exp(-z_normalized);
-			offset = z_normalized * ( Math.cos( b.z - c ) );
-			offset2 = z_normalized * ( Math.sin( b.z - c ) );
+			offset = z_normalized * Math.abs(( Math.cos( (b.z - c)/10 ) )* ( Math.sin( (b.z - c)/5 ) ));
+			offset2 = z_normalized * Math.abs(( Math.sin( (b.z - c)/10 ) )* ( Math.sin( (b.z - c)/5 ) ));
 			offsety = z_normalized*tyy;
 
-			a.x = b.x + (offset) - Math.pow(offsety, 3);
-			a.y = b.y + (offset2)- Math.pow(offsety, 3);
+			a.x = b.x + 10*(offset);
+			a.y = b.y + 10*(offset2);
 
 		};
 
@@ -1701,7 +1705,7 @@ let wire_l        = 1700,	wire_d        = 16,
 		earthTexture.mesh.position.x = 0;
 		earthTexture.mesh.position.y = 0;
 		earthTexture.mesh.position.z = 0;
-		group.add( earthTexture.mesh );
+		groupPlanet.add( earthTexture.mesh );
 
 	};
 
@@ -1711,7 +1715,7 @@ let wire_l        = 1700,	wire_d        = 16,
 		earthContour.mesh.position.x = 0;
 		earthContour.mesh.position.y = 0;
 		earthContour.mesh.position.z = 0;
-		group.add( earthContour.mesh );
+		groupPlanet.add( earthContour.mesh );
 
 	};	
 
@@ -1721,7 +1725,7 @@ let wire_l        = 1700,	wire_d        = 16,
 		earthContourShadow.mesh.position.x = 0;
 		earthContourShadow.mesh.position.y = 0;
 		earthContourShadow.mesh.position.z = 0;
-		group.add( earthContourShadow.mesh );
+		groupPlanet.add( earthContourShadow.mesh );
 
 	};	
 	function createEarthPoints(){
@@ -1730,7 +1734,7 @@ let wire_l        = 1700,	wire_d        = 16,
 		earthPoints.points.position.x = 0;
 		earthPoints.points.position.y = 0;
 		earthPoints.points.position.z = 0;
-		group.add( earthPoints.points );
+		groupPlanet.add( earthPoints.points );
 
 	};	
 
@@ -1740,7 +1744,7 @@ let wire_l        = 1700,	wire_d        = 16,
 		earthPointsShadow.points.position.x = 0;
 		earthPointsShadow.points.position.y = 0;
 		earthPointsShadow.points.position.z = 0;
-		group.add( earthPointsShadow.points );
+		groupPlanet.add( earthPointsShadow.points );
 
 	};
 
@@ -1750,7 +1754,7 @@ let wire_l        = 1700,	wire_d        = 16,
 		clouds.mesh.position.x = 0;
 		clouds.mesh.position.y = 0;
 		clouds.mesh.position.z = 0;
-		group.add( clouds.mesh );
+		groupPlanet.add( clouds.mesh );
 
 	};	
 
@@ -1760,7 +1764,7 @@ let wire_l        = 1700,	wire_d        = 16,
 		cloudsShadow.mesh.position.x = 0;
 		cloudsShadow.mesh.position.y = 0;
 		cloudsShadow.mesh.position.z = 0;
-		group.add( cloudsShadow.mesh );
+		groupPlanet.add( cloudsShadow.mesh );
 
 	};	
 
@@ -1865,7 +1869,7 @@ let wire_l        = 1700,	wire_d        = 16,
 		group_wire_4.add(sticker_4.mesh);
 		group_wire_4.add(stickerGlow_4.mesh);
 		group_wire_4.add(wire_4.mesh);
-		wire_4.mesh.material.color.setHex( 0x22FF00 );
+		//wire_4.mesh.material.color.setHex( 0x22FF00 );
 
 	};
 
@@ -1926,14 +1930,14 @@ let wire_l        = 1700,	wire_d        = 16,
 
 		var startVector = new THREE.Vector3(0, 0, 0);
 		var endVector = new THREE.Vector3(xrad,  yrad,  zrad);
-		var lat = 18,	long = 24;
+		var lat = 18,	long = -40;
 		var phi   = (90-lat)*(Math.PI/180);
 		var theta = (long-180)*(Math.PI/180);
 		let xrad = -((596) * Math.sin(phi)*Math.cos(theta));
 		let zrad = ((596) * Math.sin(phi)*Math.sin(theta));
 		let yrad = ((596) * Math.cos(phi));
-		var xrot = new THREE.Matrix4().makeRotationX( (180 - 320.9)*(Math.PI/180) );
-		var yrot = new THREE.Matrix4().makeRotationY( (270 + 150.2)*(Math.PI/180) );
+		var xrot = new THREE.Matrix4().makeRotationX( (-30)*(Math.PI/180) );
+		var yrot = new THREE.Matrix4().makeRotationY( (50)*(Math.PI/180) );
 		var xyrot = xrot.multiply(yrot);
 		var zrot = new THREE.Matrix4().makeRotationZ( 0);
 		var xyzrot = xyrot.multiply(zrot);
@@ -1946,15 +1950,15 @@ let wire_l        = 1700,	wire_d        = 16,
 	function moveGroup_models_2() {
 		var startVector = new THREE.Vector3(0, 0, 0);
 		var endVector = new THREE.Vector3(xrad,  yrad,  zrad);
-		var lat = -8,	long = -3;
+		var lat = -8,	long = -65;
 		var phi   = (90-lat)*(Math.PI/180);
 		var theta = (long-180)*(Math.PI/180);
 		let xrad = -((596) * Math.sin(phi)*Math.cos(theta));
 		let zrad = ((596) * Math.sin(phi)*Math.sin(theta));
 		let yrad = ((596) * Math.cos(phi));
 
-		var xrot = new THREE.Matrix4().makeRotationX( (180 - 280.9)*(Math.PI/180) );
-		var yrot = new THREE.Matrix4().makeRotationY( (270 + 190.2)*(Math.PI/180) );
+		var xrot = new THREE.Matrix4().makeRotationX( (7)*(Math.PI/180) );
+		var yrot = new THREE.Matrix4().makeRotationY( (25)*(Math.PI/180) );
 		var xyrot = xrot.multiply(yrot);
 		var zrot = new THREE.Matrix4().makeRotationZ( 0 );
 		var xyzrot = xyrot.multiply(zrot);
@@ -1969,15 +1973,15 @@ let wire_l        = 1700,	wire_d        = 16,
 		group_wire_3.translate(0, 0, 0.25 + 600);
 		var startVector = new THREE.Vector3(0, 0, 0);
 		var endVector = new THREE.Vector3(xrad,  yrad,  zrad);
-		var lat = 43,	long = -3;
+		var lat = 39,	long = -67;
 		var phi   = (90-lat)*(Math.PI/180);
 		var theta = (long-180)*(Math.PI/180);
 		let xrad = -((595) * Math.sin(phi)*Math.cos(theta));
 		let zrad = ((595) * Math.sin(phi)*Math.sin(theta));
 		let yrad = ((595) * Math.cos(phi));
 
-		var xrot = new THREE.Matrix4().makeRotationX( (180 - 265.9)*(Math.PI/180) );
-		var yrot = new THREE.Matrix4().makeRotationY( (270 + 135.2)*(Math.PI/180) );
+		var xrot = new THREE.Matrix4().makeRotationX( (-42)*(Math.PI/180) );
+		var yrot = new THREE.Matrix4().makeRotationY( (20)*(Math.PI/180) );
 		var xyrot = xrot.multiply(yrot);
 		var zrot = new THREE.Matrix4().makeRotationZ( 0 );
 		var xyzrot = xyrot.multiply(zrot);
@@ -1992,15 +1996,15 @@ let wire_l        = 1700,	wire_d        = 16,
 		group_wire_4.translate(0, 0, 0.25 + 600);
 		var startVector = new THREE.Vector3(0, 0, 0);
 		var endVector = new THREE.Vector3(xrad,  yrad,  zrad);
-		var lat = -25,	long = -152;//-102
+		var lat = -40,	long = -152;//-102
 		var phi   = (90-lat)*(Math.PI/180);
 		var theta = (long-180)*(Math.PI/180);
 		let xrad = -((595) * Math.sin(phi)*Math.cos(theta));
 		let zrad = ((595) * Math.sin(phi)*Math.sin(theta));
 		let yrad = ((595) * Math.cos(phi));
 
-		var xrot = new THREE.Matrix4().makeRotationX( (42.5)*(Math.PI/180) );
-		var yrot = new THREE.Matrix4().makeRotationY( (-55)*(Math.PI/180) );//-70
+		var xrot = new THREE.Matrix4().makeRotationX( (54)*(Math.PI/180) );
+		var yrot = new THREE.Matrix4().makeRotationY( (-42)*(Math.PI/180) );//-70
 		var xyrot = xrot.multiply(yrot);
 		var zrot = new THREE.Matrix4().makeRotationZ( 0 );
 		var xyzrot = xyrot.multiply(zrot);
@@ -2057,6 +2061,8 @@ let wire_l        = 1700,	wire_d        = 16,
 
 	};
 	function wiresingroup () {
+		groupPlanet.rotation.y = -50*(Math.PI/180);
+		group.add(groupPlanet);
 		group.add(group_wire_1);
 		group.add(group_wire_2);
 		group.add(group_wire_3);
@@ -2065,6 +2071,7 @@ let wire_l        = 1700,	wire_d        = 16,
 		group.add(group_wire_6);
 		group.rotation.x = 15*(Math.PI/180);
 		group.rotation.z = -20*(Math.PI/180);
+		group.position.x = 600;
 	};
 //---------------------------------------------------------остановился тут
 	var ooarr=[];
@@ -2105,13 +2112,13 @@ let wire_l        = 1700,	wire_d        = 16,
 		createWire_5();
 		createWire_6();
 		createEarthTexture();
-		//createEarthContourShadow();
-		//createEarthPointsShadow();	
+		createEarthContourShadow();
+		createEarthPointsShadow();	
 		createEarthContour();
 
 		
 		
-		//createEarthPoints();
+		createEarthPoints();
 
 		moveGroup_models_1();
 		moveGroup_models_2();
@@ -2119,8 +2126,8 @@ let wire_l        = 1700,	wire_d        = 16,
 		moveGroup_models_4();
 		moveGroup_models_5();
 		moveGroup_models_6();
-		//createCloudsShadow();
-		//createClouds();
+		createCloudsShadow();
+		createClouds();
 		addLights();
 		addDirLight();
 		wiresingroup();
