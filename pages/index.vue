@@ -450,7 +450,7 @@ mounted(){
 //LIGHTS AND CLOUDS
 	function addLights() {
 		var ambiColor = "#ffffff";
-		var ambientLight = new THREE.AmbientLight(ambiColor, 0.5);
+		var ambientLight = new THREE.AmbientLight(ambiColor, 5.5);//0.5
 		scene.add(ambientLight);
 
 	};
@@ -1344,8 +1344,8 @@ let wire_l        = 1700,	wire_d        = 16,
 			//offset = 100*Math.sin(z_normalized) * ( Math.cos( b.z - c ) ); пиздатая рандомная функция
 
 			//offset = Math.sin(2*Math.PI*z_normalized)*Math.exp(-z_normalized);
-			offset = z_normalized * ( Math.cos( (b.z - c)/10 ) )* ( Math.sin( (b.z - c)/5 ) );
-			offset2 = z_normalized * ( Math.sin( (b.z - c)/10 ) )* ( Math.sin( (b.z - c)/5 ) );
+			offset = z_normalized * Math.abs(( Math.cos( (b.z - c)/10 ) )* ( Math.sin( (b.z - c)/5 ) ));
+			offset2 = z_normalized * Math.abs(( Math.sin( (b.z - c)/10 ) )* ( Math.sin( (b.z - c)/5 ) ));
 			offsety = z_normalized*tyy;
 
 			a.x = b.x + 10*(offset);
@@ -1865,7 +1865,7 @@ let wire_l        = 1700,	wire_d        = 16,
 		group_wire_4.add(sticker_4.mesh);
 		group_wire_4.add(stickerGlow_4.mesh);
 		group_wire_4.add(wire_4.mesh);
-		//wire_4.mesh.material.color.setHex( 0x22FF00 );
+		wire_4.mesh.material.color.setHex( 0x22FF00 );
 
 	};
 
@@ -1992,15 +1992,15 @@ let wire_l        = 1700,	wire_d        = 16,
 		group_wire_4.translate(0, 0, 0.25 + 600);
 		var startVector = new THREE.Vector3(0, 0, 0);
 		var endVector = new THREE.Vector3(xrad,  yrad,  zrad);
-		var lat = -25,	long = -102;
+		var lat = -25,	long = -152;//-102
 		var phi   = (90-lat)*(Math.PI/180);
 		var theta = (long-180)*(Math.PI/180);
 		let xrad = -((595) * Math.sin(phi)*Math.cos(theta));
 		let zrad = ((595) * Math.sin(phi)*Math.sin(theta));
 		let yrad = ((595) * Math.cos(phi));
 
-		var xrot = new THREE.Matrix4().makeRotationX( (180 - 153.9)*(Math.PI/180) );
-		var yrot = new THREE.Matrix4().makeRotationY( (270 + 77.2)*(Math.PI/180) );
+		var xrot = new THREE.Matrix4().makeRotationX( (42.5)*(Math.PI/180) );
+		var yrot = new THREE.Matrix4().makeRotationY( (-55)*(Math.PI/180) );//-70
 		var xyrot = xrot.multiply(yrot);
 		var zrot = new THREE.Matrix4().makeRotationZ( 0 );
 		var xyzrot = xyrot.multiply(zrot);
@@ -2015,15 +2015,15 @@ let wire_l        = 1700,	wire_d        = 16,
 		group_wire_5.translate(0, 0, 0.25 + 600);
 		var startVector = new THREE.Vector3(0, 0, 0);
 		var endVector = new THREE.Vector3(xrad,  yrad,  zrad);
-		var lat = 35,	long = -105;
+		var lat = 35,	long = -165;//-105
 		var phi   = (90-lat)*(Math.PI/180);
 		var theta = (long-180)*(Math.PI/180);
 		let xrad = -((595) * Math.sin(phi)*Math.cos(theta));
 		let zrad = ((595) * Math.sin(phi)*Math.sin(theta));
 		let yrad = ((595) * Math.cos(phi));
 
-		var xrot = new THREE.Matrix4().makeRotationX( (180 - 36)*(Math.PI/180) );
-		var yrot = new THREE.Matrix4().makeRotationY( (270 + 284)*(Math.PI/180) );
+		var xrot = new THREE.Matrix4().makeRotationX( (-75)*(Math.PI/180) );
+		var yrot = new THREE.Matrix4().makeRotationY( (-52)*(Math.PI/180) );//тутт
 		var xyrot = xrot.multiply(yrot);
 		var zrot = new THREE.Matrix4().makeRotationZ( 0 );
 		var xyzrot = xyrot.multiply(zrot);
@@ -2105,13 +2105,13 @@ let wire_l        = 1700,	wire_d        = 16,
 		createWire_5();
 		createWire_6();
 		createEarthTexture();
-		createEarthContourShadow();
-		createEarthPointsShadow();	
+		//createEarthContourShadow();
+		//createEarthPointsShadow();	
 		createEarthContour();
 
 		
 		
-		createEarthPoints();
+		//createEarthPoints();
 
 		moveGroup_models_1();
 		moveGroup_models_2();
@@ -2119,8 +2119,8 @@ let wire_l        = 1700,	wire_d        = 16,
 		moveGroup_models_4();
 		moveGroup_models_5();
 		moveGroup_models_6();
-		createCloudsShadow();
-		createClouds();
+		//createCloudsShadow();
+		//createClouds();
 		addLights();
 		addDirLight();
 		wiresingroup();
