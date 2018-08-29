@@ -1204,6 +1204,7 @@ let wire_l        = 1700,	wire_d        = 16,
 			transparent:true,
 			opacity:1.0,
 			shading:THREE.FlatShading,
+			shininess: 100
 		});
 
 		this.mesh = new THREE.Mesh( g , m );
@@ -1343,12 +1344,12 @@ let wire_l        = 1700,	wire_d        = 16,
 			//offset = 100*Math.sin(z_normalized) * ( Math.cos( b.z - c ) ); пиздатая рандомная функция
 
 			//offset = Math.sin(2*Math.PI*z_normalized)*Math.exp(-z_normalized);
-			offset = z_normalized * ( Math.cos( b.z - c ) );
-			offset2 = z_normalized * ( Math.sin( b.z - c ) );
+			offset = z_normalized * ( Math.cos( (b.z - c)/10 ) )* ( Math.sin( (b.z - c)/5 ) );
+			offset2 = z_normalized * ( Math.sin( (b.z - c)/10 ) )* ( Math.sin( (b.z - c)/5 ) );
 			offsety = z_normalized*tyy;
 
-			a.x = b.x + (offset) - Math.pow(offsety, 3);
-			a.y = b.y + (offset2)- Math.pow(offsety, 3);
+			a.x = b.x + 10*(offset);
+			a.y = b.y + 10*(offset2);
 
 		};
 
@@ -1786,7 +1787,7 @@ let wire_l        = 1700,	wire_d        = 16,
 		group_wire_1.add(sticker.mesh);
 		group_wire_1.add(stickerGlow.mesh);
 		group_wire_1.add(wire.mesh);
-		wire.mesh.material.color.setHex( 0xFF00CC );
+		//wire.mesh.material.color.setHex( 0xFF00CC );
 
 	};
 
@@ -1812,7 +1813,7 @@ let wire_l        = 1700,	wire_d        = 16,
 		group_wire_2.add(sticker_2.mesh);
 		group_wire_2.add(stickerGlow_2.mesh);
 		group_wire_2.add(wire_2.mesh);
-		wire_2.mesh.material.color.setHex( 0x0011FF );
+		//wire_2.mesh.material.color.setHex( 0x0011FF );
 
 	};
 
@@ -2062,11 +2063,10 @@ let wire_l        = 1700,	wire_d        = 16,
 		group.add(group_wire_4);
 		group.add(group_wire_5);
 		group.add(group_wire_6);
-		group.rotation.x = 0*(Math.PI/180);
-		group.rotation.y = -65*(Math.PI/180);
-		group.rotation.z = -15*(Math.PI/180);
+		group.rotation.x = 15*(Math.PI/180);
+		group.rotation.z = -20*(Math.PI/180);
 	};
-//---------------------------------------------------------
+//---------------------------------------------------------остановился тут
 	var ooarr=[];
 	let ty = 0;
 	function gh(){
