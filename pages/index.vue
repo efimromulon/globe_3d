@@ -48,9 +48,11 @@
 <script>
 import * as THREE from 'three';
 import * as TWEEN from '@tweenjs/tween.js';
+import * as THREEx from 'threex.domevents';
 import * as gsap from 'gsap';
 import * as MTLLoader from 'three-mtl-loader';
 import * as OBJLoader from 'three-obj-loader';
+import * as Stats from 'stats-js';
 let OrbitControls = require('three-orbit-controls')(THREE);
 OBJLoader(THREE);
 MTLLoader(THREE);
@@ -66,7 +68,10 @@ mounted(){
 	var MTLLoader = require('three-mtl-loader');
 	OBJLoader(THREE);
 	MTLLoader(THREE);
-
+var anim;
+var deltaTime = 0;
+var newTime = new Date().getTime();
+var oldTime = new Date().getTime();
 //VARIABLES
 
 	let canvas = document.getElementById('basicScene');
@@ -81,7 +86,7 @@ mounted(){
 	var color = 0x000000;
 	var mouse = new THREE.Vector2(), INTERSECTED;
 
-	var camera, scene, renderer, group, groupPlanet, controls, mesh;
+	var camera, scene, renderer, group, groupPlanet, controls, mesh, domEvents;
 	var EarthTexture, earthTexture;
 	var EarthContour, earthContour;
 	var EarthContourShadow, earthContourShadow;
@@ -121,6 +126,69 @@ mounted(){
 		connector1_6, connector2_6,
 		sticker_6, Sticker_6,
 		StickerGlow_6, stickerGlow_6;
+function resetAnimation(){
+  anim = {speed:0,
+          initSpeed:.00035,
+          baseSpeed:.00035,
+          targetBaseSpeed:.00035,
+          incrementSpeedByTime:.0000025,
+          incrementSpeedByLevel:.000005,
+          distanceForSpeedUpdate:100,
+          speedLastUpdate:0,
+
+          distance:0,
+          ratioSpeedDistance:50,
+          energy:100,
+          ratioSpeedEnergy:3,
+
+          level:1,
+          levelLastUpdate:0,
+          distanceForLevelUpdate:1000,
+
+          planeDefaultHeight:100,
+          planeAmpHeight:80,
+          planeAmpWidth:75,
+          planeMoveSensivity:0.005,
+          planeRotXSensivity:0.0008,
+          planeRotZSensivity:0.0004,
+          planeFallSpeed:.001,
+          planeMinSpeed:1.2,
+          planeMaxSpeed:1.6,
+          planeSpeed:0,
+          planeCollisionDisplacementX:0,
+          planeCollisionSpeedX:0,
+
+          planeCollisionDisplacementY:0,
+          planeCollisionSpeedY:0,
+
+          seaRadius:600,
+          seaLength:800,
+          //seaRotationSpeed:0.006,
+          wavesMinAmp : 5,
+          wavesMaxAmp : 20,
+          wavesMinSpeed : 0.001,
+          wavesMaxSpeed : 0.003,
+
+          cameraFarPos:500,
+          cameraNearPos:150,
+          cameraSensivity:0.002,
+
+          coinDistanceTolerance:15,
+          coinValue:3,
+          coinsSpeed:.5,
+          coinLastSpawn:0,
+          distanceForCoinsSpawn:100,
+
+          ennemyDistanceTolerance:10,
+          ennemyValue:10,
+          ennemiesSpeed:.6,
+          ennemyLastSpawn:0,
+          distanceForEnnemiesSpawn:50,
+
+          status : "beforeStart",
+         };
+};
+
 //CREATE_SCENE
 
 	function createScene() {
@@ -128,6 +196,7 @@ mounted(){
 		scene = new THREE.Scene();
 		scene.fog = new THREE.FogExp2( 0x000104, 0.0000675 );
 		scene.background = new THREE.TextureLoader().load( 'background_map.jpg' );
+		//scene.background = new THREE.Color( 0xffffff );
 		group = new THREE.Object3D();
 		groupPlanet = new THREE.Object3D();
 		group_wire_1 = new THREE.Object3D();
@@ -161,21 +230,24 @@ mounted(){
 		scene.add(group_wire_6);
 
 		scene.add(camera);
+		window.addEventListener('resize', onResize, false);
+	};
 
+	function onResize() {
+		renderer.setSize(window.innerWidth, window.innerHeight);
+		camera.aspect = (window.innerWidth / window.innerHeight);
+		camera.updateProjectionMatrix();
 	};
 
 	function createRenderer() {
-
 		renderer = new THREE.WebGLRenderer( { canvas: canvas, antialias: true } );
-
 		renderer.setPixelRatio(window.devicePixelRatio > 1 ? 2 : 1);
 		renderer.setSize(width, height);
 		renderer.shadowMap.enabled = false;
 		renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-
-		controls = new OrbitControls(camera, renderer.domElement);
-
+		//controls = new OrbitControls(camera, renderer.domElement);
 	};
+	
 //CREATE_SCENE end
 //TEXTURE AND CONTOUR
 	EarthTexture = function() {
@@ -1324,7 +1396,8 @@ let wire_l        = 1700,	wire_d        = 16,
 	let v,l;
 //САНЯ ЭТО АНИМАЦИЯ ДВИЖЕНИЯ ПРОВОДА
 	Wire.prototype.moveWaves = function (n,tyy){
-		this.mesh.rotation.z = -90*(Math.PI/180);
+		
+		this.mesh.rotation.z = -20*(Math.PI/180);
 		v = this.mesh.geometry.vertices;
 		l = v.length;
 		var vzarr=[];
@@ -1348,12 +1421,11 @@ let wire_l        = 1700,	wire_d        = 16,
 			//offset = 100*Math.sin(z_normalized) * ( Math.cos( b.z - c ) ); пиздатая рандомная функция
 
 			//offset = Math.sin(2*Math.PI*z_normalized)*Math.exp(-z_normalized);
-			offset = z_normalized * Math.abs(( Math.cos( (b.z - c)/10 ) )* ( Math.sin( (b.z - c)/5 ) ));
-			offset2 = z_normalized * Math.abs(( Math.sin( (b.z - c)/10 ) )* ( Math.sin( (b.z - c)/5 ) ));
+			offset = z_normalized * ( Math.cos( b.z - c ) );
+			offset2 = z_normalized * ( Math.sin( b.z - c ) );
 			offsety = z_normalized*tyy;
-
-			a.x = b.x + 10*(offset);
-			a.y = b.y + 10*(offset2);
+ 			a.x = b.x + (offset) - 2*Math.pow(offsety, 4);
+			a.y = b.y + (offset2)- 2*Math.pow(offsety, 4);
 
 		};
 
@@ -1362,7 +1434,7 @@ let wire_l        = 1700,	wire_d        = 16,
 		
 	};
 	Wire.prototype.moveWaves_2 = function (n,tyy){
-		this.mesh.rotation.z = -120*(Math.PI/180);
+		this.mesh.rotation.z = -50*(Math.PI/180);
 		v = this.mesh.geometry.vertices;
 		l = v.length;
 		var vzarr=[];
@@ -1386,12 +1458,11 @@ let wire_l        = 1700,	wire_d        = 16,
 			//offset = 100*Math.sin(z_normalized) * ( Math.cos( b.z - c ) ); пиздатая рандомная функция
 
 			//offset = Math.sin(2*Math.PI*z_normalized)*Math.exp(-z_normalized);
-			offset = z_normalized * Math.abs(( Math.cos( (b.z - c)/10 ) )* ( Math.sin( (b.z - c)/5 ) ));
-			offset2 = z_normalized * Math.abs(( Math.sin( (b.z - c)/10 ) )* ( Math.sin( (b.z - c)/5 ) ));
+			offset = z_normalized * ( Math.cos( b.z - c ) );
+			offset2 = z_normalized * ( Math.sin( b.z - c ) );
 			offsety = z_normalized*tyy;
-
-			a.x = b.x + 10*(offset);
-			a.y = b.y + 10*(offset2);
+  			a.x = b.x + (offset) - 2*Math.pow(offsety, 4);
+			a.y = b.y + (offset2)- 2*Math.pow(offsety, 4);
 
 		};
 
@@ -1400,7 +1471,7 @@ let wire_l        = 1700,	wire_d        = 16,
 		
 	};
 	Wire.prototype.moveWaves_3 = function (n,tyy){
-		this.mesh.rotation.z = -150*(Math.PI/180);
+		this.mesh.rotation.z = -10*(Math.PI/180);
 		v = this.mesh.geometry.vertices;
 		l = v.length;
 		var vzarr=[];
@@ -1424,12 +1495,11 @@ let wire_l        = 1700,	wire_d        = 16,
 			//offset = 100*Math.sin(z_normalized) * ( Math.cos( b.z - c ) ); пиздатая рандомная функция
 
 			//offset = Math.sin(2*Math.PI*z_normalized)*Math.exp(-z_normalized);
-			offset = z_normalized * Math.abs(( Math.cos( (b.z - c)/10 ) )* ( Math.sin( (b.z - c)/5 ) ));
-			offset2 = z_normalized * Math.abs(( Math.sin( (b.z - c)/10 ) )* ( Math.sin( (b.z - c)/5 ) ));
+			offset = z_normalized * ( Math.cos( b.z - c ) );
+			offset2 = z_normalized * ( Math.sin( b.z - c ) );
 			offsety = z_normalized*tyy;
-
-			a.x = b.x + 10*(offset);
-			a.y = b.y + 10*(offset2);
+  			a.x = b.x + (offset) - 2*Math.pow(offsety, 4);
+			a.y = b.y + (offset2)- 2*Math.pow(offsety, 4);
 
 		};
 
@@ -1438,7 +1508,7 @@ let wire_l        = 1700,	wire_d        = 16,
 		
 	};
 	Wire.prototype.moveWaves_4 = function (n,tyy){
-		this.mesh.rotation.z = -215*(Math.PI/180);
+		this.mesh.rotation.z = 0*(Math.PI/180);
 		v = this.mesh.geometry.vertices;
 		l = v.length;
 		var vzarr=[];
@@ -1462,12 +1532,11 @@ let wire_l        = 1700,	wire_d        = 16,
 			//offset = 100*Math.sin(z_normalized) * ( Math.cos( b.z - c ) ); пиздатая рандомная функция
 
 			//offset = Math.sin(2*Math.PI*z_normalized)*Math.exp(-z_normalized);
-			offset = z_normalized * Math.abs(( Math.cos( (b.z - c)/10 ) )* ( Math.sin( (b.z - c)/5 ) ));
-			offset2 = z_normalized * Math.abs(( Math.sin( (b.z - c)/10 ) )* ( Math.sin( (b.z - c)/5 ) ));
+			offset = z_normalized * ( Math.cos( b.z - c ) );
+			offset2 = z_normalized * ( Math.sin( b.z - c ) );
 			offsety = z_normalized*tyy;
-
-			a.x = b.x + 10*(offset);
-			a.y = b.y + 10*(offset2);
+  			a.x = b.x + (offset)- 2.5*Math.pow(offsety, 2);
+			a.y = b.y + (offset2)- 2.5*Math.pow(offsety, 2);
 
 		};
 
@@ -1476,7 +1545,7 @@ let wire_l        = 1700,	wire_d        = 16,
 		
 	};
 	Wire.prototype.moveWaves_5 = function (n,tyy){
-		this.mesh.rotation.z = -55*(Math.PI/180);
+		this.mesh.rotation.z = 115*(Math.PI/180);
 		v = this.mesh.geometry.vertices;
 		l = v.length;
 		var vzarr=[];
@@ -1500,12 +1569,11 @@ let wire_l        = 1700,	wire_d        = 16,
 			//offset = 100*Math.sin(z_normalized) * ( Math.cos( b.z - c ) ); пиздатая рандомная функция
 
 			//offset = Math.sin(2*Math.PI*z_normalized)*Math.exp(-z_normalized);
-			offset = z_normalized * Math.abs(( Math.cos( (b.z - c)/10 ) )* ( Math.sin( (b.z - c)/5 ) ));
-			offset2 = z_normalized * Math.abs(( Math.sin( (b.z - c)/10 ) )* ( Math.sin( (b.z - c)/5 ) ));
+			offset = z_normalized * ( Math.cos( b.z - c ) );
+			offset2 = z_normalized * ( Math.sin( b.z - c ) );
 			offsety = z_normalized*tyy;
-
-			a.x = b.x + 10*(offset);
-			a.y = b.y + 10*(offset2);
+ 			a.x = b.x + (offset) - Math.pow(offsety, 2);
+			a.y = b.y + (offset2)- Math.pow(offsety, 2);
 
 		};
 
@@ -1538,12 +1606,11 @@ let wire_l        = 1700,	wire_d        = 16,
 			//offset = 100*Math.sin(z_normalized) * ( Math.cos( b.z - c ) ); пиздатая рандомная функция
 
 			//offset = Math.sin(2*Math.PI*z_normalized)*Math.exp(-z_normalized);
-			offset = z_normalized * Math.abs(( Math.cos( (b.z - c)/10 ) )* ( Math.sin( (b.z - c)/5 ) ));
-			offset2 = z_normalized * Math.abs(( Math.sin( (b.z - c)/10 ) )* ( Math.sin( (b.z - c)/5 ) ));
+			offset = z_normalized * ( Math.cos( b.z - c ) );
+			offset2 = z_normalized * ( Math.sin( b.z - c ) );
 			offsety = z_normalized*tyy;
-
-			a.x = b.x + 10*(offset);
-			a.y = b.y + 10*(offset2);
+ 			a.x = b.x + (offset) - Math.pow(offsety, 3);
+			a.y = b.y + (offset2)- Math.pow(offsety, 3);
 
 		};
 
@@ -1926,16 +1993,17 @@ let wire_l        = 1700,	wire_d        = 16,
 	};
 //CREATION end
 //SHIFT OF WIRES
-	function moveGroup_models_1() {
+let distanceOfWire = 596;
+	function moveGroup_models_1(zoompos) {
 
 		var startVector = new THREE.Vector3(0, 0, 0);
 		var endVector = new THREE.Vector3(xrad,  yrad,  zrad);
 		var lat = 18,	long = -40;
 		var phi   = (90-lat)*(Math.PI/180);
 		var theta = (long-180)*(Math.PI/180);
-		let xrad = -((596) * Math.sin(phi)*Math.cos(theta));
-		let zrad = ((596) * Math.sin(phi)*Math.sin(theta));
-		let yrad = ((596) * Math.cos(phi));
+		let xrad = -((zoompos) * Math.sin(phi)*Math.cos(theta));
+		let zrad = ((zoompos) * Math.sin(phi)*Math.sin(theta));
+		let yrad = ((zoompos) * Math.cos(phi));
 		var xrot = new THREE.Matrix4().makeRotationX( (-30)*(Math.PI/180) );
 		var yrot = new THREE.Matrix4().makeRotationY( (50)*(Math.PI/180) );
 		var xyrot = xrot.multiply(yrot);
@@ -1947,15 +2015,15 @@ let wire_l        = 1700,	wire_d        = 16,
 
 	};
 
-	function moveGroup_models_2() {
+	function moveGroup_models_2(zoompos) {
 		var startVector = new THREE.Vector3(0, 0, 0);
 		var endVector = new THREE.Vector3(xrad,  yrad,  zrad);
 		var lat = -8,	long = -65;
 		var phi   = (90-lat)*(Math.PI/180);
 		var theta = (long-180)*(Math.PI/180);
-		let xrad = -((596) * Math.sin(phi)*Math.cos(theta));
-		let zrad = ((596) * Math.sin(phi)*Math.sin(theta));
-		let yrad = ((596) * Math.cos(phi));
+		let xrad = -((zoompos) * Math.sin(phi)*Math.cos(theta));
+		let zrad = ((zoompos) * Math.sin(phi)*Math.sin(theta));
+		let yrad = ((zoompos) * Math.cos(phi));
 
 		var xrot = new THREE.Matrix4().makeRotationX( (7)*(Math.PI/180) );
 		var yrot = new THREE.Matrix4().makeRotationY( (25)*(Math.PI/180) );
@@ -1969,16 +2037,16 @@ let wire_l        = 1700,	wire_d        = 16,
 
 	};
 
-	function moveGroup_models_3() {
+	function moveGroup_models_3(zoompos) {
 		group_wire_3.translate(0, 0, 0.25 + 600);
 		var startVector = new THREE.Vector3(0, 0, 0);
 		var endVector = new THREE.Vector3(xrad,  yrad,  zrad);
 		var lat = 39,	long = -67;
 		var phi   = (90-lat)*(Math.PI/180);
 		var theta = (long-180)*(Math.PI/180);
-		let xrad = -((595) * Math.sin(phi)*Math.cos(theta));
-		let zrad = ((595) * Math.sin(phi)*Math.sin(theta));
-		let yrad = ((595) * Math.cos(phi));
+		let xrad = -((zoompos) * Math.sin(phi)*Math.cos(theta));
+		let zrad = ((zoompos) * Math.sin(phi)*Math.sin(theta));
+		let yrad = ((zoompos) * Math.cos(phi));
 
 		var xrot = new THREE.Matrix4().makeRotationX( (-42)*(Math.PI/180) );
 		var yrot = new THREE.Matrix4().makeRotationY( (20)*(Math.PI/180) );
@@ -1992,19 +2060,19 @@ let wire_l        = 1700,	wire_d        = 16,
 
 	};
 
-	function moveGroup_models_4() {
+	function moveGroup_models_4(zoompos) {
 		group_wire_4.translate(0, 0, 0.25 + 600);
 		var startVector = new THREE.Vector3(0, 0, 0);
 		var endVector = new THREE.Vector3(xrad,  yrad,  zrad);
-		var lat = -40,	long = -152;//-102
+		var lat = -30,	long = -152;//var lat = -40,	long = -152;
 		var phi   = (90-lat)*(Math.PI/180);
 		var theta = (long-180)*(Math.PI/180);
-		let xrad = -((595) * Math.sin(phi)*Math.cos(theta));
-		let zrad = ((595) * Math.sin(phi)*Math.sin(theta));
-		let yrad = ((595) * Math.cos(phi));
+		let xrad = -((zoompos) * Math.sin(phi)*Math.cos(theta));
+		let zrad = ((zoompos) * Math.sin(phi)*Math.sin(theta));
+		let yrad = ((zoompos) * Math.cos(phi));
 
-		var xrot = new THREE.Matrix4().makeRotationX( (54)*(Math.PI/180) );
-		var yrot = new THREE.Matrix4().makeRotationY( (-42)*(Math.PI/180) );//-70
+		var xrot = new THREE.Matrix4().makeRotationX( (46)*(Math.PI/180) );//54
+		var yrot = new THREE.Matrix4().makeRotationY( (-48)*(Math.PI/180) );//-42
 		var xyrot = xrot.multiply(yrot);
 		var zrot = new THREE.Matrix4().makeRotationZ( 0 );
 		var xyzrot = xyrot.multiply(zrot);
@@ -2015,16 +2083,16 @@ let wire_l        = 1700,	wire_d        = 16,
 
 	};
 
-	function moveGroup_models_5() {
+	function moveGroup_models_5(zoompos) {
 		group_wire_5.translate(0, 0, 0.25 + 600);
 		var startVector = new THREE.Vector3(0, 0, 0);
 		var endVector = new THREE.Vector3(xrad,  yrad,  zrad);
 		var lat = 35,	long = -165;//-105
 		var phi   = (90-lat)*(Math.PI/180);
 		var theta = (long-180)*(Math.PI/180);
-		let xrad = -((595) * Math.sin(phi)*Math.cos(theta));
-		let zrad = ((595) * Math.sin(phi)*Math.sin(theta));
-		let yrad = ((595) * Math.cos(phi));
+		let xrad = -((zoompos) * Math.sin(phi)*Math.cos(theta));
+		let zrad = ((zoompos) * Math.sin(phi)*Math.sin(theta));
+		let yrad = ((zoompos) * Math.cos(phi));
 
 		var xrot = new THREE.Matrix4().makeRotationX( (-75)*(Math.PI/180) );
 		var yrot = new THREE.Matrix4().makeRotationY( (-52)*(Math.PI/180) );//тутт
@@ -2038,16 +2106,16 @@ let wire_l        = 1700,	wire_d        = 16,
 
 	};
 
-	function moveGroup_models_6() {
+	function moveGroup_models_6(zoompos) {
 		group_wire_6.translate(0, 0, 0.25 + 600);
 		var startVector = new THREE.Vector3(0, 0, 0);
 		var endVector = new THREE.Vector3(xrad,  yrad,  zrad);
 		var lat = 73,	long = -102;
 		var phi   = (90-lat)*(Math.PI/180);
 		var theta = (long-180)*(Math.PI/180);
-		let xrad = -((595) * Math.sin(phi)*Math.cos(theta));
-		let zrad = ((595) * Math.sin(phi)*Math.sin(theta));
-		let yrad = ((595) * Math.cos(phi));
+		let xrad = -((zoompos) * Math.sin(phi)*Math.cos(theta));
+		let zrad = ((zoompos) * Math.sin(phi)*Math.sin(theta));
+		let yrad = ((zoompos) * Math.cos(phi));
 
 		var xrot = new THREE.Matrix4().makeRotationX( (180 - 253.9)*(Math.PI/180) );
 		var yrot = new THREE.Matrix4().makeRotationY( (270 + 87.2)*(Math.PI/180) );
@@ -2060,6 +2128,11 @@ let wire_l        = 1700,	wire_d        = 16,
 		group_wire_6.position.set(xrad,yrad,zrad);//0xFF0000
 
 	};
+
+
+
+
+
 	function wiresingroup () {
 		groupPlanet.rotation.y = -50*(Math.PI/180);
 		group.add(groupPlanet);
@@ -2079,32 +2152,112 @@ let wire_l        = 1700,	wire_d        = 16,
 	function gh(){
 			var r = group;
 			var oo = group.rotation.y;
+			var r1 = groupPlanet;
 
 			
-			if(oo >= 0.4){ui = -1; yy = 0.0015};
-			if(oo <= 0){ui = 1; yy = 0.0015};
+			//if(oo >= 0.4){ui = -1; yy = 0.0015};
+			//if(oo <= 0){ui = 1; yy = 0.0015};
+			if((anim.status=="stage1")||(anim.status=="stage2")){
+			if(oo >= 0.4){ui = -1; yy = 0.0007};
+
+			if((oo <= 0.3)&&(oo >= 0.1)){yy = 0.0015};
+			
+			if(oo <= 0){ui = 1; yy = 0.0007};
+
 			r.rotation.y = r.rotation.y + ui*yy;
+		}else if(anim.status=="stage3"){
+			ui = 1;
+			yy = 0.0015;
+			r.rotation.y = 0;
+			r1.rotation.y = r1.rotation.y + ui*yy;
+		};
+
 			ty = oo;
 
 	};
 
 //---------------------------------------------------------
-	init();
-	animate();
-	function init() {
+	function moveWireOut_1(zoompos) {
+		var startVector = new THREE.Vector3(0, 0, 0);
+		var endVector = new THREE.Vector3(xrad,  yrad,  zrad);
+		var lat = 18,	long = -40;
+		var phi   = (90-lat)*(Math.PI/180);
+		var theta = (long-180)*(Math.PI/180);
+		let xrad = -((zoompos) * Math.sin(phi)*Math.cos(theta));
+		let zrad = ((zoompos) * Math.sin(phi)*Math.sin(theta));
+		let yrad = ((zoompos) * Math.cos(phi));
+		group_wire_1.position.set(xrad,yrad,zrad);//0xFF00CC
+	};
+	function moveWireOut_2(zoompos) {
+		var startVector = new THREE.Vector3(0, 0, 0);
+		var endVector = new THREE.Vector3(xrad,  yrad,  zrad);
+		var lat = -8,	long = -65;
+		var phi   = (90-lat)*(Math.PI/180);
+		var theta = (long-180)*(Math.PI/180);
+		let xrad = -((zoompos) * Math.sin(phi)*Math.cos(theta));
+		let zrad = ((zoompos) * Math.sin(phi)*Math.sin(theta));
+		let yrad = ((zoompos) * Math.cos(phi));
+		group_wire_2.position.set(xrad,yrad,zrad);//0xFF00CC
+	};
+	function moveWireOut_3(zoompos) {
+		var startVector = new THREE.Vector3(0, 0, 0);
+		var endVector = new THREE.Vector3(xrad,  yrad,  zrad);
+		var lat = 39,	long = -67;
+		var phi   = (90-lat)*(Math.PI/180);
+		var theta = (long-180)*(Math.PI/180);
+		let xrad = -((zoompos) * Math.sin(phi)*Math.cos(theta));
+		let zrad = ((zoompos) * Math.sin(phi)*Math.sin(theta));
+		let yrad = ((zoompos) * Math.cos(phi));
+		group_wire_3.position.set(xrad,yrad,zrad);//0xFF00CC
+	};
+	function moveWireOut_4(zoompos) {
+		var startVector = new THREE.Vector3(0, 0, 0);
+		var endVector = new THREE.Vector3(xrad,  yrad,  zrad);
+		var lat = -30,	long = -152;
+		var phi   = (90-lat)*(Math.PI/180);
+		var theta = (long-180)*(Math.PI/180);
+		let xrad = -((zoompos) * Math.sin(phi)*Math.cos(theta));
+		let zrad = ((zoompos) * Math.sin(phi)*Math.sin(theta));
+		let yrad = ((zoompos) * Math.cos(phi));
+		group_wire_4.position.set(xrad,yrad,zrad);//0xFF00CC
+	};
+	function moveWireOut_5(zoompos) {
+		var startVector = new THREE.Vector3(0, 0, 0);
+		var endVector = new THREE.Vector3(xrad,  yrad,  zrad);
+		var lat = 35,	long = -165;
+		var phi   = (90-lat)*(Math.PI/180);
+		var theta = (long-180)*(Math.PI/180);
+		let xrad = -((zoompos) * Math.sin(phi)*Math.cos(theta));
+		let zrad = ((zoompos) * Math.sin(phi)*Math.sin(theta));
+		let yrad = ((zoompos) * Math.cos(phi));
+		group_wire_5.position.set(xrad,yrad,zrad);//0xFF00CC
+	};
+	function moveWireOut_6(zoompos) {
+		var startVector = new THREE.Vector3(0, 0, 0);
+		var endVector = new THREE.Vector3(xrad,  yrad,  zrad);
+		var lat = 73,	long = -102;
+		var phi   = (90-lat)*(Math.PI/180);
+		var theta = (long-180)*(Math.PI/180);
+		let xrad = -((zoompos) * Math.sin(phi)*Math.cos(theta));
+		let zrad = ((zoompos) * Math.sin(phi)*Math.sin(theta));
+		let yrad = ((zoompos) * Math.cos(phi));
+		group_wire_6.position.set(xrad,yrad,zrad);//0xFF00CC
+	};
+	let zoompos = 596;
+	let minzoomspeed=5;
+	let zoomspeed = minzoomspeed;
 
+
+
+
+
+
+	function init() {
+		resetAnimation();
 		createScene();
 		createRenderer();
 		addAureole();
-		
-		//addEarthPoints();
 
-		//addAureole_1();
-		//addAureole_2();
-		//addAureole_3();
-		//addAureole_4();
-		//addAureole_5();
-		//addAureole_6();
 		createWire_1();
 		createWire_2();
 		createWire_3();
@@ -2120,19 +2273,23 @@ let wire_l        = 1700,	wire_d        = 16,
 		
 		createEarthPoints();
 
-		moveGroup_models_1();
-		moveGroup_models_2();
-		moveGroup_models_3();
-		moveGroup_models_4();
-		moveGroup_models_5();
-		moveGroup_models_6();
-		createCloudsShadow();
-		createClouds();
+		moveGroup_models_1(zoompos);
+		moveGroup_models_2(zoompos);
+		moveGroup_models_3(zoompos);
+		moveGroup_models_4(zoompos);
+		moveGroup_models_5(zoompos);
+		moveGroup_models_6(zoompos);
+
 		addLights();
 		addDirLight();
 		wiresingroup();
 
+
+
+		loop();
+
 	};
+
 	let n_max=2250 + 600;
 	let n_min=1000 + 600;
 	let n = n_max / 2 ;
@@ -2142,80 +2299,150 @@ let wire_l        = 1700,	wire_d        = 16,
 		if ( s < 0.5 ) { q = 2*s } else { q = -1+(4-2*s)*s };
 	};
 
-	let n_2_max=60;
-	let n_2_min=0;
-	let n_2 = 1;
+
 	let f_2 = 1;
 	let q_2 = 1;
 	
-	//for (var s = 0; s < 1; s=s+0.001) {
-	//	if ( s < 0.5 ) { q_2 = 2*s } else { q_2 = -1+(4-2*s)*s };
-	//};
-	//function(t){return t<.5 ? 2*t*t : -1+(4-2*t)*t};
-let tyy = 0;
-	function animate() {
-		//var np_max=(Math.random() * (1500 - 500 + 1)) + 500;
-		//var np_min=(-1)*((Math.random() * (1500 - 500 + 1)) + 500);
-		//var np_min=(-1)*(np_max/5);
 
-		gh();
-		//earthTexture.moveEarth();
-		//earthContour.moveEarth();
-		//earthContourShadow.moveEarth();
-		//earthPoints.moveEarth();
-		//earthPointsShadow.moveEarth();
-		//clouds.moveEarth();
-		//cloudsShadow.moveEarth();
-		wire.moveWaves(n,tyy);
-		wire_2.moveWaves_2(n,tyy);
-		wire_3.moveWaves_3(n,tyy);
-		wire_4.moveWaves_4(n,tyy);
-		wire_5.moveWaves_5(n,tyy);
-		wire_6.moveWaves_6(n,tyy);
-		//wire_2.moveWaves(n);
+let tyy = 0;
+let distanceOfWireX = 596;
+
+let maxtime = 0;
+	function nplus(){
 		if(n >= n_max){f = -1};
 		if(n <= n_min){f = 1};
 		n = n + f*(q);
-//		if(n_2 >= n_2_max){f_2 = -2};
-//		if(n_2 <= n_2_min){f_2 = 1};
-		n_2 = n_2;
 		tyy = ty;
-		Render();
-
-		window.requestAnimationFrame(animate);
-		
-		TWEEN.update();
 	};
-	TweenLite.ticker.addEventListener("tick", Render);
-	function Render() {
+	function zposplus(){
+		
+		if(zoompos<2400){
+			zoompos++;
+			//console.log(zoompos);
+		};
+		if(zoompos>=2400){
+			zoompos = 2400;
+		};
+		
+	};
+	window.addEventListener( 'wheel', onMouseWheel, false );
+		function onMouseWheel(event) {
+		    anim.status="stage2";
+		    window.removeEventListener('wheel', onMouseWheel, false);
+		    console.log('hui');
+		};
+	function loop() {
+		newTime = new Date().getTime();
+		deltaTime = newTime-oldTime;
+		oldTime = newTime;
+		
 
-		//camera.rotation.y = 8*(Math.PI/180);
-		//camera.rotation.x = -28*(Math.PI/180);
-		//camera.rotation.z = 11*(Math.PI/180);
-		//camera.position.x = -900;
-		//camera.position.y = 1200;
-		//camera.position.z = 2300;
-		//group_models.rotation.x = 90*(Math.PI/180);
-		//group_models.rotation.y = 138*(Math.PI/180);
-		//group_models.rotation.z = 11*(Math.PI/180);
-		//group_models.position.x--;
-		//group_models.position.y--;
 
-	//	camera.position.x=width *2 / 3;
-	//	camera.position.y=500;
-	//	camera.position.z=height *1 / 3;
+		if (anim.status=="beforeStart"){
+
+			  wire.moveWaves(n,tyy);
+			wire_2.moveWaves_2(n,tyy);
+			wire_3.moveWaves_3(n,tyy);
+			wire_4.moveWaves_4(n,tyy);
+			wire_5.moveWaves_5(n,tyy);
+			wire_6.moveWaves_6(n,tyy);
+
+		};
+
+		maxtime += deltaTime;
+		nplus();
+		if (anim.status=="stage1"){
+			zoompos = zoompos;
+		}else if(anim.status=="stage2"){
+			
+			zposplus();
+			if(zoompos == 2400){anim.status="stage3"};
+		} else if(anim.status=="stage3"){
+
+			group.rotation.y =group.rotation.y + 1*0.0015;
+		};
+		
+		//if( (maxtime > 2400)&&(anim.status=="stage1") ){anim.status="stage3"};
+		console.log(anim.status);
+		moveWireOut_1(zoompos);
+		moveWireOut_2(zoompos);
+		moveWireOut_3(zoompos);
+		moveWireOut_4(zoompos);
+		moveWireOut_5(zoompos);
+		moveWireOut_6(zoompos);
+		gh();
+
+
+
 		renderer.autoClear = false;
 		renderer.clear();
 		renderer.render( scene, camera );
+		window.requestAnimationFrame(loop);
 	};
 
-	function onResize() {
-		renderer.setSize(window.innerWidth, window.innerHeight);
-		camera.aspect = (window.innerWidth / window.innerHeight);
-		camera.updateProjectionMatrix();
-	};
 
-window.addEventListener('resize', onResize, false);
+
+
+window.addEventListener('load', init, false);
+
+
+
+
+//TweenLite.ticker.addEventListener("tick", Render);
+
+
+//earthTexture.moveEarth();
+//earthContour.moveEarth();
+//earthContourShadow.moveEarth();
+//earthPoints.moveEarth();
+//earthPointsShadow.moveEarth();
+//clouds.moveEarth();
+//cloudsShadow.moveEarth();
+
+//document.addEventListener('mousemove', onMouseMove, false);
+//function onMouseMove(event) {
+//    let mouseX = event.clientX - window.innerWidth / 2;
+//    let mouseY = event.clientY - window.innerHeight / 2;
+//    camera.position.x += (mouseX - camera.position.x) * 0.005;
+//    camera.position.y += (mouseY - camera.position.y) * 0.005;
+//    camera.lookAt(scene.position);
+//};
+
+//createCloudsShadow();
+//createClouds();
+		
+//addEarthPoints();
+
+//addAureole_1();
+//addAureole_2();
+//addAureole_3();
+//addAureole_4();
+//addAureole_5();
+//addAureole_6();
+
+//		window.addEventListener( 'wheel', onMouseWheel, false );
+//		function onMouseWheel(event) {
+//		    var amount = event.deltaY;
+//		    if(amount === 0) return;
+//		    var dir = amount / Math.abs(amount);
+//		    zoomspeed = dir*10;
+//		    minzoomspeed = 5;
+//		    zoompos += zoomspeed;
+//		};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 }//mounted end
 }
