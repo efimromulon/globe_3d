@@ -638,9 +638,9 @@ function resetAnimation(){
 				customMaterial.fog = false;
 		customMaterial.depthWrite = false;
 		scene.add( moonGlow );
-		moonGlow.position.x = 618;
-		moonGlow.position.y = 12;
-		//EARTH_AUREOLE_END
+		moonGlow.position.x = 600;
+		moonGlow.rotation.y = -20*(Math.PI/180);
+
 
 	};
 
@@ -1246,9 +1246,9 @@ function resetAnimation(){
 //Wire animation----------------------------------------------------
 let wire_l        = 1700,	wire_d        = 16,
 	Connector1_l  = 100,	Connector1_d  = 30,
-	Connector2_l  = 17,		Connector2_d  = 45,
+	Connector2_l  = 25,		Connector2_d  = 45,
 	Sticker_l     = 60,		Sticker_d     = 31,
-	StickerGlow_l = 60,		StickerGlow_d = 34;
+	StickerGlow_l = 60,		StickerGlow_d = 32;
 	Wire = function(){
 
 		var g = new THREE.CylinderGeometry( wire_d,wire_d,wire_l, 110,55);//110 55
@@ -1844,10 +1844,10 @@ let wire_l        = 1700,	wire_d        = 16,
 		connector1.mesh.position.z = Connector2_l + (Connector1_l / 2);
 
 		sticker = new Sticker();
-		sticker.mesh.position.z = Connector2_l + (Sticker_l / 2);
+		sticker.mesh.position.z = Connector2_l + (Connector1_l  / 2);
 
 		stickerGlow = new StickerGlow();
-		stickerGlow.mesh.position.z = Connector2_l + (StickerGlow_l / 2);
+		stickerGlow.mesh.position.z = Connector2_l + (Connector1_l  / 2);
 
 		wire = new Wire();
 		wire.mesh.position.z = Connector1_l + Connector2_l + (wire_l / 2);
@@ -1871,10 +1871,10 @@ let wire_l        = 1700,	wire_d        = 16,
 		connector1_2.mesh.position.z = Connector2_l + (Connector1_l / 2);
 
 		sticker_2 = new Sticker();
-		sticker_2.mesh.position.z = Connector2_l + (Sticker_l / 2);
+		sticker_2.mesh.position.z = Connector2_l + (Connector1_l  / 2);
 
 		stickerGlow_2 = new StickerGlow();
-		stickerGlow_2.mesh.position.z = Connector2_l + (StickerGlow_l / 2);
+		stickerGlow_2.mesh.position.z = Connector2_l + (Connector1_l  / 2);
 
 		wire_2 = new Wire();
 		wire_2.mesh.position.z = Connector1_l + Connector2_l + (wire_l / 2);
@@ -1897,10 +1897,10 @@ let wire_l        = 1700,	wire_d        = 16,
 		connector1_3.mesh.position.z = Connector2_l + (Connector1_l / 2);
 
 		sticker_3 = new Sticker();
-		sticker_3.mesh.position.z = Connector2_l + (Sticker_l / 2);
+		sticker_3.mesh.position.z = Connector2_l + (Connector1_l  / 2);
 
 		stickerGlow_3 = new StickerGlow();
-		stickerGlow_3.mesh.position.z = Connector2_l + (StickerGlow_l / 2);
+		stickerGlow_3.mesh.position.z = Connector2_l + (Connector1_l  / 2);
 
 		wire_3 = new Wire();
 		wire_3.mesh.position.z = Connector1_l + Connector2_l + (wire_l / 2);
@@ -1923,10 +1923,10 @@ let wire_l        = 1700,	wire_d        = 16,
 		connector1_4.mesh.position.z = Connector2_l + (Connector1_l / 2);
 
 		sticker_4 = new Sticker();
-		sticker_4.mesh.position.z = Connector2_l + (Sticker_l / 2);
+		sticker_4.mesh.position.z = Connector2_l + (Connector1_l  / 2);
 
 		stickerGlow_4 = new StickerGlow();
-		stickerGlow_4.mesh.position.z = Connector2_l + (StickerGlow_l / 2);
+		stickerGlow_4.mesh.position.z = Connector2_l + (Connector1_l  / 2);
 
 		wire_4 = new Wire();
 		wire_4.mesh.position.z = Connector1_l + Connector2_l + (wire_l / 2);
@@ -1949,10 +1949,10 @@ let wire_l        = 1700,	wire_d        = 16,
 		connector1_5.mesh.position.z = Connector2_l + (Connector1_l / 2);
 
 		sticker_5 = new Sticker();
-		sticker_5.mesh.position.z = Connector2_l + (Sticker_l / 2);
+		sticker_5.mesh.position.z = Connector2_l + (Connector1_l  / 2);
 
 		stickerGlow_5 = new StickerGlow();
-		stickerGlow_5.mesh.position.z = Connector2_l + (StickerGlow_l / 2);
+		stickerGlow_5.mesh.position.z = Connector2_l + (Connector1_l  / 2);
 
 		wire_5 = new Wire();
 		wire_5.mesh.position.z = Connector1_l + Connector2_l + (wire_l / 2);
@@ -1975,10 +1975,10 @@ let wire_l        = 1700,	wire_d        = 16,
 		connector1_6.mesh.position.z = Connector2_l + (Connector1_l / 2);
 
 		sticker_6 = new Sticker();
-		sticker_6.mesh.position.z = Connector2_l + (Sticker_l / 2);
+		sticker_6.mesh.position.z = Connector2_l + (Connector1_l  / 2);
 
 		stickerGlow_6 = new StickerGlow();
-		stickerGlow_6.mesh.position.z = Connector2_l + (StickerGlow_l / 2);
+		stickerGlow_6.mesh.position.z = Connector2_l + (Connector1_l  / 2);
 
 		wire_6 = new Wire();
 		wire_6.mesh.position.z = Connector1_l + Connector2_l + (wire_l / 2);
@@ -2157,22 +2157,23 @@ let distanceOfWire = 596;
 			
 			//if(oo >= 0.4){ui = -1; yy = 0.0015};
 			//if(oo <= 0){ui = 1; yy = 0.0015};
-			if((anim.status=="stage1")||(anim.status=="stage2")){
-			if(oo >= 0.4){ui = -1; yy = 0.0007};
+			if(anim.status=="beforeStart"){
+				if(oo >= 0.4){ui = -1; yy = 0.0007};
 
-			if((oo <= 0.3)&&(oo >= 0.1)){yy = 0.0015};
+				if((oo <= 0.3)&&(oo >= 0.1)){yy = 0.0015};
+				
+				if(oo <= 0){ui = 1; yy = 0.0007};
+
+				r.rotation.y = r.rotation.y + ui*yy;
+				ty = oo;
+			}else if((anim.status=="stage1")||(anim.status=="stage2")){
+				ui = 1;
+				yy = 0.0007;
+				r.rotation.y = ty;
+				r1.rotation.y = r1.rotation.y + ui*yy;
+			};
+
 			
-			if(oo <= 0){ui = 1; yy = 0.0007};
-
-			r.rotation.y = r.rotation.y + ui*yy;
-		}else if(anim.status=="stage3"){
-			ui = 1;
-			yy = 0.0015;
-			r.rotation.y = 0;
-			r1.rotation.y = r1.rotation.y + ui*yy;
-		};
-
-			ty = oo;
 
 	};
 
@@ -2316,18 +2317,18 @@ let maxtime = 0;
 	};
 	function zposplus(){
 		
-		if(zoompos<2400){
+		if(zoompos<2500){
 			zoompos++;
 			//console.log(zoompos);
 		};
-		if(zoompos>=2400){
-			zoompos = 2400;
+		if(zoompos>=2500){
+			zoompos = 2500;
 		};
 		
 	};
 	window.addEventListener( 'wheel', onMouseWheel, false );
 		function onMouseWheel(event) {
-		    anim.status="stage2";
+		    anim.status="stage1";
 		    window.removeEventListener('wheel', onMouseWheel, false);
 		    console.log('hui');
 		};
@@ -2352,14 +2353,16 @@ let maxtime = 0;
 		maxtime += deltaTime;
 		nplus();
 		if (anim.status=="stage1"){
-			zoompos = zoompos;
-		}else if(anim.status=="stage2"){
-			
 			zposplus();
-			if(zoompos == 2400){anim.status="stage3"};
-		} else if(anim.status=="stage3"){
-
-			group.rotation.y =group.rotation.y + 1*0.0015;
+			if(zoompos == 2500){anim.status="stage2"};
+		}else if(anim.status=="stage2"){
+			group.remove(group_wire_1);
+			group.remove(group_wire_2);
+			group.remove(group_wire_3);
+			group.remove(group_wire_4);
+			group.remove(group_wire_5);
+			group.remove(group_wire_6);
+			//group.rotation.y =group.rotation.y + 1*0.0015;
 		};
 		
 		//if( (maxtime > 2400)&&(anim.status=="stage1") ){anim.status="stage3"};
