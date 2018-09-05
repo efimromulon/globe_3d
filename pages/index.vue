@@ -245,7 +245,7 @@ function resetAnimation(){
 		renderer.setSize(width, height);
 		renderer.shadowMap.enabled = false;
 		renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-		//controls = new OrbitControls(camera, renderer.domElement);
+		controls = new OrbitControls(camera, renderer.domElement);
 	};
 	
 //CREATE_SCENE end
@@ -600,7 +600,7 @@ function resetAnimation(){
 		{
 		    uniforms: 
 			{ 
-				"c":   { type: "f", value: 0.4 },
+				"c":   { type: "f", value: 0.8 },//0.4 -> 0.7
 				"p":   { type: "f", value: 1.6 },
 				glowColor: { type: "c", value: new THREE.Color(0x304a62) },
 				viewVector: { type: "v3", value: camera.position }
@@ -639,7 +639,7 @@ function resetAnimation(){
 		customMaterial.depthWrite = false;
 		scene.add( moonGlow );
 		moonGlow.position.x = 600;
-		moonGlow.rotation.y = -20*(Math.PI/180);
+		moonGlow.rotation.y = -18*(Math.PI/180);
 
 
 	};
@@ -1619,152 +1619,14 @@ let wire_l        = 1700,	wire_d        = 16,
 		
 	};
 
-//if((Math.cos( b.z ) <=0.3)||(Math.cos( b.z ) >=-0.3)) {};
-//offset = Math.sin(2*Math.PI*(qe))*(Math.exp(qe));
-	var update;
-	var userOpts	= {
-		range		: 18,
-		duration	: 2000,
-		delay		: 500
-	};
 
-	let speed =0.1;	 
-	var angle1 = [];
+
+
+
 	var ui = 1;
 	var yy;
 //---------------------------------------------------------
-	EarthTexture.prototype.moveEarth = function (){
 
-			var r = this.mesh;
-			var oo = r.rotation.y;
-
-			
-			if(oo >= 0.4){ui = -1; yy = 0.0015};
-			if(oo <= 0){ui = 1; yy = 0.0015};
-			r.rotation.y = r.rotation.y + ui*yy;
-
-			//TweenMax.set(sphere.position,{x:posX});
-
-
-		this.mesh.geometry.verticesNeedUpdate=true;
-	};
-	//r.y += speed*(Math.PI/180);
-		//for (var i = 0; i < elements.length; i++) {
-		//	expression
-		//}
-		//this.mesh.geometry.verticesNeedUpdate=true;
-		//v = r.rotation;
-		//var vzarr=[];
-		//for ( var i = 0; i < l; i++ ){
-		//	vzarr.push(this.waves[i].z);
-		//};
-		//var tweenHead = new TWEEN.Tween(r.rotation)
-		//.to({x: 0, y: 15, z: 0}, userOpts.duration).easing(TWEEN.Easing.Quadratic.Out);
-		//var tweenBack = new TWEEN.Tween(r.rotation)
-		//.to({x: 0, y: -15, z: 0}, userOpts.duration).easing(TWEEN.Easing.Quadratic.Out);
-		//tweenHead.chain(tweenBack);
-		//tweenBack.chain(tweenHead);
-		//tweenHead.start();
-		//console.log(r.rotation);
-		//.easing(TWEEN.Easing.Quadratic.Out)
-		//.onUpdate(EarthContour.prototype.update);
-		//const getDiskFlip = disk => (
-		//    new Tween(r.rotation)
-		//    .to({ x: -r.rotation.x }, 400, Easing.Elastic.InOut)
-		//    .onStart(() => {
-		//        new Tween(r.position).to({ z: [40, r.position.z] }, 400).start();
-		//    })
-	//);
-	EarthContour.prototype.moveEarth = function (){
-
-			var r = this.mesh;
-			var oo = r.rotation.y;
-
-			
-			if(oo >= 0.4){ui = -1; yy = 0.0015};
-			if(oo <= 0){ui = 1; yy = 0.0015};
-			r.rotation.y = r.rotation.y + ui*yy;
-
-			//TweenMax.set(sphere.position,{x:posX});
-
-
-		this.mesh.geometry.verticesNeedUpdate=true;
-	};
-	EarthContourShadow.prototype.moveEarth = function (){
-
-			var r = this.mesh;
-			var oo = r.rotation.y;
-
-			
-			if(oo >= 0.4){ui = -1; yy = 0.0015};
-			if(oo <= 0){ui = 1; yy = 0.0015};
-			r.rotation.y = r.rotation.y + ui*yy;
-
-			//TweenMax.set(sphere.position,{x:posX});
-
-
-		this.mesh.geometry.verticesNeedUpdate=true;
-	};	
-	EarthPoints.prototype.moveEarth = function (){
-
-			var r = this.points;
-			var oo = r.rotation.y;
-
-			
-			if(oo >= 0.4){ui = -1; yy = 0.0015};
-			if(oo <= 0){ui = 1; yy = 0.0015};
-			r.rotation.y = r.rotation.y + ui*yy;
-
-			//TweenMax.set(sphere.position,{x:posX});
-
-
-		this.points.geometry.verticesNeedUpdate=true;
-	};
-	EarthPointsShadow.prototype.moveEarth = function (){
-
-			var r = this.points;
-			var oo = r.rotation.y;
-
-			
-			if(oo >= 0.4){ui = -1; yy = 0.0015};
-			if(oo <= 0){ui = 1; yy = 0.0015};
-			r.rotation.y = r.rotation.y + ui*yy;
-
-			//TweenMax.set(sphere.position,{x:posX});
-
-
-		this.points.geometry.verticesNeedUpdate=true;
-	};
-	Clouds.prototype.moveEarth = function (){
-
-			var r = this.mesh;
-			var oo = r.rotation.y;
-
-			
-			if(oo >= 0.4){ui = -1; yy = 0.0015};
-			if(oo <= 0){ui = 1; yy = 0.0015};
-			r.rotation.y = r.rotation.y + ui*yy;
-
-			//TweenMax.set(sphere.position,{x:posX});
-
-
-		this.mesh.geometry.verticesNeedUpdate=true;
-	};
-	CloudsShadow.prototype.moveEarth = function (){
-
-			var r = this.mesh;
-			var oo = r.rotation.y;
-
-			
-			if(oo >= 0.4){ui = -1; yy = 0.0015};
-			if(oo <= 0){ui = 1; yy = 0.0015};
-			r.rotation.y = r.rotation.y + ui*yy;
-
-			//TweenMax.set(sphere.position,{x:posX});
-
-
-		this.mesh.geometry.verticesNeedUpdate=true;
-	};
 //CREATION
 	function createEarthTexture(){
 
@@ -2394,13 +2256,7 @@ window.addEventListener('load', init, false);
 //TweenLite.ticker.addEventListener("tick", Render);
 
 
-//earthTexture.moveEarth();
-//earthContour.moveEarth();
-//earthContourShadow.moveEarth();
-//earthPoints.moveEarth();
-//earthPointsShadow.moveEarth();
-//clouds.moveEarth();
-//cloudsShadow.moveEarth();
+
 
 //document.addEventListener('mousemove', onMouseMove, false);
 //function onMouseMove(event) {
