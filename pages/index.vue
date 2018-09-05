@@ -111,7 +111,7 @@ var oldTime = new Date().getTime();
 		connector1_3, connector2_3,
 		sticker_3, Sticker_3,
 		StickerGlow_3, stickerGlow_3;
-	var Wire_4, wire_4,
+	var Wire_4, wire_4, Wire4,
 		Connector1_4, Connector2_4,
 		connector1_4, connector2_4,
 		sticker_4, Sticker_4,
@@ -245,7 +245,7 @@ function resetAnimation(){
 		renderer.setSize(width, height);
 		renderer.shadowMap.enabled = false;
 		renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-		controls = new OrbitControls(camera, renderer.domElement);
+		//controls = new OrbitControls(camera, renderer.domElement);
 	};
 	
 //CREATE_SCENE end
@@ -1244,7 +1244,7 @@ function resetAnimation(){
 	};
 //AUREOLE end
 //Wire animation----------------------------------------------------
-let wire_l        = 1700,	wire_d        = 16,
+let wire_l        = 700,	wire_d        = 16,
 	Connector1_l  = 100,	Connector1_d  = 30,
 	Connector2_l  = 25,		Connector2_d  = 45,
 	Sticker_l     = 60,		Sticker_d     = 31,
@@ -1287,7 +1287,44 @@ let wire_l        = 1700,	wire_d        = 16,
 		this.mesh.receiveShadow = true;
 
 	};
+	Wire4 = function(){
 
+		var g = new THREE.CylinderGeometry( wire_d,wire_d,1700, 110,55);//110 55
+
+			g.applyMatrix( new THREE.Matrix4().makeRotationX( -Math.PI/2 ) );
+			g.mergeVertices();
+
+		var l = g.vertices.length;
+		var r = 10;
+
+		this.waves = [];
+
+		for ( var i = 0 ; i < l ; i++ ){
+
+			var v = g.vertices[i];
+
+			this.waves.push({
+				y:v.y,
+				x:v.x,
+				z:v.z,
+				amp: -0.02,//статичная амплитуда каждой точки
+				speed: 0.0001
+			});
+
+		};
+
+		var m = new THREE.MeshPhongMaterial({
+			color: 0x030303,
+			transparent:true,
+			opacity:1.0,
+			shading:THREE.SmoothShading,
+			shininess: 100
+		});
+
+		this.mesh = new THREE.Mesh( g , m );
+		this.mesh.receiveShadow = true;
+
+	};
 	Connector1 = function(){
 
 		var geom = new THREE.CylinderGeometry(Connector1_d,Connector1_d,Connector1_l,80,80);
@@ -1424,8 +1461,8 @@ let wire_l        = 1700,	wire_d        = 16,
 			offset = z_normalized * ( Math.cos( b.z - c ) );
 			offset2 = z_normalized * ( Math.sin( b.z - c ) );
 			offsety = z_normalized*tyy;
- 			a.x = b.x + (offset) - 2*Math.pow(offsety, 4);
-			a.y = b.y + (offset2)- 2*Math.pow(offsety, 4);
+  			a.x = b.x + (offset)- 2.5*Math.pow(offsety, 2);
+			a.y = b.y + (offset2)- 2.5*Math.pow(offsety, 2);
 
 		};
 
@@ -1461,8 +1498,8 @@ let wire_l        = 1700,	wire_d        = 16,
 			offset = z_normalized * ( Math.cos( b.z - c ) );
 			offset2 = z_normalized * ( Math.sin( b.z - c ) );
 			offsety = z_normalized*tyy;
-  			a.x = b.x + (offset) - 2*Math.pow(offsety, 4);
-			a.y = b.y + (offset2)- 2*Math.pow(offsety, 4);
+  			a.x = b.x + (offset)- 2.5*Math.pow(offsety, 2);
+			a.y = b.y + (offset2)- 2.5*Math.pow(offsety, 2);
 
 		};
 
@@ -1498,8 +1535,8 @@ let wire_l        = 1700,	wire_d        = 16,
 			offset = z_normalized * ( Math.cos( b.z - c ) );
 			offset2 = z_normalized * ( Math.sin( b.z - c ) );
 			offsety = z_normalized*tyy;
-  			a.x = b.x + (offset) - 2*Math.pow(offsety, 4);
-			a.y = b.y + (offset2)- 2*Math.pow(offsety, 4);
+  			a.x = b.x + (offset)- 2.5*Math.pow(offsety, 2);
+			a.y = b.y + (offset2)- 2.5*Math.pow(offsety, 2);
 
 		};
 
@@ -1507,7 +1544,7 @@ let wire_l        = 1700,	wire_d        = 16,
 		this.mesh.geometry.verticesNeedUpdate=true;
 		
 	};
-	Wire.prototype.moveWaves_4 = function (n,tyy){
+	Wire4.prototype.moveWaves_4 = function (n,tyy){
 		this.mesh.rotation.z = 0*(Math.PI/180);
 		v = this.mesh.geometry.vertices;
 		l = v.length;
@@ -1545,7 +1582,7 @@ let wire_l        = 1700,	wire_d        = 16,
 		
 	};
 	Wire.prototype.moveWaves_5 = function (n,tyy){
-		this.mesh.rotation.z = 115*(Math.PI/180);
+		this.mesh.rotation.z = -115*(Math.PI/180);
 		v = this.mesh.geometry.vertices;
 		l = v.length;
 		var vzarr=[];
@@ -1572,8 +1609,10 @@ let wire_l        = 1700,	wire_d        = 16,
 			offset = z_normalized * ( Math.cos( b.z - c ) );
 			offset2 = z_normalized * ( Math.sin( b.z - c ) );
 			offsety = z_normalized*tyy;
- 			a.x = b.x + (offset) - Math.pow(offsety, 2);
-			a.y = b.y + (offset2)- Math.pow(offsety, 2);
+  			//a.x = b.x + (offset)- 2.5*Math.pow(offsety, 2);
+			//a.y = b.y + (offset2)- 2.5*Math.pow(offsety, 2);
+  			a.x = b.x + (offset);
+			a.y = b.y + (offset2);
 
 		};
 
@@ -1582,7 +1621,7 @@ let wire_l        = 1700,	wire_d        = 16,
 		
 	};
 	Wire.prototype.moveWaves_6 = function (n,tyy){
-		this.mesh.rotation.z = 115*(Math.PI/180);
+		this.mesh.rotation.z = -115*(Math.PI/180);
 		v = this.mesh.geometry.vertices;
 		l = v.length;
 		var vzarr=[];
@@ -1609,9 +1648,10 @@ let wire_l        = 1700,	wire_d        = 16,
 			offset = z_normalized * ( Math.cos( b.z - c ) );
 			offset2 = z_normalized * ( Math.sin( b.z - c ) );
 			offsety = z_normalized*tyy;
- 			a.x = b.x + (offset) - Math.pow(offsety, 3);
-			a.y = b.y + (offset2)- Math.pow(offsety, 3);
-
+  			//a.x = b.x + (offset)- 2.5*Math.pow(offsety, 2);
+			//a.y = b.y + (offset2)- 2.5*Math.pow(offsety, 2);
+  			a.x = b.x + (offset);
+			a.y = b.y + (offset2);
 		};
 
 
@@ -1790,8 +1830,8 @@ let wire_l        = 1700,	wire_d        = 16,
 		stickerGlow_4 = new StickerGlow();
 		stickerGlow_4.mesh.position.z = Connector2_l + (Connector1_l  / 2);
 
-		wire_4 = new Wire();
-		wire_4.mesh.position.z = Connector1_l + Connector2_l + (wire_l / 2);
+		wire_4 = new Wire4();
+		wire_4.mesh.position.z = Connector1_l + Connector2_l + (1700 / 2);
 
 		group_wire_4.add(connector2_4.mesh);
 		group_wire_4.add(connector1_4.mesh);
@@ -1922,16 +1962,16 @@ let distanceOfWire = 596;
 
 	};
 
-	function moveGroup_models_4(zoompos) {
+	function moveGroup_models_4(zoompos4) {
 		group_wire_4.translate(0, 0, 0.25 + 600);
 		var startVector = new THREE.Vector3(0, 0, 0);
 		var endVector = new THREE.Vector3(xrad,  yrad,  zrad);
 		var lat = -30,	long = -152;//var lat = -40,	long = -152;
 		var phi   = (90-lat)*(Math.PI/180);
 		var theta = (long-180)*(Math.PI/180);
-		let xrad = -((zoompos) * Math.sin(phi)*Math.cos(theta));
-		let zrad = ((zoompos) * Math.sin(phi)*Math.sin(theta));
-		let yrad = ((zoompos) * Math.cos(phi));
+		let xrad = -((zoompos4) * Math.sin(phi)*Math.cos(theta));
+		let zrad = ((zoompos4) * Math.sin(phi)*Math.sin(theta));
+		let yrad = ((zoompos4) * Math.cos(phi));
 
 		var xrot = new THREE.Matrix4().makeRotationX( (46)*(Math.PI/180) );//54
 		var yrot = new THREE.Matrix4().makeRotationY( (-48)*(Math.PI/180) );//-42
@@ -2073,15 +2113,15 @@ let distanceOfWire = 596;
 		let yrad = ((zoompos) * Math.cos(phi));
 		group_wire_3.position.set(xrad,yrad,zrad);//0xFF00CC
 	};
-	function moveWireOut_4(zoompos) {
+	function moveWireOut_4(zoompos4) {
 		var startVector = new THREE.Vector3(0, 0, 0);
 		var endVector = new THREE.Vector3(xrad,  yrad,  zrad);
 		var lat = -30,	long = -152;
 		var phi   = (90-lat)*(Math.PI/180);
 		var theta = (long-180)*(Math.PI/180);
-		let xrad = -((zoompos) * Math.sin(phi)*Math.cos(theta));
-		let zrad = ((zoompos) * Math.sin(phi)*Math.sin(theta));
-		let yrad = ((zoompos) * Math.cos(phi));
+		let xrad = -((zoompos4) * Math.sin(phi)*Math.cos(theta));
+		let zrad = ((zoompos4) * Math.sin(phi)*Math.sin(theta));
+		let yrad = ((zoompos4) * Math.cos(phi));
 		group_wire_4.position.set(xrad,yrad,zrad);//0xFF00CC
 	};
 	function moveWireOut_5(zoompos) {
@@ -2107,6 +2147,7 @@ let distanceOfWire = 596;
 		group_wire_6.position.set(xrad,yrad,zrad);//0xFF00CC
 	};
 	let zoompos = 596;
+	let zoompos4 = 596;
 	let minzoomspeed=5;
 	let zoomspeed = minzoomspeed;
 
@@ -2139,7 +2180,7 @@ let distanceOfWire = 596;
 		moveGroup_models_1(zoompos);
 		moveGroup_models_2(zoompos);
 		moveGroup_models_3(zoompos);
-		moveGroup_models_4(zoompos);
+		moveGroup_models_4(zoompos4);
 		moveGroup_models_5(zoompos);
 		moveGroup_models_6(zoompos);
 
@@ -2181,6 +2222,7 @@ let maxtime = 0;
 		
 		if(zoompos<2500){
 			zoompos++;
+			zoompos4 = zoompos4 +1.6;
 			//console.log(zoompos);
 		};
 		if(zoompos>=2500){
@@ -2192,7 +2234,7 @@ let maxtime = 0;
 		function onMouseWheel(event) {
 		    anim.status="stage1";
 		    window.removeEventListener('wheel', onMouseWheel, false);
-		    console.log('hui');
+		    
 		};
 	function loop() {
 		newTime = new Date().getTime();
@@ -2232,7 +2274,7 @@ let maxtime = 0;
 		moveWireOut_1(zoompos);
 		moveWireOut_2(zoompos);
 		moveWireOut_3(zoompos);
-		moveWireOut_4(zoompos);
+		moveWireOut_4(zoompos4);
 		moveWireOut_5(zoompos);
 		moveWireOut_6(zoompos);
 		gh();
